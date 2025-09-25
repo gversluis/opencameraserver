@@ -5877,7 +5877,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                                 float old_zoom_ratio = preview.getZoomRatio();
                                 float new_zoom_ratio = preview.getZoomRatio(new_zoom_factor);
                                 if( new_zoom_ratio != old_zoom_ratio ) {
-                                    last_haptic_time = performHapticFeedback(seekBar, last_haptic_time);
+                                    last_haptic_time = performHapticFeedbackIfSafe(seekBar, last_haptic_time);
                                 }
                             }
                             preview.zoomTo(new_zoom_factor, false, true);
@@ -5958,7 +5958,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                         preview.setISO( manualSeekbars.getISO(progress) );
                         mainUI.updateSelectedISOButton();
                         if( fromUser ) {
-                            last_haptic_time = performHapticFeedback(seekBar, last_haptic_time);
+                            last_haptic_time = performHapticFeedbackIfSafe(seekBar, last_haptic_time);
                         }
                     }
 
@@ -5992,7 +5992,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 							long exposure_time = exponentialScaling(frac, min_exposure_time, max_exposure_time);*/
                             preview.setExposureTime( manualSeekbars.getExposureTime(progress) );
                             if( fromUser ) {
-                                last_haptic_time = performHapticFeedback(seekBar, last_haptic_time);
+                                last_haptic_time = performHapticFeedbackIfSafe(seekBar, last_haptic_time);
                             }
                         }
 
@@ -6062,7 +6062,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                         if( fromUser ) {
                             // check if not scrolling past the repeated zeroes
                             if( preview.getCurrentExposure() != new_exposure ) {
-                                last_haptic_time = performHapticFeedback(seekBar, last_haptic_time);
+                                last_haptic_time = performHapticFeedbackIfSafe(seekBar, last_haptic_time);
                             }
                         }
                         preview.setExposure(new_exposure);
@@ -6125,6 +6125,15 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             View switchCameraButton = findViewById(R.id.switch_camera);
             switchCameraButton.animate().rotationBy(180).setDuration(250).setInterpolator(new AccelerateDecelerateInterpolator()).start();
         }
+    }
+
+    /** Performs haptic feedback if safe to do so (i.e. not video recording).
+     */
+    public long performHapticFeedbackIfSafe(SeekBar seekBar, long last_haptic_time) {
+        if( !preview.isVideoRecording() ) {
+            return performHapticFeedback(seekBar, last_haptic_time);
+        }
+        return last_haptic_time;
     }
 
     public static long performHapticFeedback(SeekBar seekBar, long last_haptic_time) {
@@ -6260,7 +6269,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                     //preview.setWhiteBalanceTemperature(temperature);
                     preview.setWhiteBalanceTemperature( manualSeekbars.getWhiteBalanceTemperature(progress) );
                     if( fromUser ) {
-                        last_haptic_time = performHapticFeedback(seekBar, last_haptic_time);
+                        last_haptic_time = performHapticFeedbackIfSafe(seekBar, last_haptic_time);
                     }
                 }
 
