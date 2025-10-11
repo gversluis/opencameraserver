@@ -2505,8 +2505,9 @@ public class MyApplicationInterface extends BasicApplicationInterface {
                 main_activity.finish();
             }
         }
-        else if( done ) {
+        else if( done && !main_activity.isAppPaused() ) {
             // create thumbnail
+            // no need to do this if we are stopping video due to pausing (and avoids risks of ANR from retriever.getFrameAtTime)
             long debug_time = System.currentTimeMillis();
             Bitmap thumbnail = null;
             ParcelFileDescriptor pfd_saf = null; // keep a reference to this as long as retriever, to avoid risk of pfd_saf being garbage collected
@@ -2520,7 +2521,11 @@ public class MyApplicationInterface extends BasicApplicationInterface {
                     pfd_saf = getContext().getContentResolver().openFileDescriptor(uri, "r");
                     retriever.setDataSource(pfd_saf.getFileDescriptor());
                 }
+                if( MyDebug.LOG )
+                    Log.d(TAG, "    time to before retriever.getFrameAtTime: " + (System.currentTimeMillis() - debug_time));
                 thumbnail = retriever.getFrameAtTime(-1);
+                if( MyDebug.LOG )
+                    Log.d(TAG, "    time to after retriever.getFrameAtTime: " + (System.currentTimeMillis() - debug_time));
             }
             catch(FileNotFoundException | /*IllegalArgumentException |*/ RuntimeException e) {
                 // video file wasn't saved or corrupt video file?
