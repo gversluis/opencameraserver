@@ -2438,6 +2438,8 @@ public class MyApplicationInterface extends BasicApplicationInterface {
         if( dategeo_subtitles && video_method != ApplicationInterface.VideoMethod.URI ) {
             startVideoSubtitlesTask(video_method);
         }
+
+        main_activity.setZoomSticky(false); // don't want the zoom to be sticky while recording video
     }
 
     @Override
@@ -2449,6 +2451,8 @@ public class MyApplicationInterface extends BasicApplicationInterface {
         view.setImageResource(R.drawable.take_video_selector);
         view.setContentDescription( getContext().getResources().getString(R.string.start_video) );
         view.setTag(R.drawable.take_video_selector); // for testing
+
+        main_activity.setZoomSticky(true); // reenable the zoom sticky available (for Camera2 API)
     }
 
     @Override

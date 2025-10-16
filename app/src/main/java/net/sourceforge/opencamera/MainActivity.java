@@ -5858,40 +5858,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             SeekBar zoomSeekBar = findViewById(R.id.zoom_seekbar);
 
             if( preview.supportsZoom() ) {
-                zoomSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
-                zoomSeekBar.setMax(preview.getMaxZoom());
-                zoomSeekBar.setProgress(preview.getMaxZoom()-preview.getCameraController().getZoom());
-                zoomSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-                    private long last_haptic_time;
-
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if( MyDebug.LOG )
-                            Log.d(TAG, "zoom onProgressChanged: " + progress);
-                        // note we zoom even if !fromUser, as various other UI controls (multitouch, volume key zoom)
-                        // indirectly set zoom via this method, from setting the zoom slider
-                        // if hasSmoothZoom()==true, then the preview already handled zooming to the current value
-                        if( !preview.hasSmoothZoom() ) {
-                            int new_zoom_factor = preview.getMaxZoom() - progress;
-                            if( fromUser && preview.getCameraController() != null ) {
-                                float old_zoom_ratio = preview.getZoomRatio();
-                                float new_zoom_ratio = preview.getZoomRatio(new_zoom_factor);
-                                if( new_zoom_ratio != old_zoom_ratio ) {
-                                    last_haptic_time = performHapticFeedbackIfSafe(seekBar, last_haptic_time);
-                                }
-                            }
-                            preview.zoomTo(new_zoom_factor, false, true);
-                        }
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                    }
-                });
+                setZoomSeekbar();
 
                 if( sharedPreferences.getBoolean(PreferenceKeys.ShowZoomSliderControlsPreferenceKey, true) ) {
                     if( !mainUI.inImmersiveMode() ) {
@@ -6127,6 +6094,16 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         }
     }
 
+    /** For Camera2 only. Sets whether the zoom ratios should be sticky or not (see documentation of
+     *  CameraController2.setZoomSticky), and updates the zoom seekbar.
+     */
+    void setZoomSticky(boolean sticky) {
+        if( preview.supportsZoom() && preview.usingCamera2API() ) {
+            preview.setZoomSticky(sticky);
+            setZoomSeekbar(); // need to update max and progress of the seekbar
+        }
+    }
+
     /** Performs haptic feedback if safe to do so (i.e. not video recording).
      */
     public long performHapticFeedbackIfSafe(SeekBar seekBar, long last_haptic_time) {
@@ -6152,6 +6129,46 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             }
         }
         return last_haptic_time;
+    }
+
+    /** Sets up the zoom seekbar based on available zoom values.
+     */
+    public void setZoomSeekbar() {
+        SeekBar zoomSeekBar = findViewById(R.id.zoom_seekbar);
+        zoomSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
+        zoomSeekBar.setMax(preview.getMaxZoom());
+        zoomSeekBar.setProgress(preview.getMaxZoom()-preview.getCameraController().getZoom());
+        zoomSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            private long last_haptic_time;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if( MyDebug.LOG )
+                    Log.d(TAG, "zoom onProgressChanged: " + progress);
+                // note we zoom even if !fromUser, as various other UI controls (multitouch, volume key zoom)
+                // indirectly set zoom via this method, from setting the zoom slider
+                // if hasSmoothZoom()==true, then the preview already handled zooming to the current value
+                if( !preview.hasSmoothZoom() ) {
+                    int new_zoom_factor = preview.getMaxZoom() - progress;
+                    if( fromUser && preview.getCameraController() != null ) {
+                        float old_zoom_ratio = preview.getZoomRatio();
+                        float new_zoom_ratio = preview.getZoomRatio(new_zoom_factor);
+                        if( new_zoom_ratio != old_zoom_ratio ) {
+                            last_haptic_time = performHapticFeedbackIfSafe(seekBar, last_haptic_time);
+                        }
+                    }
+                    preview.zoomTo(new_zoom_factor, false, true);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
     }
 
     public void setManualFocusSeekbarProgress(final boolean is_target_distance, float focus_distance) {

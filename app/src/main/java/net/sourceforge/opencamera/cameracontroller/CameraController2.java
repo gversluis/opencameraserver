@@ -97,6 +97,7 @@ public class CameraController2 extends CameraController {
 
     // camera features that we save (either to avoid repeatedly accessing, or we do our own modification)
     private List<Integer> zoom_ratios;
+    private List<Integer> full_zoom_ratios; // full_zoom_ratios is a saved version of zoom ratios, including repeated values so that the zoom seekbar is "sticky"
     private int current_zoom_value;
     private int zoom_value_1x; // index into zoom_ratios list that is for zoom 1x
     private List<Integer> supported_extensions_zoom; // if non-null, list of camera vendor extensions that support zoom
@@ -2789,12 +2790,14 @@ public class CameraController2 extends CameraController {
             camera_features.zoom_ratios = ratios;
             camera_features.max_zoom = camera_features.zoom_ratios.size()-1;
             this.zoom_ratios = camera_features.zoom_ratios;
+            this.full_zoom_ratios = this.zoom_ratios;
             if( MyDebug.LOG ) {
                 Log.d(TAG, "zoom_ratios: " + zoom_ratios);
             }
         }
         else {
             this.zoom_ratios = null;
+            this.full_zoom_ratios = null;
         }
 
         int [] face_modes = characteristics.get(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES);
@@ -3619,6 +3622,39 @@ public class CameraController2 extends CameraController {
         }
 
         return camera_features;
+    }
+
+    @Override
+    public List<Integer> setZoomSticky(boolean sticky) {
+        if( this.zoom_ratios != null ) {
+            int current_zoom_ratio = this.zoom_ratios.get(current_zoom_value);
+
+            if( sticky ) {
+                // reset
+                this.zoom_ratios = this.full_zoom_ratios;
+            }
+            else {
+                List<Integer> new_zoom_ratios = new ArrayList<>();
+                int old_ratio = -1;
+                for(int ratio : full_zoom_ratios) {
+                    if( ratio != old_ratio ) {
+                        new_zoom_ratios.add(ratio);
+                        old_ratio = ratio;
+                    }
+                }
+                this.zoom_ratios = new_zoom_ratios;
+            }
+
+            // adjust current_zoom_value to new value
+            current_zoom_value = 0;
+            for(int i=0;i<zoom_ratios.size();i++) {
+                if( current_zoom_ratio == zoom_ratios.get(i) ) {
+                    current_zoom_value = i;
+                }
+            }
+        }
+
+        return this.zoom_ratios;
     }
 
     /** Returns true iff every entry in camera_sizes is also a member of alt_camera_sizes (order

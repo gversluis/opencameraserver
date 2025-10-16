@@ -410,6 +410,12 @@ public class CameraController1 extends CameraController {
         return camera_features;
     }
 
+    @Override
+    public List<Integer> setZoomSticky(boolean sticky) {
+        // not supported for CameraController1
+        throw new RuntimeException(); // throw as RuntimeException, as this is a programming error
+    }
+
     /** Important, from docs:
      *  "Changing scene mode may override other parameters (such as flash mode, focus mode, white balance).
      *  For example, suppose originally flash mode is on and supported flash modes are on/off. In night

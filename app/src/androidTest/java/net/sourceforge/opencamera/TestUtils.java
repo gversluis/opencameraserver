@@ -1505,6 +1505,33 @@ public class TestUtils {
         }
     }
 
+    private static void checkZoomSticky(Preview preview, boolean expect_sticky) {
+        float prev_zoom_ratio = -1.0f;
+        if( preview.usingCamera2API() && preview.supportsZoom() ) {
+            for(int i=0;i<preview.getMaxZoom();i++) {
+                float this_zoom_ratio = preview.getZoomRatio(i);
+                if( prev_zoom_ratio != -1.0f ) {
+                    final float eps = 1.0e-3f;
+                    double log_zoom = Math.log(this_zoom_ratio) / Math.log(2.0);
+                    double log_zoom_i = Math.floor(log_zoom+eps);
+                    boolean is_power_2 = Math.abs(log_zoom - log_zoom_i) < eps;
+                    if( prev_zoom_ratio == this_zoom_ratio ) {
+                        assertTrue(expect_sticky);
+                        // also check this_zoom_ratio is power of 2
+                        assertTrue(is_power_2);
+                    }
+                    else if( expect_sticky ) {
+                        // if this_zoom_ratio is power of 2, check the next zoom_ratio is equal
+                        if( is_power_2 ) {
+                            assertTrue(i+1 < preview.getMaxZoom() && this_zoom_ratio == preview.getZoomRatio(i+1));
+                        }
+                    }
+                }
+                prev_zoom_ratio = this_zoom_ratio;
+            }
+        }
+    }
+
     public static void preTakeVideoChecks(MainActivity activity, boolean immersive_mode) {
         Preview preview = activity.getPreview();
 
@@ -1552,6 +1579,8 @@ public class TestUtils {
         assertEquals(popupButton.getVisibility(), (immersive_mode ? View.GONE : View.VISIBLE));
         assertEquals(trashButton.getVisibility(), View.GONE);
         assertEquals(shareButton.getVisibility(), View.GONE);
+
+        checkZoomSticky(preview, true);
     }
 
     public static void takeVideoRecordingChecks(MainActivity activity, boolean immersive_mode, int exposureVisibility, int exposureLockVisibility) {
@@ -1592,6 +1621,8 @@ public class TestUtils {
         assertEquals(exposureLockButton.getVisibility(), exposureLockVisibility);
         assertEquals(trashButton.getVisibility(), View.GONE);
         assertEquals(shareButton.getVisibility(), View.GONE);
+
+        checkZoomSticky(preview, false);
     }
 
     public static void checkFilesAfterTakeVideo(MainActivity activity, boolean allow_failure, boolean has_cb, long time_ms, int n_non_video_files, boolean failed_to_start, int exp_n_new_files, int n_new_files) {
@@ -1673,6 +1704,8 @@ public class TestUtils {
         assertEquals(takePhotoVideoButton.getVisibility(), View.GONE);
 
         assertTrue( preview.getCameraController() == null || preview.getCameraController().count_camera_parameters_exception == 0 );
+
+        checkZoomSticky(preview, true);
     }
 
     public interface VideoTestCallback {

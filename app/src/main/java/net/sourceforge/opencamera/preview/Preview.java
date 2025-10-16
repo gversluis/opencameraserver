@@ -2430,6 +2430,26 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
         }
     }
 
+    /** For Camera2 only. Sets whether the zoom ratios should be sticky or not (see documentation of
+     *  CameraController2.setZoomSticky).
+     */
+    public void setZoomSticky(boolean sticky) {
+        if( !using_android_l ) {
+            // making zoom sticking or not only supported for Camera2 API
+            return;
+        }
+        this.camera_controller_zoom_ratios = this.camera_controller.setZoomSticky(sticky);
+        this.camera_controller_max_zoom_factor = camera_controller_zoom_ratios != null ? camera_controller_zoom_ratios.size()-1 : 0;
+        if( this.has_zoom ) {
+            this.max_zoom_factor = camera_controller_max_zoom_factor;
+            this.zoom_ratios = camera_controller_zoom_ratios;
+        }
+        else {
+            this.max_zoom_factor = 0;
+            this.zoom_ratios = null;
+        }
+    }
+
     private void initCameraParameters() throws CameraControllerException {
         if( MyDebug.LOG )
             Log.d(TAG, "initCameraParameters()");

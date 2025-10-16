@@ -386,6 +386,13 @@ public abstract class CameraController {
     }
     public abstract String getAPI();
     public abstract CameraFeatures getCameraFeatures() throws CameraControllerException;
+
+    /** For CameraController2 only. Normally the returned CameraFeatures.zoom_ratios for Camera2
+     *  contains repeated values, so that the zoom seekbar is sticky at e.g. powers of 2. Call this
+     *  method to set whether the zoom_ratios should contain these repeated values or not.
+     * @return The updated zoom_ratios.
+     */
+    public abstract List<Integer> setZoomSticky(boolean sticky);
     public int getCameraId() {
         return cameraId;
     }
