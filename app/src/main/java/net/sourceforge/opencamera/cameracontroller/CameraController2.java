@@ -7798,9 +7798,13 @@ public class CameraController2 extends CameraController {
                             Log.d(TAG, "continuous_burst_in_progress: " + continuous_burst_in_progress);
                             Log.d(TAG, "n_burst: " + n_burst);
                         }
-                        if( n_burst >= 10 || n_burst_raw >= 10 ) {
-                            // Nokia 8 in std mode without post-processing options doesn't hit this limit (we only hit this
+                        if( n_burst >= 5 || n_burst_raw >= 5 ) {
+                            // Nokia 8 in std mode without post-processing options doesn't a limit of 10 (we only hit this
                             // if it's set to "n_burst >= 5")
+                            // But Galaxy S24+ is slower, so need to set this limit not too high (otherwise we have a long
+                            // lag of taking photos after releasing continuous burst). Also with the limit set to 10 or more,
+                            // on Galaxy S24+ the preview can end up pausing during continuous burst, or in some cases
+                            // taking a photo hangs.
                             if( MyDebug.LOG ) {
                                 Log.d(TAG, "...but wait for continuous burst, as waiting for too many photos");
                             }
