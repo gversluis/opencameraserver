@@ -255,7 +255,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     private final IntentFilter battery_ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
     private final Timer batteryCheckVideoTimer = new Timer();
     private TimerTask batteryCheckVideoTimerTask;
-    private long take_photo_time;
+    private long take_photo_time; // if taking photo on timer, planned time when we'll take the photo
+    private long last_take_photo_time = -1; // last time we called takePhoto()
     private int remaining_repeat_photos;
     private int remaining_restart_video;
 
@@ -6423,6 +6424,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                 Log.d(TAG, "don't take photo, preview is still opening");
             return;
         }
+        this.last_take_photo_time = System.currentTimeMillis();
         applicationInterface.cameraInOperation(true, false);
         String current_ui_focus_value = getCurrentFocusValue();
         if( MyDebug.LOG )
@@ -6875,7 +6877,15 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                     Log.d(TAG, "takeRemainingRepeatPhotos: remaining_repeat_photos is now: " + remaining_repeat_photos);
 
                 long timer_delay = applicationInterface.getRepeatIntervalPref();
-                if( timer_delay == 0 ) {
+                if( last_take_photo_time >= 0 ) {
+                    // the repeat interval should be measured from when we last requested to take the photo (but before allowing for
+                    // any auto focus), not now (since taking the photo itself can take time)
+                    long elapsed_time = System.currentTimeMillis() - last_take_photo_time;
+                    if( elapsed_time > 0 ) {
+                        timer_delay -= elapsed_time;
+                    }
+                }
+                if( timer_delay <= 0 ) {
                     // we set skip_autofocus to go straight to taking a photo rather than refocusing, for speed
                     // need to manually set the phase
                     phase = PHASE_TAKING_PHOTO;
