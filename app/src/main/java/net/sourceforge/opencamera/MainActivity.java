@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 
     private static int activity_count = 0;
 
-    private boolean app_is_paused = true;
+    private boolean app_is_paused = true; // whether activity is paused
 
     private SensorManager mSensorManager;
     private Sensor mSensorAccelerometer;
