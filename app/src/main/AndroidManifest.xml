@@ -9,6 +9,7 @@
 
     <supports-screens android:xlargeScreens="true" android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true"/>
 
+    <!-- if adding permissions, remember to review privacy policy; also features accessing sensitive information must be listed in Google Play listing -->
     <uses-permission android:name="android.permission.BLUETOOTH"
         android:maxSdkVersion="30"
         />
@@ -26,6 +27,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- see note above if adding permissions -->
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.microphone" />
