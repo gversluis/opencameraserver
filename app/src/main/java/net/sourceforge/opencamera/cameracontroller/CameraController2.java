@@ -6522,14 +6522,17 @@ public class CameraController2 extends CameraController {
                     launchCameraSession(wait_until_started, new CreateCaptureSessionFunction() {
                         @Override
                         public void call() throws CameraAccessException {
-                            if( camera == null ) {
-                                // just in case - don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
-                                Log.e(TAG, "camera is no longer open");
-                                return;
+                            synchronized( background_camera_lock ) {
+                                if( camera == null ) {
+                                    // don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "camera is no longer open");
+                                    return;
+                                }
+                                /*if( true )
+                                    throw new UnsupportedOperationException(); // test*/
+                                camera.createExtensionSession(extensionConfiguration);
                             }
-                            /*if( true )
-                                throw new UnsupportedOperationException(); // test*/
-                            camera.createExtensionSession(extensionConfiguration);
                         }
                     }, on_failed);
                 }
@@ -6545,12 +6548,15 @@ public class CameraController2 extends CameraController {
                     launchCameraSession(wait_until_started, new CreateCaptureSessionFunction() {
                         @Override
                         public void call() throws CameraAccessException {
-                            if( camera == null ) {
-                                // just in case - don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
-                                Log.e(TAG, "camera is no longer open");
-                                return;
+                            synchronized( background_camera_lock ) {
+                                if( camera == null ) {
+                                    // don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "camera is no longer open");
+                                    return;
+                                }
+                                camera.createCaptureSession(sessionConfiguration);
                             }
-                            camera.createCaptureSession(sessionConfiguration);
                         }
                     }, on_failed);
                 }
@@ -6558,14 +6564,17 @@ public class CameraController2 extends CameraController {
                     launchCameraSession(wait_until_started, new CreateCaptureSessionFunction() {
                         @Override
                         public void call() throws CameraAccessException {
-                            if( camera == null ) {
-                                // just in case - don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
-                                Log.e(TAG, "camera is no longer open");
-                                return;
+                            synchronized( background_camera_lock ) {
+                                if( camera == null ) {
+                                    // don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "camera is no longer open");
+                                    return;
+                                }
+                                camera.createConstrainedHighSpeedCaptureSession(surfaces,
+                                        myStateCallback,
+                                        handler);
                             }
-                            camera.createConstrainedHighSpeedCaptureSession(surfaces,
-                                    myStateCallback,
-                                    handler);
                         }
                     }, on_failed);
                 }
@@ -6584,12 +6593,15 @@ public class CameraController2 extends CameraController {
                         launchCameraSession(wait_until_started, new CreateCaptureSessionFunction() {
                             @Override
                             public void call() throws CameraAccessException {
-                                if( camera == null ) {
-                                    // just in case - don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
-                                    Log.e(TAG, "camera is no longer open");
-                                    return;
+                                synchronized( background_camera_lock ) {
+                                    if( camera == null ) {
+                                        // don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
+                                        if( MyDebug.LOG )
+                                            Log.d(TAG, "camera is no longer open");
+                                        return;
+                                    }
+                                    camera.createCaptureSession(sessionConfiguration);
                                 }
-                                camera.createCaptureSession(sessionConfiguration);
                             }
                         }, on_failed);
                     }
@@ -6597,16 +6609,19 @@ public class CameraController2 extends CameraController {
                         launchCameraSession(wait_until_started, new CreateCaptureSessionFunction() {
                             @Override
                             public void call() throws CameraAccessException {
-                                /*if( true )
-                                    throw new CameraAccessException(CameraAccessException.CAMERA_ERROR); // test*/
-                                if( camera == null ) {
-                                    // just in case - don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
-                                    Log.e(TAG, "camera is no longer open");
-                                    return;
+                                synchronized( background_camera_lock ) {
+                                    /*if( true )
+                                        throw new CameraAccessException(CameraAccessException.CAMERA_ERROR); // test*/
+                                    if( camera == null ) {
+                                        // don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
+                                        if( MyDebug.LOG )
+                                            Log.d(TAG, "camera is no longer open");
+                                        return;
+                                    }
+                                    camera.createCaptureSession(surfaces,
+                                            myStateCallback,
+                                            handler);
                                 }
-                                camera.createCaptureSession(surfaces,
-                                        myStateCallback,
-                                        handler);
                             }
                         }, on_failed);
                     }
