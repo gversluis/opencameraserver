@@ -379,6 +379,11 @@ public abstract class CameraController {
     }
 
     public abstract void release();
+    /** Can be called from activity onPause(), before release(), as a hint that the activity is pausing and
+     *  that the camera will be closing. Used to avoid e.g. starting preview if that's running on a background
+     *  thread.
+     */
+    public abstract void appIsPaused();
     public abstract void onError(); // triggers error mechanism - should only be called externally for testing purposes
 
     CameraController(int cameraId) {

@@ -143,6 +143,11 @@ public class CameraController1 extends CameraController {
         }
     }
 
+    @Override
+    public void appIsPaused() {
+        // unused
+    }
+
     private Camera.Parameters getParameters() {
         if( MyDebug.LOG )
             Log.d(TAG, "getParameters");

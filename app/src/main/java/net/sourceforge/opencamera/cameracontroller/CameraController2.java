@@ -77,6 +77,17 @@ public class CameraController2 extends CameraController {
     private static final String TAG = "CameraController2";
 
     private final Context context;
+    // Whether activity is paused - although the camera should be released when the app is paused,
+    // will be a short period before that happens (especially if closing camera on background thread).
+    // Note that this shouldn't block any camera access, as we clearly need to call the camera API to
+    // e.g. close the capture session and release the camera. In practice it isn't necessary to check
+    // this flag most the time (as in theory the application shouldn't be trying to call CameraController
+    // methods after onPause()), but this flag is useful to check for things that might run on a
+    // background thread (e.g., if starting the preview in createCaptureSession() is done on a
+    // background thread, there's a risk the app will pause in the meantime - we don't want to try
+    // creating the camera session or starting the preview at that point, even if the camera hasn't
+    // yet been released.
+    private boolean app_is_paused = false;
     private final Map<String, CameraFeaturesCache> camera_features_caches; // used to improve performance for subsequent CameraController2 objects; key is the cameraIdS string, value is a CameraFeaturesCache object
     private CameraDevice camera;
     private final String cameraIdS; // ID string of logical camera
@@ -2448,6 +2459,13 @@ public class CameraController2 extends CameraController {
         }
         if( MyDebug.LOG )
             Log.d(TAG, "release exit: " + this);
+    }
+
+    @Override
+    public void appIsPaused() {
+        synchronized( background_camera_lock ) {
+            this.app_is_paused = true;
+        }
     }
 
     /** Enforce a minimum number of points in tonemap curves - needed due to Galaxy S10e having wrong behaviour if fewer
@@ -6322,6 +6340,14 @@ public class CameraController2 extends CameraController {
                             // whilst preview was starting)
                             return;
                         }
+                        else if( app_is_paused ) {
+                            if( MyDebug.LOG )
+                                Log.d(TAG, "app is pausing");
+                            callback_done = true;
+                            background_camera_lock.notifyAll();
+                            // don't call onFailure() - if app is pausing, no need to report to user
+                            return;
+                        }
 
                         if( MyDebug.LOG ) {
                             Log.d(TAG, "camera: " + camera);
@@ -6529,6 +6555,11 @@ public class CameraController2 extends CameraController {
                                         Log.d(TAG, "camera is no longer open");
                                     return;
                                 }
+                                else if( app_is_paused ) {
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "don't start session as app is pausing");
+                                    return;
+                                }
                                 /*if( true )
                                     throw new UnsupportedOperationException(); // test*/
                                 camera.createExtensionSession(extensionConfiguration);
@@ -6555,6 +6586,11 @@ public class CameraController2 extends CameraController {
                                         Log.d(TAG, "camera is no longer open");
                                     return;
                                 }
+                                else if( app_is_paused ) {
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "don't start session as app is pausing");
+                                    return;
+                                }
                                 camera.createCaptureSession(sessionConfiguration);
                             }
                         }
@@ -6569,6 +6605,11 @@ public class CameraController2 extends CameraController {
                                     // don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
                                     if( MyDebug.LOG )
                                         Log.d(TAG, "camera is no longer open");
+                                    return;
+                                }
+                                else if( app_is_paused ) {
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "don't start session as app is pausing");
                                     return;
                                 }
                                 camera.createConstrainedHighSpeedCaptureSession(surfaces,
@@ -6600,6 +6641,11 @@ public class CameraController2 extends CameraController {
                                             Log.d(TAG, "camera is no longer open");
                                         return;
                                     }
+                                    else if( app_is_paused ) {
+                                        if( MyDebug.LOG )
+                                            Log.d(TAG, "don't start session as app is pausing");
+                                        return;
+                                    }
                                     camera.createCaptureSession(sessionConfiguration);
                                 }
                             }
@@ -6616,6 +6662,11 @@ public class CameraController2 extends CameraController {
                                         // don't throw exception as we don't want to show error toast, as it may be that another request to start preview is already active
                                         if( MyDebug.LOG )
                                             Log.d(TAG, "camera is no longer open");
+                                        return;
+                                    }
+                                    else if( app_is_paused ) {
+                                        if( MyDebug.LOG )
+                                            Log.d(TAG, "don't start session as app is pausing");
                                         return;
                                     }
                                     camera.createCaptureSession(surfaces,

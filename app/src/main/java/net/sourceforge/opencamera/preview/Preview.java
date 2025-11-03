@@ -8033,8 +8033,12 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
         if( MyDebug.LOG )
             Log.d(TAG, "onPause");
         this.is_paused = true;
-        if( activity_is_pausing )
+        if( activity_is_pausing ) {
             this.app_is_paused = true; // note, if activity_is_paused==false, we don't change app_is_paused, in case app was paused indicated via a separate call to onPause
+            if( camera_controller != null ) {
+                camera_controller.appIsPaused();
+            }
+        }
         if( camera_open_state == CameraOpenState.CAMERAOPENSTATE_OPENING ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "cancel open_camera_task");
