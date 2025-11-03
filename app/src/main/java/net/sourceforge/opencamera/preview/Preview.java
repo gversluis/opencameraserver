@@ -1621,6 +1621,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             Log.d(TAG, "openCamera()");
             debug_time = System.currentTimeMillis();
         }
+        // n.b., no need to check for app_is_paused - we check for is_paused below, which covers that
         if( applicationInterface.isPreviewInBackground() ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "don't open camera as preview in background");
