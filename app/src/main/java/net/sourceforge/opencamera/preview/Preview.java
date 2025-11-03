@@ -1818,6 +1818,14 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                 protected void onPostExecute(CameraController camera_controller) {
                     if( MyDebug.LOG )
                         Log.d(TAG, "onPostExecute, async task: " + this);
+                    if( Preview.this.is_paused ) {
+                        // in theory if Preview.onPause was called, then we call open_camera_task.cancel() meaning
+                        // we should enter onCancelled() instead of onPostExecute() - but put this check just in case
+                        if( MyDebug.LOG )
+                            Log.e(TAG, "entered onPostExecute but is_paused");
+                        onCancelled(camera_controller);
+                        return;
+                    }
                     // see note in openCameraCore() for why we set camera_controller here
                     Preview.this.camera_controller = camera_controller;
                     cameraOpened();
