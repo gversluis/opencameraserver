@@ -5113,7 +5113,13 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
         if( MyDebug.LOG )
             Log.d(TAG, "updateFocusForVideo()");
         String old_focus_mode = null;
-        if( this.supported_focus_values != null && camera_controller != null && is_video ) {
+        if( app_is_paused ) {
+            // don't do anything if app is going into background - needed to fix RuntimeException reported
+            // from Google Play from focusIsVideo->CameraController1.focusIsVideo->getParameters() (for old
+            // API); in general, it seems good practice to avoid reading or changing focus mode when app is
+            // pausing
+        }
+        else if( this.supported_focus_values != null && camera_controller != null && is_video ) {
             boolean focus_is_video = focusIsVideo();
             if( MyDebug.LOG ) {
                 Log.d(TAG, "focus_is_video: " + focus_is_video + " , is_video: " + is_video);
