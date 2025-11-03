@@ -5109,10 +5109,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
      *  video is corrupted.
      * @return If the focus mode is changed, this returns the previous focus mode; else it returns null.
      */
-    private String updateFocusForVideo() {
+    private void updateFocusForVideo() {
         if( MyDebug.LOG )
             Log.d(TAG, "updateFocusForVideo()");
-        String old_focus_mode = null;
         if( app_is_paused ) {
             // don't do anything if app is going into background - needed to fix RuntimeException reported
             // from Google Play from focusIsVideo->CameraController1.focusIsVideo->getParameters() (for old
@@ -5127,11 +5126,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             if( focus_is_video != is_video ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "need to change focus mode");
-                old_focus_mode = this.getCurrentFocusValue();
                 updateFocus("focus_mode_continuous_video", true, false, false); // don't save, as we're just changing focus mode temporarily for the Samsung S5 video hack
             }
         }
-        return old_focus_mode;
     }
 
     /** If we've switch to video mode, ensures that we're not in a flash mode other than torch.
