@@ -8469,18 +8469,20 @@ public class CameraController2 extends CameraController {
     }
 
     @Override
-    public void reconnect() throws CameraControllerException {
+    public void reconnect(boolean restart_preview) throws CameraControllerException {
         if( MyDebug.LOG )
             Log.d(TAG, "reconnect");
         // if we change where we play the STOP_VIDEO_RECORDING sound, make sure it can't be heard in resultant video
         playSound(MediaActionSound.STOP_VIDEO_RECORDING);
         createPreviewRequest();
-        createCaptureSession(true, null, null, null, false);
-        /*if( MyDebug.LOG )
-            Log.d(TAG, "add preview surface to previewBuilder");
-        Surface surface = getPreviewSurface();
-        previewBuilder.addTarget(surface);*/
-        //setRepeatingRequest();
+        if( restart_preview ) {
+            createCaptureSession(true, null, null, null, false);
+            /*if( MyDebug.LOG )
+                Log.d(TAG, "add preview surface to previewBuilder");
+            Surface surface = getPreviewSurface();
+            previewBuilder.addTarget(surface);*/
+            //setRepeatingRequest();
+        }
     }
 
     @Override

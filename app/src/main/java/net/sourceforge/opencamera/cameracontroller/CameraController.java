@@ -659,7 +659,12 @@ public abstract class CameraController {
     public abstract boolean supportsMetering();
     public abstract boolean focusIsContinuous();
     public abstract boolean focusIsVideo();
-    public abstract void reconnect() throws CameraControllerException;
+    /** Reconnect to the camera after recording video is completed.
+     * @param restart_preview If false, then there is no need to restart the camera preview.
+     *                        Only relevant for CameraController2 (for CameraController1, the
+     *                        preview will always be started).
+     */
+    public abstract void reconnect(boolean restart_preview) throws CameraControllerException;
     public abstract void setPreviewDisplay(SurfaceHolder holder) throws CameraControllerException;
     public abstract void setPreviewTexture(TextureView texture) throws CameraControllerException;
     /** This should be called when using a TextureView, and the texture view has reported a change

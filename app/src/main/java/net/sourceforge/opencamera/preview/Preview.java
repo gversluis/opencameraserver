@@ -1345,7 +1345,10 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             Log.d(TAG, "reconnectCamera()");
         if( camera_controller != null ) { // just to be safe
             try {
-                camera_controller.reconnect();
+                // if app_is_paused==true, for CameraController2 don't want to try starting the preview again - have had SecurityException from
+                // Google Play ("Attempt to use camera from a different process than original client"), but also seems good practice to not
+                // be doing this anyway after MainActivity.unPause, especially now that we can start camera preview from background thread
+                camera_controller.reconnect(!app_is_paused);
                 this.setPreviewPaused(false);
             }
             catch(CameraControllerException e) {

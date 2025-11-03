@@ -1528,7 +1528,7 @@ public class CameraController1 extends CameraController {
     }
 
     @Override
-    public void reconnect() throws CameraControllerException {
+    public void reconnect(boolean restart_preview) throws CameraControllerException {
         if( MyDebug.LOG )
             Log.d(TAG, "reconnect");
         try {
