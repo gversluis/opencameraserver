@@ -6,4 +6,5 @@
     <color name="shutter_icon">#2F9CF2</color>
     <color name="shutter_icon_pressed">#40C4FF</color>
     <color name="shutter_icon_video_recording">#F44336</color>
+    <color name="scrollview">#999999</color>
 </resources>
