@@ -1304,7 +1304,7 @@ public class PopupView extends LinearLayout {
     }
 
     public static String getButtonOptionString(boolean include_prefix, String prefix_string, String supported_option) {
-        return (include_prefix ? prefix_string : "") + "\n" + supported_option;
+        return (include_prefix ? (prefix_string + "\n") : "") + supported_option;
     }
 
     static List<View> createButtonOptions(ViewGroup parent, Context context, int total_width_dp, Map<String, View> test_ui_buttons, List<String> supported_options, int icons_id, int values_id, String prefix_string, boolean include_prefix, String current_value, int max_buttons_per_row, String test_key, final ButtonOptionsPopupListener listener) {
