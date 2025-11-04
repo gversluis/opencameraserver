@@ -2638,8 +2638,7 @@ public class MainUI {
 
         {
             // prevent popup being transparent
-            popup_container.setBackgroundColor(Color.BLACK);
-            popup_container.setAlpha(0.9f);
+            popup_container.setBackgroundColor(Color.argb(230, 0, 0, 0));
         }
 
         if( popup_view == null ) {

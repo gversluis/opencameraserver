@@ -51,7 +51,7 @@ import androidx.appcompat.widget.SwitchCompat;
 public class PopupView extends LinearLayout {
     private static final String TAG = "PopupView";
     public static final float ALPHA_BUTTON_SELECTED = 1.0f;
-    public static final float ALPHA_BUTTON = 0.6f; // 0.4f tends to be hard to see in bright light
+    public static final float ALPHA_BUTTON = 0.54f; // 0.36f tends to be hard to see in bright light
 
     private static final float button_text_size_dip = 12.0f;
     private static final float title_text_size_dip = 17.0f;
