@@ -962,8 +962,9 @@ public class ImageSaver extends Thread {
     private void addRequest(Request request, int cost) {
         if( MyDebug.LOG )
             Log.d(TAG, "addRequest, cost: " + cost);
-        if( main_activity.isDestroyed() ) {
-            // If the application is being destroyed as a new photo is being taken, it's not safe to continue
+        if( main_activity.isDestroyed() && request.type != Request.Type.ON_DESTROY ) {
+            // If the application is being destroyed as a new photo is being taken, it's not safe to continue, unless this request
+            // is for the ON_DESTROY
             // MainDestroy.onDestroy() does call waitUntilDone(), but this is extra protection in case an image comes in after that.
             Log.e(TAG, "application is destroyed, image lost!");
             return;
