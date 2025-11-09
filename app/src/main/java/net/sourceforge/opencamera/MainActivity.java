@@ -72,6 +72,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.speech.tts.TextToSpeech;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -269,6 +270,10 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         activity_count++;
         if( MyDebug.LOG )
             Log.d(TAG, "activity_count: " + activity_count);
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM ) {
+            // whilst in theory this is redundant (since edge-to-edge is enabled by default on Android 15+ anyway), maybe it'll stop the Google Play warning?
+            EdgeToEdge.enable(this);
+        }
         //EdgeToEdge.enable(this, SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT), SystemBarStyle.dark(Color.TRANSPARENT)); // test edge-to-edge on pre-Android 15
         super.onCreate(savedInstanceState);
 
