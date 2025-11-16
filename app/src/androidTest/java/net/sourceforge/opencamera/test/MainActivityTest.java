@@ -9324,7 +9324,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     /* Tests we disable location when going to settings, but re-enable it when returning to camera.
      * Also tests camera is turned off when going to settings.
-     * Fails on Android emulator because we immediately get location again after returning from settings.
+     * Fails on Android emulator because we get calls to both LocationSupplier.onProviderDisabled()
+     * and onStatusChanged() for TEMPORARILY_UNAVAILABLE when going back from settings, which
+     * clears the cached location.
      */
     public void testLocationSettings() throws InterruptedException {
         Log.d(TAG, "testLocationSettings");
