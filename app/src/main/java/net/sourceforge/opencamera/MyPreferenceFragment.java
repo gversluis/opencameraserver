@@ -47,6 +47,7 @@ import android.view.WindowMetrics;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -736,6 +737,26 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
         }
 
         setupDependencies();
+
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA ) {
+            // handle on back behaviour - workaround for not yet using AndroidX Fragments
+            preferenceFragmentOnBackPressedCallback = new PreferenceFragmentOnBackPressedCallback(true);
+            MainActivity main_activity = (MainActivity)MyPreferenceFragment.this.getActivity();
+            main_activity.getOnBackPressedDispatcher().addCallback(main_activity, preferenceFragmentOnBackPressedCallback);
+        }
+    }
+
+    private PreferenceFragmentOnBackPressedCallback preferenceFragmentOnBackPressedCallback;
+
+    private class PreferenceFragmentOnBackPressedCallback extends OnBackPressedCallback {
+        public PreferenceFragmentOnBackPressedCallback(boolean enabled) {
+            super(enabled);
+        }
+
+        @Override
+        public void handleOnBackPressed() {
+            getFragmentManager().popBackStack();
+        }
     }
 
     @Override
@@ -941,6 +962,12 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
         if( MyDebug.LOG )
             Log.d(TAG, "onDestroy");
         super.onDestroy();
+
+        if( preferenceFragmentOnBackPressedCallback != null ) {
+            this.preferenceFragmentOnBackPressedCallback.setEnabled(false);
+            this.preferenceFragmentOnBackPressedCallback.remove();
+            this.preferenceFragmentOnBackPressedCallback = null;
+        }
 
         if( MyDebug.LOG )
             Log.d(TAG, "isRemoving?: " + isRemoving());
