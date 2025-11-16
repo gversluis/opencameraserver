@@ -9413,13 +9413,24 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue(mPreview.isOpeningCamera() || mPreview.openCameraAttempted());
 
         // check we start listening again
-        // first should have a cached location
+        // even if we don't have a location, we should at least have a cached location
+        // note that some devices (e.g., Galaxy S24+ since Android 16) will
+        // immediately get a non-cached location
         assertTrue(mActivity.getLocationSupplier().hasLocationListeners());
-        assertFalse(mActivity.getLocationSupplier().testHasReceivedLocation());
-        assertNotNull(mActivity.getLocationSupplier().getLocation());
-        locationInfo = new LocationSupplier.LocationInfo();
-        mActivity.getLocationSupplier().getLocation(locationInfo);
-        assertTrue(locationInfo.LocationWasCached());
+        if( mActivity.getLocationSupplier().testHasReceivedLocation() ) {
+            // location should be non-cached
+            assertNotNull(mActivity.getLocationSupplier().getLocation());
+            locationInfo = new LocationSupplier.LocationInfo();
+            mActivity.getLocationSupplier().getLocation(locationInfo);
+            assertFalse(locationInfo.LocationWasCached());
+        }
+        else {
+            // check we at least have cached location
+            assertNotNull(mActivity.getLocationSupplier().getLocation());
+            locationInfo = new LocationSupplier.LocationInfo();
+            mActivity.getLocationSupplier().getLocation(locationInfo);
+            assertTrue(locationInfo.LocationWasCached());
+        }
 
         // check camera is opened after a pause
         Thread.sleep(1000);
