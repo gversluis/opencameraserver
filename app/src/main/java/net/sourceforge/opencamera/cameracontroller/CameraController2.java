@@ -8717,6 +8717,19 @@ public class CameraController2 extends CameraController {
 
         @Override
         public void onCaptureResultAvailable(@NonNull CameraExtensionSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+            /*if( MyDebug.LOG ) {
+                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ) {
+                    Integer strength = request.get(CaptureRequest.EXTENSION_STRENGTH);
+                    if( strength != null ) {
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "EXTENSION_STRENGTH: " + strength);
+                    }
+                    else {
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "EXTENSION_STRENGTH is null ");
+                    }
+                }
+            }*/
             previewCaptureCallback.updateCachedCaptureResult(result);
         }
 
