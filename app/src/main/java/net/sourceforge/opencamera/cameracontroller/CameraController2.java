@@ -97,6 +97,7 @@ public class CameraController2 extends CameraController {
     private final boolean is_samsung_s7; // Galaxy S7 or Galaxy S7 Edge
     private final boolean is_samsung_galaxy_s;
     private final boolean is_samsung_galaxy_f; // Galaxy fold or flip series
+    private final boolean block_vendor_extensions; // block specific devices that take ages or cause ANR in CameraExtensionCharacteristics.getSupportedExtensions()
 
     // characteristics of camera - if a specific physical camera is being used, these are characteristics for the physical camera
     private CameraCharacteristics characteristics;
@@ -2111,9 +2112,14 @@ public class CameraController2 extends CameraController {
 
         //this.is_oneplus = Build.MANUFACTURER.toLowerCase(Locale.US).contains("oneplus");
         this.is_samsung = Build.MANUFACTURER.toLowerCase(Locale.US).contains("samsung");
-        this.is_samsung_s7 = Build.MODEL.toLowerCase(Locale.US).contains("sm-g93");
-        this.is_samsung_galaxy_s = is_samsung && ( Build.MODEL.toLowerCase(Locale.US).contains("sm-g") || Build.MODEL.toLowerCase(Locale.US).contains("sm-s") );
-        this.is_samsung_galaxy_f = is_samsung && Build.MODEL.toLowerCase(Locale.US).contains("sm-f");
+        String build_model = Build.MODEL.toLowerCase(Locale.US);
+        this.is_samsung_s7 = build_model.contains("sm-g93");
+        this.is_samsung_galaxy_s = is_samsung && ( build_model.contains("sm-g") || build_model.contains("sm-s") );
+        this.is_samsung_galaxy_f = is_samsung && build_model.contains("sm-f");
+        this.block_vendor_extensions = build_model.contains("nokia g42 5g") ||
+                build_model.contains("hmd fusion") ||
+                build_model.contains("hmd skyline") ||
+                build_model.contains("pixel 5a");
         if( MyDebug.LOG ) {
             Log.d(TAG, "is_samsung: " + is_samsung);
             Log.d(TAG, "is_samsung_s7: " + is_samsung_s7);
@@ -2176,7 +2182,7 @@ public class CameraController2 extends CameraController {
                             Log.d(TAG, "characteristics_facing: " + characteristics_facing);
                         }
 
-                        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && cameraIdSPhysical == null ) {
+                        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !block_vendor_extensions && cameraIdSPhysical == null ) {
                             // n.b., getCameraExtensionCharacteristics is documented as saying this must be the standalone cameraID that can be directly opened with openCamera()
                             // however on Pixel 6 Pro at least, night mode extension only ever uses the wide camera, even if telephoto or ultrawide is set as a physical camera,
                             // so don't support for now
