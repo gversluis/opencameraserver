@@ -847,10 +847,10 @@
     <string name="preference_show_cycle_flash_summary">Mostra o no una icona en pantalla per canviar entre les opcions de flaix en lloc de mostrar les opcions de flaix al menú emergent. Tingues present que el mode Llanterna no estarà disponible si uses aquesta icona.</string>     
     
     <string name="preference_raw_expo_bracketing">Permet RAW per al bràqueting d\'exposició</string>
-    <string name="preference_raw_expo_bracketing_summary">Si s\'habilita, l\'opció RAW també s\'aplicarà al bràqueting d\'exposició (o al mode HDR si \"Desa totes les imatges del mode HDR\" està habilitat). Si aquesta opció està inhabilitada, només es desaran les imatges no-DNG (JPEG/etc) en aquests modes.</string>
+    <string name="preference_raw_expo_bracketing_summary">Si s\'habilita, l\'opció RAW també s\'aplicarà al bràqueting d\'exposició (o al mode HDR si \"Desa totes les imatges del mode HDR\" està habilitat). Si aquesta opció està inhabilitada, només es desaran les imatges no-RAW (JPEG/etc) en aquests modes.</string>
 
     <string name="preference_raw_focus_bracketing">Permet RAW per al bràqueting d\'enfocament</string>
-    <string name="preference_raw_focus_bracketing_summary">Si s\'habilita, l\'opció RAW també s\'aplicarà al bràqueting d\'enfocament. Si aquesta opció està inhabilitada, només es desaran les imatges no-DNG (JPEG/etc) en el mode bràqueting d\'enfocament.</string>
+    <string name="preference_raw_focus_bracketing_summary">Si s\'habilita, l\'opció RAW també s\'aplicarà al bràqueting d\'enfocament. Si aquesta opció està inhabilitada, només es desaran les imatges no-RAW (JPEG/etc) en el mode bràqueting d\'enfocament.</string>
 
     <string name="cycle_raw">Canvia els modes RAW</string>
     <string name="preference_show_cycle_raw">Mostra la icona RAW</string>

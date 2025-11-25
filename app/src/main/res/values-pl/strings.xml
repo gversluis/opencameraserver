@@ -845,10 +845,10 @@
     <string name="preference_show_cycle_flash_summary">Wyświetla ikonę na ekranie do przełączania opcji lampy błyskowej, zamiast wyświetlać opcje lampy błyskowej w menu podręcznym. Pamiętaj, że latarka nie jest dostępna, jeśli używasz tej ikony.</string>
 
     <string name="preference_raw_expo_bracketing">Zezwalaj na format RAW dla braketingu ekspozycji</string>
-    <string name="preference_raw_expo_bracketing_summary">Określa, czy opcja RAW powinna mieć zastosowanie również w trybie zdjęć z braketingiem ekspozycji (lub w trybie HDR, gdy włączona jest opcja „Zapisz wszystkie obrazy w trybie HDR”). Jeśli ta opcja jest wyłączona, w tych trybach zdjęć zapisywane będą tylko obrazy inne niż DNG (JPEG/etc).</string>
+    <string name="preference_raw_expo_bracketing_summary">Określa, czy opcja RAW powinna mieć zastosowanie również w trybie zdjęć z braketingiem ekspozycji (lub w trybie HDR, gdy włączona jest opcja „Zapisz wszystkie obrazy w trybie HDR”). Jeśli ta opcja jest wyłączona, w tych trybach zdjęć zapisywane będą tylko obrazy inne niż RAW (JPEG/etc).</string>
 
     <string name="preference_raw_focus_bracketing">Zezwalaj na format RAW dla braketingu ostrości</string>
-    <string name="preference_raw_focus_bracketing_summary">Określa, czy opcja RAW powinna mieć zastosowanie również w trybie zdjęć z braketingiem ostrości. Jeśli ta opcja jest wyłączona, w trybach zdjęć z bracketingiem ostrości zapisywane będą tylko zdjęcia w formacie innym niż DNG (JPEG/etc).</string>
+    <string name="preference_raw_focus_bracketing_summary">Określa, czy opcja RAW powinna mieć zastosowanie również w trybie zdjęć z braketingiem ostrości. Jeśli ta opcja jest wyłączona, w trybach zdjęć z bracketingiem ostrości zapisywane będą tylko zdjęcia w formacie innym niż RAW (JPEG/etc).</string>
 
     <string name="cycle_raw">Tryby RAW</string>
     <string name="preference_show_cycle_raw">Ikona RAW</string>
