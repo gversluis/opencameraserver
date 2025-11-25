@@ -43,6 +43,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 
 /** This defines the UI for the "popup" button, that provides quick access to a
@@ -363,7 +364,7 @@ public class PopupView extends LinearLayout {
                 if( auto_stabilise )
                     checkBox.setChecked(auto_stabilise);
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton buttonView,
+                    public void onCheckedChanged(@NonNull CompoundButton buttonView,
                                                  boolean isChecked) {
                         main_activity.clickedAutoLevel();
                     }
@@ -727,7 +728,7 @@ public class PopupView extends LinearLayout {
                 });
 
                 addCheckBox(context, scale, getResources().getString(R.string.focus_bracketing_add_infinity), sharedPreferences.getBoolean(PreferenceKeys.FocusBracketingAddInfinityPreferenceKey, false), new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton buttonView,
+                    public void onCheckedChanged(@NonNull CompoundButton buttonView,
                                                  boolean isChecked) {
                         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -741,7 +742,7 @@ public class PopupView extends LinearLayout {
 
                 if( main_activity.supportsFocusBracketingSourceAuto() ) {
                     addCheckBox(context, scale, getResources().getString(R.string.focus_bracketing_auto_source_distance), sharedPreferences.getBoolean(PreferenceKeys.FocusBracketingAutoSourceDistancePreferenceKey, false), new CompoundButton.OnCheckedChangeListener() {
-                        public void onCheckedChanged(CompoundButton buttonView,
+                        public void onCheckedChanged(@NonNull CompoundButton buttonView,
                                                      boolean isChecked) {
                             main_activity.getApplicationInterface().setFocusBracketingSourceAutoPref(isChecked);
                             if( !isChecked ) {
