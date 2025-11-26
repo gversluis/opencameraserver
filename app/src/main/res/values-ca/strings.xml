@@ -452,7 +452,7 @@
 
     <string name="preference_video_fps_default">Per defecte</string>
     
-    <string name="preference_category_exif_tags">Personalització d\'etiquetes EXIF</string>
+    <string name="preference_category_exif_tags">Personalització d\'etiquetes Exif</string>
     <string name="preference_exif_artist">Autor</string>
     <string name="preference_exif_artist_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta "Autor" (només en formats JPEG). Deixa-ho en blanc per a cap</string>
     <string name="preference_exif_copyright">Copyright</string>
@@ -993,10 +993,10 @@
     <string name="preference_hdr_tonemapping_exponential">Exponencial</string>
     <string name="preference_hdr_tonemapping_default">Per defecte</string>
 
-    <string name="preference_remove_device_exif">Suprimeix les dades EXIF del dispositiu</string>
-    <string name="preference_remove_device_exif_summary">Suprimeix o no les metadades EXIF del dispositiu en les fotos JPEG. No se suprimiran les etiquetes EXIF provinents d\'altres paràmetres, com ara ubicació/geotagging. Aquestes altres opcions són independents i passen per damunt d\'aquest paràmetre. RAW/DNG i els vídeos no es veuen afectats.\n%s</string>
-    <string name="preference_remove_device_exif_off">No suprimeixis les dades EXIF del dispositiu</string>
-    <string name="preference_remove_device_exif_on">Suprimeix les dades EXIF del dispositiu</string>
+    <string name="preference_remove_device_exif">Suprimeix les dades Exif del dispositiu</string>
+    <string name="preference_remove_device_exif_summary">Suprimeix o no les metadades Exif del dispositiu en les fotos JPEG. No se suprimiran les etiquetes Exif provinents d\'altres paràmetres, com ara ubicació/geotagging. Aquestes altres opcions són independents i passen per damunt d\'aquest paràmetre. RAW/DNG i els vídeos no es veuen afectats.\n%s</string>
+    <string name="preference_remove_device_exif_off">No suprimeixis les dades Exif del dispositiu</string>
+    <string name="preference_remove_device_exif_on">Suprimeix les dades Exif del dispositiu</string>
     <string name="preference_remove_device_exif_keep_datetime">Suprimeix-les tret de data/hora</string>
 
     <string name="choose_camera">Tria la càmera:</string>   

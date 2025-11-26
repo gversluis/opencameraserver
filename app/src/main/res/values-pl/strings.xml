@@ -450,7 +450,7 @@
 
     <string name="preference_video_fps_default">Domyślnie</string>
 
-    <string name="preference_category_exif_tags">Własne znaczniki EXIF</string>
+    <string name="preference_category_exif_tags">Własne znaczniki Exif</string>
     <string name="preference_exif_artist">Autor</string>
     <string name="preference_exif_artist_summary">Tekst do zapisania w metadanych obrazu dla znacznika artysty (tylko format JPEG). (Pozostaw puste dla żadnego)</string>
     <string name="preference_exif_copyright">Prawa autorskie</string>
@@ -991,10 +991,10 @@
     <string name="preference_hdr_tonemapping_exponential">Wykładniczo</string>
     <string name="preference_hdr_tonemapping_default">Domyślnie</string>
 
-    <string name="preference_remove_device_exif">Usuń dane EXIF urządzenia</string>
-    <string name="preference_remove_device_exif_summary">Czy usuwać metadane EXIF urządzenia ze zdjęć JPEG. Nie spowoduje to usunięcia znaczników exif zastosowanych w innych ustawieniach, które stosują metadane EXIF (np. lokalizacja/geotagowanie). Te inne opcje są niezależne i zastąpią to ustawienie. Nie dotyczy to zdjęć RAW/DNG oraz filmów.\n%s</string>
-    <string name="preference_remove_device_exif_off">Nie usuwaj danych EXIF urządzenia</string>
-    <string name="preference_remove_device_exif_on">Usuń dane EXIF urządzenia</string>
+    <string name="preference_remove_device_exif">Usuń dane Exif urządzenia</string>
+    <string name="preference_remove_device_exif_summary">Czy usuwać metadane Exif urządzenia ze zdjęć JPEG. Nie spowoduje to usunięcia znaczników Exif zastosowanych w innych ustawieniach, które stosują metadane Exif (np. lokalizacja/geotagowanie). Te inne opcje są niezależne i zastąpią to ustawienie. Nie dotyczy to zdjęć RAW/DNG oraz filmów.\n%s</string>
+    <string name="preference_remove_device_exif_off">Nie usuwaj danych Exif urządzenia</string>
+    <string name="preference_remove_device_exif_on">Usuń dane Exif urządzenia</string>
     <string name="preference_remove_device_exif_keep_datetime">Usuń z wyjątkiem daty/godziny</string>
     
     <string name="choose_camera">Wybierz aparat:</string>

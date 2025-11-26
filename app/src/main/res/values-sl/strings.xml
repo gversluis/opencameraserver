@@ -449,7 +449,7 @@
 
     <string name="preference_video_fps_default">Privzeta</string>
 	
-	<string name="preference_category_exif_tags">Oznake EXIF po meri</string>
+	<string name="preference_category_exif_tags">Oznake Exif po meri</string>
     <string name="preference_exif_artist">Avtor</string>
     <string name="preference_exif_artist_summary">Besedilo, ki se shrani med metapodatke slike v oznako "Avtor" (samo oblika JPEG)</string>
     <string name="preference_exif_copyright">Avtorske pravice</string>

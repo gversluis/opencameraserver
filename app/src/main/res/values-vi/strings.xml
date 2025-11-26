@@ -447,7 +447,7 @@
 
     <string name="preference_video_fps_default">Mặc định</string>
 
-    <string name="preference_category_exif_tags">Tùy chỉnh thẻ EXIF</string>
+    <string name="preference_category_exif_tags">Tùy chỉnh thẻ Exif</string>
     <string name="preference_exif_artist">Nghệ sĩ</string>
     <string name="preference_exif_artist_summary">Văn bản được lưu trữ trong thẻ Nghệ sĩ (chỉ định dạng JPEG, để trống là không ghi)</string>
     <string name="preference_exif_copyright">Bản quyền</string>

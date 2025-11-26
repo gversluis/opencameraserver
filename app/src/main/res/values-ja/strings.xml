@@ -430,11 +430,11 @@
 
     <string name="preference_video_fps_default">デフォルト</string>
 
-    <string name="preference_category_exif_tags">カスタムEXIFタグ</string>
+    <string name="preference_category_exif_tags">カスタムExifタグ</string>
     <string name="preference_exif_artist">アーティスト</string>
-    <string name="preference_exif_artist_summary">EXIFデータ内の\"Artist\"タグに記録されます。(JPEG形式のみ)(使用しない場合は空にします)</string>
+    <string name="preference_exif_artist_summary">Exifデータ内の\"Artist\"タグに記録されます。(JPEG形式のみ)(使用しない場合は空にします)</string>
     <string name="preference_exif_copyright">著作権表記</string>
-    <string name="preference_exif_copyright_summary">EXIFデータ内の\"Copyright\"タグに記録されます。(JPEG形式のみ)(使用しない場合は空にします)</string>
+    <string name="preference_exif_copyright_summary">Exifデータ内の\"Copyright\"タグに記録されます。(JPEG形式のみ)(使用しない場合は空にします)</string>
 
     <string name="processing">処理中…あと</string>
 

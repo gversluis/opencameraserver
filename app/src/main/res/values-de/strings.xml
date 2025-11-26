@@ -448,7 +448,7 @@
 
     <string name="preference_video_fps_default">Standard</string>
 
-    <string name="preference_category_exif_tags">Spezifische EXIF-Kennungen</string>
+    <string name="preference_category_exif_tags">Spezifische Exif-Kennungen</string>
     <string name="preference_exif_artist">Ersteller</string>
     <string name="preference_exif_artist_summary">Text für den "Ersteller"-Eintrag in den Foto-Metadaten (nur JPEG-Format, freilassen, falls nicht verwendet.)</string>
     <string name="preference_exif_copyright">Copyright</string>
@@ -954,7 +954,7 @@
     <string name="error_features_slow_motion">Slow-Motion</string>
 
     <string name="preference_comment_ypr">Eigentliche Eulerwinkel speichern</string>
-    <string name="preference_comment_ypr_summary">Speichern der drei Euler-Winkel (Drehlage des Geräts im EXIF Benutzerkommentar des Fotos (nur im JPEG-Format)</string>
+    <string name="preference_comment_ypr_summary">Speichern der drei Euler-Winkel (Drehlage des Geräts im Exif Benutzerkommentar des Fotos (nur im JPEG-Format)</string>
 
     <string name="preference_audio_control_none">Keine</string>
     <string name="preference_audio_control_noise">Lautes Geräusch</string>

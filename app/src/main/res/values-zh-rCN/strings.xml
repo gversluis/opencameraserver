@@ -477,7 +477,7 @@
     <string name="top_of_screen">在屏幕顶端</string>
     <string name="bottom_of_screen">在屏幕底端</string>
     <string name="centre_of_screen">在屏幕中央</string>
-    <string name="preference_category_exif_tags">自定义EXIF标签</string>
+    <string name="preference_category_exif_tags">自定义Exif标签</string>
 
     <string name="high_speed">高速</string> <!-- in the sense of high speed video frame rates -->
 
@@ -953,10 +953,10 @@
     <string name="preference_hdr_tonemapping">HDR映射</string>
     <string name="preference_hdr_tonemapping_summary">在HDR模式中使用的色调映射算法\n%s</string>
 
-    <string name="preference_remove_device_exif">删除设备 EXIF 信息</string>
-    <string name="preference_remove_device_exif_summary">是否删除 JPEG 照片中的设备 EXIF 信息。其他 EXIF 信息（如坐标/海拔）不受影响，RAW/DNG 和视频也不受影响。\n%s</string>
-    <string name="preference_remove_device_exif_off">不删除设备 EXIF 信息</string>
-    <string name="preference_remove_device_exif_on">删除设备 EXIF 信息</string>
+    <string name="preference_remove_device_exif">删除设备 Exif 信息</string>
+    <string name="preference_remove_device_exif_summary">是否删除 JPEG 照片中的设备 Exif 信息。其他 Exif 信息（如坐标/海拔）不受影响，RAW/DNG 和视频也不受影响。\n%s</string>
+    <string name="preference_remove_device_exif_off">不删除设备 Exif 信息</string>
+    <string name="preference_remove_device_exif_on">删除设备 Exif 信息</string>
     <string name="preference_remove_device_exif_keep_datetime">删除日期/时间以外的信息</string>
 
     <string name="choose_camera">选择相机：</string>

@@ -454,7 +454,7 @@
 
     <string name="preference_video_fps_default">Default</string>
 
-    <string name="preference_category_exif_tags">Custom EXIF tags</string>
+    <string name="preference_category_exif_tags">Custom Exif tags</string>
     <string name="preference_exif_artist">Artist</string>
     <string name="preference_exif_artist_summary">Text to store in the image metadata for the "artist" tag  (JPEG formats only). (Leave blank for none.)</string>
     <string name="preference_exif_copyright">Copyright</string>
@@ -1003,10 +1003,10 @@
     <string name="preference_hdr_tonemapping_default">Default</string>
     <string name="preference_hdr_tonemapping_aces" translatable="false">ACES</string>
 
-    <string name="preference_remove_device_exif">Remove device EXIF data</string>
-    <string name="preference_remove_device_exif_summary">Whether to remove device EXIF metadata from JPEG photos. This will not remove exif tags applied by other settings that apply EXIF metadata (e.g. location/geotagging). Those other options are independent and will override this setting. RAW/DNG and videos are not affected.\n%s</string>
-    <string name="preference_remove_device_exif_off">Don\'t remove device EXIF data</string>
-    <string name="preference_remove_device_exif_on">Remove device EXIF data</string>
+    <string name="preference_remove_device_exif">Remove device Exif data</string>
+    <string name="preference_remove_device_exif_summary">Whether to remove device Exif metadata from JPEG photos. This will not remove Exif tags applied by other settings that apply Exif metadata (e.g. location/geotagging). Those other options are independent and will override this setting. RAW/DNG and videos are not affected.\n%s</string>
+    <string name="preference_remove_device_exif_off">Don\'t remove device Exif data</string>
+    <string name="preference_remove_device_exif_on">Remove device Exif data</string>
     <string name="preference_remove_device_exif_keep_datetime">Remove except date/time</string>
 
     <string name="choose_camera">Choose camera:</string>

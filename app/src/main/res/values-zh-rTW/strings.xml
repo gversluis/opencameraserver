@@ -449,7 +449,7 @@
 
     <string name="preference_video_fps_default">預設</string>
 
-    <string name="preference_category_exif_tags">自訂 EXIF 標籤</string>
+    <string name="preference_category_exif_tags">自訂 Exif 標籤</string>
     <string name="preference_exif_artist">藝術家</string>
     <string name="preference_exif_artist_summary">儲存在圖片詮釋資料藝術家標籤的文字（只有在 JPEG 格式）。（留空代表不儲存）</string>
     <string name="preference_exif_copyright">版權</string>

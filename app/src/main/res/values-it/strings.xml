@@ -447,7 +447,7 @@
 
     <string name="preference_video_fps_default">Default</string>
 
-    <string name="preference_category_exif_tags">Tag EXIF personalizzati</string>
+    <string name="preference_category_exif_tags">Tag Exif personalizzati</string>
     <string name="preference_exif_artist">Artista</string>
     <string name="preference_exif_artist_summary">Testo da inserire nei metadati della foto per il tag \"artista\" (solo JPEG). (Lasciare vuoto per eliminarlo.)</string>
     <string name="preference_exif_copyright">Copyright</string>
