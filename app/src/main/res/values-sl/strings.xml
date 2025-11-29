@@ -174,9 +174,9 @@
     <string name="preference_quality_summary">Nastavite kakovost shranjenih slik JPEG ali WebP (privzeta vrednost je 90 %%).  Nima učinka na obliko PNG.\n%s</string> <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
 	<string name="preference_raw">RAW</string>
     <string name="preference_location">Shrani podatke o lokaciji (označevanje z zemljepisno lego)</string>
-    <string name="preference_location_summary">Shrani podatke o lokaciji GPS v fotografijah/videoposnetkih (v fotografijah se podatki o lokaciji lahko shranijo samo pri oblikah JPEG in DNG)</string>
+    <string name="preference_location_summary">Shrani podatke o lokaciji GPS v fotografijah/videoposnetkih</string>
     <string name="preference_gps_direction">Shrani smer neba</string>
-    <string name="preference_gps_direction_summary">Shrani smer neba GPS v fotografijah (samo oblika JPEG)</string>
+    <string name="preference_gps_direction_summary">Shrani smer neba GPS v fotografijah (samo oblika JPEG/itd)</string>
     <string name="preference_require_location">Zahtevaj podatke o lokaciji</string>
     <string name="preference_require_location_summary">Če so podatki o lokaciji omogočeni, snemaj fotografije/videoposnetke samo, če so ti podatki na voljo</string>
     <string name="preference_stamp">Časovni žig fotografij</string>
@@ -451,9 +451,9 @@
 	
 	<string name="preference_category_exif_tags">Oznake Exif po meri</string>
     <string name="preference_exif_artist">Avtor</string>
-    <string name="preference_exif_artist_summary">Besedilo, ki se shrani med metapodatke slike v oznako "Avtor" (samo oblika JPEG)</string>
+    <string name="preference_exif_artist_summary">Besedilo, ki se shrani med metapodatke slike v oznako "Avtor" (samo oblika JPEG/itd)</string>
     <string name="preference_exif_copyright">Avtorske pravice</string>
-    <string name="preference_exif_copyright_summary">Besedilo, ki se shrani med metapodatke slike v oznako "Avtorske pravice" (samo oblika JPEG)</string>
+    <string name="preference_exif_copyright_summary">Besedilo, ki se shrani med metapodatke slike v oznako "Avtorske pravice" (samo oblika JPEG/itd)</string>
 
     <string name="processing">Obdelovanje …</string>
 
@@ -882,7 +882,7 @@
 
     <string name="exposure_compensation_seekbar">Iskalna vrstica za spremembo izravnave osvetlitve</string>
 
-    <string name="preference_image_format_summary">Izberite obliko datototek za shranjevanje fotografij.  To vpliva na fotografije v \"običajni\" obliki (ne v obliki RAW).  Samo oblika JPEG podpira shranjevanje metapodatkov Exif.  Upoštevajte, da oblika PNG ni popolnoma brezizgubna in se zaradi tega pretvori iz oblike JPEG pri 100 %% kakovosti.\n%s</string>
+    <string name="preference_image_format_summary">Izberite obliko datototek za shranjevanje fotografij.  To vpliva na fotografije v \"običajni\" obliki (ne v obliki RAW). Upoštevajte, da oblika PNG ni popolnoma brezizgubna in se zaradi tega pretvori iz oblike JPEG pri 100 %% kakovosti.\n%s</string>
 
     <string name="preference_camera_api">API fotoaparata</string>
     <string name="preference_camera_api_summary">Izberite API Camera2, da omogočite dodatne značilnosti, kot so ročni načini za osvetlitev, ostrino, ravnovesje beline, kot tudi obliko RAW (če jo naprava podpira).  Sprememba API-ja po ponovno zagnala program.\n%s</string>
@@ -958,7 +958,7 @@
     <string name="error_features_slow_motion">Počasni posnetek</string>
 
     <string name="preference_comment_ypr">Shrani odklon, naklon in nagib</string>
-    <string name="preference_comment_ypr_summary">V uporabniško opombo Exif v fotografiji shrani odklon, naklon in nagib naprave (samo oblika JPEG)</string>
+    <string name="preference_comment_ypr_summary">V uporabniško opombo Exif v fotografiji shrani odklon, naklon in nagib naprave (samo oblika JPEG/itd)</string>
 
     <string name="array_seekbar_preference_seekbar">Iskalna vrstica za spremembo trenutne vrednosti nastavitve</string>
 

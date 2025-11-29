@@ -177,9 +177,9 @@
     <string name="preference_quality_summary">Set the image quality of saved JPEG or WebP photo images (default value is 90%%). Has no effect for PNG image format.\n%s</string> <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
     <string name="preference_raw">RAW</string>
     <string name="preference_location">Store location data (Geotagging)</string>
-    <string name="preference_location_summary">Store GPS location data in the photos/videos (for photos, location data can only be stored in JPEG and DNG formats)</string>
+    <string name="preference_location_summary">Store GPS location data in the photos/videos</string>
     <string name="preference_gps_direction">Store compass direction</string>
-    <string name="preference_gps_direction_summary">Store GPS compass direction in the photos (JPEG formats only)</string>
+    <string name="preference_gps_direction_summary">Store GPS compass direction in the photos, for non-RAW (JPEG/etc) images only</string>
     <string name="preference_require_location">Require location data</string>
     <string name="preference_require_location_summary">If location data is enabled, only take photo/video if location data is available</string>
     <string name="preference_stamp">Stamp photos</string>
@@ -456,9 +456,9 @@
 
     <string name="preference_category_exif_tags">Custom Exif tags</string>
     <string name="preference_exif_artist">Artist</string>
-    <string name="preference_exif_artist_summary">Text to store in the image metadata for the "artist" tag  (JPEG formats only). (Leave blank for none.)</string>
+    <string name="preference_exif_artist_summary">Text to store in the image metadata for the "artist" tag, for non-RAW (JPEG/etc) images only. (Leave blank for none.)</string>
     <string name="preference_exif_copyright">Copyright</string>
-    <string name="preference_exif_copyright_summary">Text to store in the image metadata for the "copyright" tag  (JPEG formats only). (Leave blank for none.)</string>
+    <string name="preference_exif_copyright_summary">Text to store in the image metadata for the "copyright" tag, for non-RAW (JPEG/etc) images. (Leave blank for none.)</string>
 
     <string name="processing">Processing…</string>
 
@@ -892,7 +892,7 @@
 
     <string name="exposure_compensation_seekbar">Seekbar to change exposure compensation</string>
 
-    <string name="preference_image_format_summary">Select the file format used for saving photos. This affects \"standard\" (not RAW) photos. Only JPEG formats support saving Exif metadata. Ultra HDR not supported for NR, HDR, Pano, X- modes. Note that PNG format is not truly lossless, instead it is converted from a JPEG at 100%% quality.\n%s</string>
+    <string name="preference_image_format_summary">Select the file format used for saving photos. This affects \"standard\" (not RAW) photos. Ultra HDR not supported for NR, HDR, Pano, X- modes. Note that PNG format is not truly lossless, instead it is converted from a JPEG at 100%% quality.\n%s</string>
 
     <string name="preference_camera_api">Camera API</string>
     <string name="preference_camera_api_summary">Select Camera2 API to enable extra features such as manual modes for exposure, focus, white balance, along with RAW (if supported by the device). Changing the API will cause a restart.\n%s</string>
@@ -971,7 +971,7 @@
     <string name="error_features_slow_motion">Slow motion</string>
 
     <string name="preference_comment_ypr">Store yaw, pitch and roll</string>
-    <string name="preference_comment_ypr_summary">Store the yaw, pitch and roll of the device in the photo\'s Exif user comment (JPEG formats only)</string>
+    <string name="preference_comment_ypr_summary">Store the yaw, pitch and roll of the device in the photo\'s Exif user comment, for non-RAW (JPEG/etc) images only</string>
 
     <string name="array_seekbar_preference_seekbar">Seekbar to change current preference value</string>
 
@@ -1004,7 +1004,7 @@
     <string name="preference_hdr_tonemapping_aces" translatable="false">ACES</string>
 
     <string name="preference_remove_device_exif">Remove device Exif data</string>
-    <string name="preference_remove_device_exif_summary">Whether to remove device Exif metadata from JPEG photos. This will not remove Exif tags applied by other settings that apply Exif metadata (e.g. location/geotagging). Those other options are independent and will override this setting. RAW/DNG and videos are not affected.\n%s</string>
+    <string name="preference_remove_device_exif_summary">Whether to remove device Exif metadata from non-RAW (JPEG/etc) photos. This will not remove Exif tags applied by other settings that apply Exif metadata (e.g. location/geotagging). Those other options are independent and will override this setting. RAW/DNG and videos are not affected.\n%s</string>
     <string name="preference_remove_device_exif_off">Don\'t remove device Exif data</string>
     <string name="preference_remove_device_exif_on">Remove device Exif data</string>
     <string name="preference_remove_device_exif_keep_datetime">Remove except date/time</string>

@@ -176,9 +176,9 @@
     <string name="preference_quality_summary">Defineix la qualitat de les imatges desades en JPEG o WebP (el valor per defecte és del 90%%). No té cap efecte sobre les imatges en format PNG.\n%s</string> <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
     <string name="preference_raw">RAW</string>
     <string name="preference_location">Emmagatzema les dades d\'ubicació (Geotagging)</string>
-    <string name="preference_location_summary">Emmagatzema les dades d\'ubicació del GPS a les fotos/vídeos (per a les fotos les dades d\'ubicació només es desaran en els formats JPEG i DNG)</string>
+    <string name="preference_location_summary">Emmagatzema les dades d\'ubicació del GPS a les fotos/vídeos</string>
     <string name="preference_gps_direction">Emmagatzema la direcció de brúixola</string>
-    <string name="preference_gps_direction_summary">Emmagatzema la direcció de la brúixola del GPS a les fotos (només per al format JPEG)</string>
+    <string name="preference_gps_direction_summary">Emmagatzema la direcció de la brúixola del GPS a les fotos (només per al format JPEG/etc)</string>
     <string name="preference_require_location">Exigeix les dades d\'ubicació</string>
     <string name="preference_require_location_summary">Si s\'habiliten les dades d\'ubicació, només es faran fotos/vídeos si hi ha dades d\'ubicació disponibles</string>
     <string name="preference_stamp">Estampa les fotos</string>
@@ -454,9 +454,9 @@
     
     <string name="preference_category_exif_tags">Personalització d\'etiquetes Exif</string>
     <string name="preference_exif_artist">Autor</string>
-    <string name="preference_exif_artist_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta "Autor" (només en formats JPEG). Deixa-ho en blanc per a cap</string>
+    <string name="preference_exif_artist_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta "Autor" (només en formats JPEG/etc). Deixa-ho en blanc per a cap</string>
     <string name="preference_exif_copyright">Copyright</string>
-    <string name="preference_exif_copyright_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta "Copyright" (només en formats JPEG). Deixa-ho en blanc per a cap</string>
+    <string name="preference_exif_copyright_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta "Copyright" (només en formats JPEG/etc). Deixa-ho en blanc per a cap</string>
 
     <string name="processing">Processant…</string>
 
@@ -886,7 +886,7 @@
 
     <string name="exposure_compensation_seekbar">Barra de selecció per canviar la compensació de l\'exposició</string>
 
-    <string name="preference_image_format_summary">Tria el format de fitxer per desar les fotos. Això afecta les fotos estàndard (no RAW). Només el format JPEG és compatible amb desar les metadades Exif. UltraHDR no és compatible amb els modes NR, HDR, Pano, X-.Tingues present que PNG no és un format sense pèrdues, sinó que es converteix des de JPEG al 100%% de qualitat.\n%s</string>
+    <string name="preference_image_format_summary">Tria el format de fitxer per desar les fotos. Això afecta les fotos estàndard (no RAW). UltraHDR no és compatible amb els modes NR, HDR, Pano, X-.Tingues present que PNG no és un format sense pèrdues, sinó que es converteix des de JPEG al 100%% de qualitat.\n%s</string>
 
     <string name="preference_camera_api">API de la càmera</string>
     <string name="preference_camera_api_summary">Tria l\'API Camera2 per habilitar funcions extra com ara els modes manuals d\'exposició, enfocament, balanç de blancs i també RAW (si és compatible amb el teu dispositiu). Si canvies l\'Api es reiniciarà l\'aplicació.\n%s</string>
@@ -962,7 +962,7 @@
     <string name="error_features_slow_motion">Càmera lenta</string>
 
     <string name="preference_comment_ypr">Emmagatzema guinyada, capcineig i balanceig</string>
-    <string name="preference_comment_ypr_summary">Emmagatzema la guinyada, el capcineig i el balanceig del dispositiu a l\'Exif de la foto (només en formats JPEG)</string>
+    <string name="preference_comment_ypr_summary">Emmagatzema la guinyada, el capcineig i el balanceig del dispositiu a l\'Exif de la foto (només en formats JPEG/etc)</string>
 
     <string name="array_seekbar_preference_seekbar">Barra de selecció per canviar el valor de preferència actual</string>
 
@@ -994,7 +994,7 @@
     <string name="preference_hdr_tonemapping_default">Per defecte</string>
 
     <string name="preference_remove_device_exif">Suprimeix les dades Exif del dispositiu</string>
-    <string name="preference_remove_device_exif_summary">Suprimeix o no les metadades Exif del dispositiu en les fotos JPEG. No se suprimiran les etiquetes Exif provinents d\'altres paràmetres, com ara ubicació/geotagging. Aquestes altres opcions són independents i passen per damunt d\'aquest paràmetre. RAW/DNG i els vídeos no es veuen afectats.\n%s</string>
+    <string name="preference_remove_device_exif_summary">Suprimeix o no les metadades Exif del dispositiu en les fotos JPEG/etc. No se suprimiran les etiquetes Exif provinents d\'altres paràmetres, com ara ubicació/geotagging. Aquestes altres opcions són independents i passen per damunt d\'aquest paràmetre. RAW/DNG i els vídeos no es veuen afectats.\n%s</string>
     <string name="preference_remove_device_exif_off">No suprimeixis les dades Exif del dispositiu</string>
     <string name="preference_remove_device_exif_on">Suprimeix les dades Exif del dispositiu</string>
     <string name="preference_remove_device_exif_keep_datetime">Suprimeix-les tret de data/hora</string>

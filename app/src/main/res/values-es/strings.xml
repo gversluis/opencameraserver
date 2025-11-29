@@ -444,9 +444,9 @@
     <string name="high_speed">Alta velocidad</string>
 
     <string name="preference_exif_artist">Autor</string>
-    <string name="preference_exif_artist_summary">Texto para almacenar en los metadatos de la imagen para la etiqueta del Autor (formato JPEG solamente). (Déjelo en blanco para ninguno)</string>
+    <string name="preference_exif_artist_summary">Texto para almacenar en los metadatos de la imagen para la etiqueta del Autor (formato JPEG etc solamente). (Déjelo en blanco para ninguno)</string>
     <string name="preference_exif_copyright">Copyright</string>
-    <string name="preference_exif_copyright_summary">Texto para almacenar en los metadatos de la imagen para la etiqueta de Copyright (formato JPEG solamente). (Déjelo en blanco para ninguno)</string>
+    <string name="preference_exif_copyright_summary">Texto para almacenar en los metadatos de la imagen para la etiqueta de Copyright (formato JPEG etc solamente). (Déjelo en blanco para ninguno)</string>
 
     <string name="processing">Procesando…</string>
 

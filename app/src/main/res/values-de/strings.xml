@@ -175,7 +175,7 @@
     <string name="preference_location">Geotagging</string>
     <string name="preference_location_summary">Wenn aktiviert, werden die GPS-Standortdaten in den Aufnahmen gespeichert.</string>
     <string name="preference_gps_direction">Himmelsrichtung</string>
-    <string name="preference_gps_direction_summary">Speichere die GPS-Kompassrichtung in den Fotos (nur JPEG-Format)</string>
+    <string name="preference_gps_direction_summary">Speichere die GPS-Kompassrichtung in den Fotos (nur JPEG-Format usw)</string>
     <string name="preference_require_location">Standortdaten erforderlich</string>
     <string name="preference_require_location_summary">Wenn aktiviert, werden die Aufnahmen nur bei Verfügbarkeit der Standortdaten ausgelöst.</string>
     <string name="preference_stamp">Fotos stempeln</string>
@@ -450,9 +450,9 @@
 
     <string name="preference_category_exif_tags">Spezifische Exif-Kennungen</string>
     <string name="preference_exif_artist">Ersteller</string>
-    <string name="preference_exif_artist_summary">Text für den "Ersteller"-Eintrag in den Foto-Metadaten (nur JPEG-Format, freilassen, falls nicht verwendet.)</string>
+    <string name="preference_exif_artist_summary">Text für den "Ersteller"-Eintrag in den Foto-Metadaten (nur JPEG-Format usw, freilassen, falls nicht verwendet.)</string>
     <string name="preference_exif_copyright">Copyright</string>
-    <string name="preference_exif_copyright_summary">Text für den "Copyright"-Eintrag in den Foto-Metadaten (nur JPEG-Format, freilassen, falls nicht verwendet.)</string>
+    <string name="preference_exif_copyright_summary">Text für den "Copyright"-Eintrag in den Foto-Metadaten (nur JPEG-Format usw, freilassen, falls nicht verwendet.)</string>
 
     <string name="processing">Bearbeitung…</string>
 
@@ -954,7 +954,7 @@
     <string name="error_features_slow_motion">Slow-Motion</string>
 
     <string name="preference_comment_ypr">Eigentliche Eulerwinkel speichern</string>
-    <string name="preference_comment_ypr_summary">Speichern der drei Euler-Winkel (Drehlage des Geräts im Exif Benutzerkommentar des Fotos (nur im JPEG-Format)</string>
+    <string name="preference_comment_ypr_summary">Speichern der drei Euler-Winkel (Drehlage des Geräts im Exif Benutzerkommentar des Fotos (nur im JPEG-Format usw)</string>
 
     <string name="preference_audio_control_none">Keine</string>
     <string name="preference_audio_control_noise">Lautes Geräusch</string>

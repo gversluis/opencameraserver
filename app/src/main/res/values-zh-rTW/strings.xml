@@ -174,9 +174,9 @@
     <string name="preference_quality_summary">設定儲存的 JPEG 或 WebP 照片的圖片品質（預設值是 90%%）。對於 PNG 圖片格式沒有作用。\n%s</string> <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
     <string name="preference_raw">RAW</string>
     <string name="preference_location">儲存位置資料 (地理標記)</string>
-    <string name="preference_location_summary">在照片/影片中儲存 GPS 位置資料（對於照片，位置資料只能儲存在 JPEG 和 DNG 格式）</string>
+    <string name="preference_location_summary">在照片/影片中儲存 GPS 位置資料</string>
     <string name="preference_gps_direction">儲存羅盤方向</string>
-    <string name="preference_gps_direction_summary">在照片中儲存 GPS 羅盤方向（只有在 JPEG 格式）</string>
+    <string name="preference_gps_direction_summary">在照片中儲存 GPS 羅盤方向（只有在 JPEG 等等格式）</string>
     <string name="preference_require_location">需要位置資料</string>
     <string name="preference_require_location_summary">如果啟用位置資料，只在位置資料可用時拍照/錄影</string>
     <string name="preference_stamp">標記照片</string>
@@ -451,9 +451,9 @@
 
     <string name="preference_category_exif_tags">自訂 Exif 標籤</string>
     <string name="preference_exif_artist">藝術家</string>
-    <string name="preference_exif_artist_summary">儲存在圖片詮釋資料藝術家標籤的文字（只有在 JPEG 格式）。（留空代表不儲存）</string>
+    <string name="preference_exif_artist_summary">儲存在圖片詮釋資料藝術家標籤的文字（只有在 JPEG 等等格式）。（留空代表不儲存）</string>
     <string name="preference_exif_copyright">版權</string>
-    <string name="preference_exif_copyright_summary">儲存在圖片詮釋資料版權標籤的文字（只有在 JPEG 格式）。（留空代表不儲存）</string>
+    <string name="preference_exif_copyright_summary">儲存在圖片詮釋資料版權標籤的文字（只有在 JPEG 等等格式）。（留空代表不儲存）</string>
 
     <string name="processing">處理中…</string>
 
@@ -957,7 +957,7 @@
     <string name="error_features_slow_motion">慢動作</string>
 
     <string name="preference_comment_ypr">儲存偏擺 (yaw)、俯仰 (pitch) 及翻滾 (roll)</string>
-    <string name="preference_comment_ypr_summary">在照片的 Exif user comment 中儲存裝置的偏擺 (yaw)、俯仰 (pitch) 及翻滾 (roll)（只有在 JPEG 格式）</string>
+    <string name="preference_comment_ypr_summary">在照片的 Exif user comment 中儲存裝置的偏擺 (yaw)、俯仰 (pitch) 及翻滾 (roll)（只有在 JPEG 等等格式）</string>
 
     <string name="preference_audio_control_none">無</string>
     <string name="preference_audio_control_noise">大的聲音</string>

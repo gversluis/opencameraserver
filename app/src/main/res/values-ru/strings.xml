@@ -450,9 +450,9 @@
 
     <string name="preference_category_exif_tags">Пользовательские теги Exif</string>
     <string name="preference_exif_artist">Автор</string>
-    <string name="preference_exif_artist_summary">Текст для хранения в метаданных изображения под меткой "автор" (только в формате JPEG). (Оставьте пустым при отсутствии.)</string>
+    <string name="preference_exif_artist_summary">Текст для хранения в метаданных изображения под меткой "автор" (только в формате JPEG и т. д.). (Оставьте пустым при отсутствии.)</string>
     <string name="preference_exif_copyright">Авторское право</string>
-    <string name="preference_exif_copyright_summary">Текст для хранения в метаданных изображения под меткой "авторское право" (только в формате JPEG). (Оставьте пустым при отсутствии.)</string>
+    <string name="preference_exif_copyright_summary">Текст для хранения в метаданных изображения под меткой "авторское право" (только в формате JPEG и т. д.). (Оставьте пустым при отсутствии.)</string>
 
     <string name="processing">Обработка…</string>
 
@@ -957,7 +957,7 @@
     <string name="error_features_slow_motion">Замедление времени</string>
 
     <string name="preference_comment_ypr">Сохранять связанную систему координат</string>
-    <string name="preference_comment_ypr_summary">Сохранять связанную систему координат устройства в Exif фото в комментарии пользователя (только для формата JPEG)</string>
+    <string name="preference_comment_ypr_summary">Сохранять связанную систему координат устройства в Exif фото в комментарии пользователя (только для формата JPEG и т. д.)</string>
 
     <string name="preference_audio_control_none">Нет</string>
     <string name="preference_audio_control_noise">Громкий шум</string>

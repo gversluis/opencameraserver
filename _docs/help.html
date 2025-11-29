@@ -851,8 +851,7 @@ compression. Also note this option has no effect if "Image format" is set to PNG
 
 <p><b>Image format</b> - The image file format for saving photos:</p>
 <ul>
-    <li>JPEG - This is the fastest option. Also note that only JPEG and Ultra HDR JPEG support saving various photo
-    metadata (Exif), including camera details, location, and artist/copyright tags.</li>
+    <li>JPEG - This is the fastest option.</li>
     <li>Ultra HDR JPEG - This is a format that saves additional high dynamic range data, for viewing on
     HDR displays, but is backwards compatible with JPEG (so resultant images can still be viewed by older
     JPEG viewers, and on standard non-HDR displays). (Requires Android 14+ and Camera2 API, and even then,
@@ -889,7 +888,7 @@ uncompressed and unprocessed information from your camera. Please note the follo
     of the camera device. This also means that these options have no relevance for photos in "DNG (RAW) only" mode, therefore such
     options will not show on the popup menu.</li>
     <li>Options to store extra Exif tags ("Store compass direction", "Artist", "Copyright") are only supported for
-    JPEG formats.</li>
+    non-RAW formats.</li>
     <li>Some devices only support saving RAW images in the Standard or DRO photo modes. Higher end devices will also support saving RAW
     images also in Expo Bracketing and Focus Bracketing modes, as well as HDR where "Save all images for HDR mode" is enabled.
     The X- modes do not support saving RAW images.
@@ -951,16 +950,16 @@ a third party File Explorer application to see and delete XML files.</p>
 photos will still be as the camera (or other people) view the scene. This option can be used to mirror the
 resultant photo, so the resultant photo matches the mirrored image you see on the screen.</p>
 
-<p><b>Remove device Exif data</b> - Whether to remove device Exif metadata from JPEG photos. Note that
+<p><b>Remove device Exif data</b> - Whether to remove device Exif metadata from non-RAW photos. Note that
     this will not remove Exif tags applied by other Open Camera settings that apply Exif metadata (e.g.
     location/geotagging, artist, copyright etc). Those other options are independent and will override this
     setting. Also note that RAW/DNG and videos are not affected.</p>
 
 <p><b>Artist</b> - If text is entered in this setting, then the text will be stored in the image's Exif metadata as the
-    "Artist" tag. Only supported for JPEG formats. Not supported for RAW photos (DNG format).</p>
+    "Artist" tag. Not supported for RAW photos (DNG format).</p>
 
 <p><b>Copyright</b> - If text is entered in this setting, then the text will be stored in the image's Exif metadata as the
-    "Copyright" tag. Only supported for JPEG formats. Not supported for RAW photos (DNG format).</p>
+    "Copyright" tag. Not supported for RAW photos (DNG format).</p>
 
 <p><a name="stamp_photos"><b>Stamp photos</b></a> - Option to add a date and timestamp to the resultant photos. If "Store
 location data" is enabled (see "Location settings" below), then the current location latitude
@@ -1156,11 +1155,11 @@ location. Location data will also be stored in videos (though only for devices t
 3GPP formats).</p>
 
 <p><b>Store compass direction</b> - If selected, then photos will be tagged with the compass direction.
-Only supported for JPEG formats. Not supported for RAW photos (DNG format) or videos.</p>
+Not supported for RAW photos (DNG format) or videos.</p>
 
 <p><b>Store yaw, pitch and roll</b> - If selected, then photos will be tagged with the device's yaw, pitch and roll.
     Note that Exif data does not have direct support for this, instead it will be written as a string in the Exif data's
-    User Comment for the image. Only supported for JPEG formats. Not supported for RAW photos (DNG format) or videos.</p>
+    User Comment for the image. Not supported for RAW photos (DNG format) or videos.</p>
 
 <p><b>Require location data</b> - If "Store location data" is enabled, then also enabling this option means that
 photos and videos can only be taken if location data is present (this can be useful if you need pictures/videos to

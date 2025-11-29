@@ -3201,8 +3201,10 @@ public class ImageSaver extends Thread {
                     success = true;
                 }
 
-                if( request.image_format == Request.ImageFormat.STD ) {
-                    // handle transferring/setting Exif tags (JPEG format only)
+                //if( request.image_format == Request.ImageFormat.STD )
+                {
+                    // handle transferring/setting Exif tags
+                    // ExifInterface now supports WebP and PNG
                     if( bitmap != null ) {
                         // need to update EXIF data! (only supported for JPEG image formats)
                         if( MyDebug.LOG )

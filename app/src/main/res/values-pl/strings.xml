@@ -175,9 +175,9 @@
     <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
     <string name="preference_raw">RAW</string>
     <string name="preference_location">Zapisuj dane lokalizacji (Geolokalizacja)</string>
-    <string name="preference_location_summary">Zapisuje dane lokalizacji GPS na zdjęciach/filmach (w przypadku zdjęć dane lokalizacji mogą być przechowywane tylko w formatach JPEG i DNG)</string>
+    <string name="preference_location_summary">Zapisuje dane lokalizacji GPS na zdjęciach/filmach</string>
     <string name="preference_gps_direction">Zapisuj kierunek kompasu</string>
-    <string name="preference_gps_direction_summary">Zapisuje kierunek kompasu GPS na zdjęciach (tylko format JPEG)</string>
+    <string name="preference_gps_direction_summary">Zapisuje kierunek kompasu GPS na zdjęciach (tylko format JPEG/itp)</string>
     <string name="preference_require_location">Wymagaj danych geolokalizacji</string>
     <string name="preference_require_location_summary">Jeśli zapisywanie danych geolokalizacyjnych jest włączone, zapisanie zdjęcia lub filmu nastąpi tylko gdy te dane będą dostępne</string>
     <string name="preference_stamp">Stempluj zdjęcia</string>
@@ -452,9 +452,9 @@
 
     <string name="preference_category_exif_tags">Własne znaczniki Exif</string>
     <string name="preference_exif_artist">Autor</string>
-    <string name="preference_exif_artist_summary">Tekst do zapisania w metadanych obrazu dla znacznika artysty (tylko format JPEG). (Pozostaw puste dla żadnego)</string>
+    <string name="preference_exif_artist_summary">Tekst do zapisania w metadanych obrazu dla znacznika artysty (tylko format JPEG/itp). (Pozostaw puste dla żadnego)</string>
     <string name="preference_exif_copyright">Prawa autorskie</string>
-    <string name="preference_exif_copyright_summary">Tekst do przechowywania w metadanych obrazu dla znacznika praw autorskich (tylko format JPEG). (Pozostaw puste dla żadnego)</string>
+    <string name="preference_exif_copyright_summary">Tekst do przechowywania w metadanych obrazu dla znacznika praw autorskich (tylko format JPEG/itp). (Pozostaw puste dla żadnego)</string>
 
     <string name="processing">Przetwarzanie…</string>
 
@@ -884,7 +884,7 @@
 
     <string name="exposure_compensation_seekbar">Pasek do zmiany kompensacji ekspozycji</string>
 
-    <string name="preference_image_format_summary">Wybierz format pliku używany do zapisywania zdjęć. Dotyczy to zdjęć „standardowych” (nie RAW). Tylko JPEG obsługuje zapisywanie metadanych Exif. Ultra HDR nie jest obsługiwany dla trybów RSz, HDR, Pan, X-. Należy pamiętać, że format PNG nie jest naprawdę bezstratny, zamiast tego jest konwertowany z JPEG przy 100%% jakości.\n%s</string>
+    <string name="preference_image_format_summary">Wybierz format pliku używany do zapisywania zdjęć. Dotyczy to zdjęć „standardowych” (nie RAW). Ultra HDR nie jest obsługiwany dla trybów RSz, HDR, Pan, X-. Należy pamiętać, że format PNG nie jest naprawdę bezstratny, zamiast tego jest konwertowany z JPEG przy 100%% jakości.\n%s</string>
 
     <string name="preference_camera_api">Interfejs aparatu (Camera API)</string>
     <string name="preference_camera_api_summary">Wybierz interfejs (Camera2 API), aby włączyć dodatkowe funkcje, takie jak ręczne tryby ekspozycji, ostrości, balansu bieli oraz RAW (jeśli jest obsługiwany przez urządzenie). Zmiana interfejsu API spowoduje ponowne uruchomienie aplikacji.\n%s</string>
@@ -960,7 +960,7 @@
     <string name="error_features_slow_motion">Zwolnione tempo</string>
 
     <string name="preference_comment_ypr">Przechowuj odchylenie, nachylenie i przechylenie</string>
-    <string name="preference_comment_ypr_summary">Przechowuje odchylenie, pochylenie i przechylenie urządzenia w komentarzu Exif zdjęcia (tylko formaty JPEG).</string>
+    <string name="preference_comment_ypr_summary">Przechowuje odchylenie, pochylenie i przechylenie urządzenia w komentarzu Exif zdjęcia (tylko formaty JPEG/itp).</string>
 
     <string name="array_seekbar_preference_seekbar">Pasek do zmiany bieżącej wartości preferencji</string>
 
@@ -992,7 +992,7 @@
     <string name="preference_hdr_tonemapping_default">Domyślnie</string>
 
     <string name="preference_remove_device_exif">Usuń dane Exif urządzenia</string>
-    <string name="preference_remove_device_exif_summary">Czy usuwać metadane Exif urządzenia ze zdjęć JPEG. Nie spowoduje to usunięcia znaczników Exif zastosowanych w innych ustawieniach, które stosują metadane Exif (np. lokalizacja/geotagowanie). Te inne opcje są niezależne i zastąpią to ustawienie. Nie dotyczy to zdjęć RAW/DNG oraz filmów.\n%s</string>
+    <string name="preference_remove_device_exif_summary">Czy usuwać metadane Exif urządzenia ze zdjęć JPEG/itp. Nie spowoduje to usunięcia znaczników Exif zastosowanych w innych ustawieniach, które stosują metadane Exif (np. lokalizacja/geotagowanie). Te inne opcje są niezależne i zastąpią to ustawienie. Nie dotyczy to zdjęć RAW/DNG oraz filmów.\n%s</string>
     <string name="preference_remove_device_exif_off">Nie usuwaj danych Exif urządzenia</string>
     <string name="preference_remove_device_exif_on">Usuń dane Exif urządzenia</string>
     <string name="preference_remove_device_exif_keep_datetime">Usuń z wyjątkiem daty/godziny</string>

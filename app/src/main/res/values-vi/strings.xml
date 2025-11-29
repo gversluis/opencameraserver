@@ -173,9 +173,9 @@
     <string name="preference_quality_summary">Thiết lập chất lượng hình ảnh khi lưu tệp JPEG hoặc WebP (giá trị mặc định là 90%%). Không áp dụng cho định dạng hình ảnh PNG.\n%s</string> <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
     <string name="preference_raw">RAW</string>
     <string name="preference_location">Lưu dữ liệu vị trí (gắn thẻ địa lý)</string>
-    <string name="preference_location_summary">Lưu trữ dữ liệu vị trí GPS trong ảnh và video (đối với ảnh, dữ liệu vị trí chỉ có thể được lưu trữ ở định dạng JPEG và DNG)</string>
+    <string name="preference_location_summary">Lưu trữ dữ liệu vị trí GPS trong ảnh và video</string>
     <string name="preference_gps_direction">Lưu hướng la bàn</string>
-    <string name="preference_gps_direction_summary">Lưu trữ hướng la bàn GPS trong ảnh (chỉ định dạng JPEG)</string>
+    <string name="preference_gps_direction_summary">Lưu trữ hướng la bàn GPS trong ảnh (chỉ định dạng JPEG, v.v.)</string>
     <string name="preference_require_location">Yêu cầu dữ liệu vị trí</string>
     <string name="preference_require_location_summary">Khi dữ liệu vị trí được kích hoạt, chỉ có thể chụp ảnh/quay video nếu dữ liệu vị trí khả dụng</string>
     <string name="preference_stamp">Đóng dấu hình ảnh</string>
@@ -449,9 +449,9 @@
 
     <string name="preference_category_exif_tags">Tùy chỉnh thẻ Exif</string>
     <string name="preference_exif_artist">Nghệ sĩ</string>
-    <string name="preference_exif_artist_summary">Văn bản được lưu trữ trong thẻ Nghệ sĩ (chỉ định dạng JPEG, để trống là không ghi)</string>
+    <string name="preference_exif_artist_summary">Văn bản được lưu trữ trong thẻ Nghệ sĩ (chỉ định dạng JPEG, v.v., để trống là không ghi)</string>
     <string name="preference_exif_copyright">Bản quyền</string>
-    <string name="preference_exif_copyright_summary">Văn bản được lưu trữ trong thẻ Bản quyền (chỉ định dạng JPEG, để trống là không ghi)</string>
+    <string name="preference_exif_copyright_summary">Văn bản được lưu trữ trong thẻ Bản quyền (chỉ định dạng JPEG, v.v., để trống là không ghi)</string>
 
     <string name="processing">Đang xử lý…</string>
 

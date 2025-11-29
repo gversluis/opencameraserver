@@ -174,9 +174,9 @@
     <string name="preference_quality_summary">JPEG形式とWebP形式の保存品質を設定します(初期値は90%%)。PNG形式には影響しません。\n%s</string> <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
     <string name="preference_raw">RAW</string>
     <string name="preference_location">位置情報を使用する</string>
-    <string name="preference_location_summary">写真/ビデオにジオタグを埋め込みます(写真の場合、JPEGまたはDNGの場合のみ埋め込み可能)</string>
+    <string name="preference_location_summary">写真/ビデオにジオタグを埋め込みます</string>
     <string name="preference_gps_direction">方角情報を使用する</string>
-    <string name="preference_gps_direction_summary">写真にコンパスを埋め込みます(JPEG形式のみ)</string>
+    <string name="preference_gps_direction_summary">写真にコンパスを埋め込みます(JPEG等の形式のみ)</string>
     <string name="preference_require_location">位置情報を要求する</string>
     <string name="preference_require_location_summary">有効にすると位置情報を取得可能な場合のみ写真/ビデオの撮影が動作します</string>
     <string name="preference_stamp">スタンプを貼り付ける</string>
@@ -432,9 +432,9 @@
 
     <string name="preference_category_exif_tags">カスタムExifタグ</string>
     <string name="preference_exif_artist">アーティスト</string>
-    <string name="preference_exif_artist_summary">Exifデータ内の\"Artist\"タグに記録されます。(JPEG形式のみ)(使用しない場合は空にします)</string>
+    <string name="preference_exif_artist_summary">Exifデータ内の\"Artist\"タグに記録されます。(JPEG等の形式のみ)(使用しない場合は空にします)</string>
     <string name="preference_exif_copyright">著作権表記</string>
-    <string name="preference_exif_copyright_summary">Exifデータ内の\"Copyright\"タグに記録されます。(JPEG形式のみ)(使用しない場合は空にします)</string>
+    <string name="preference_exif_copyright_summary">Exifデータ内の\"Copyright\"タグに記録されます。(JPEG等の形式のみ)(使用しない場合は空にします)</string>
 
     <string name="processing">処理中…あと</string>
 
