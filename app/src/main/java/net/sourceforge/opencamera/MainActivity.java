@@ -5118,6 +5118,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, true); // can now turn the preference on
                         editor.putString(PreferenceKeys.SaveLocationSAFPreferenceKey, treeUri.toString());
                         editor.apply();
 
@@ -5132,33 +5133,25 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                     }
                     catch(SecurityException e) {
                         MyDebug.logStackTrace(TAG, "SecurityException failed to take permission", e);
-                        preview.showToast(null, R.string.saf_permission_failed);
-                        // failed - if the user had yet to set a save location, make sure we switch SAF back off
+                        // in theory no need to switch SAF back off, as we only enable the SAF preference if a folder was selected
+                        // but do so just in case to be safe
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        String uri = sharedPreferences.getString(PreferenceKeys.SaveLocationSAFPreferenceKey, "");
-                        if( uri.isEmpty() ) {
-                            if( MyDebug.LOG )
-                                Log.d(TAG, "no SAF save location was set");
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
-                            editor.apply();
-                        }
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
+                        editor.apply();
+                        preview.showToast(null, R.string.saf_permission_failed);
                     }
                 }
                 else {
                     if( MyDebug.LOG )
                         Log.d(TAG, "SAF dialog cancelled");
-                    // cancelled - if the user had yet to set a save location, make sure we switch SAF back off
+                    // in theory no need to switch SAF back off, as we only enable the SAF preference if a folder was selected
+                    // but do so just in case to be safe
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    String uri = sharedPreferences.getString(PreferenceKeys.SaveLocationSAFPreferenceKey, "");
-                    if( uri.isEmpty() ) {
-                        if( MyDebug.LOG )
-                            Log.d(TAG, "no SAF save location was set");
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
-                        editor.apply();
-                        preview.showToast(null, R.string.saf_cancelled);
-                    }
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
+                    editor.apply();
+                    preview.showToast(null, R.string.saf_cancelled);
                 }
 
                 if( !saf_dialog_from_preferences ) {

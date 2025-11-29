@@ -119,6 +119,15 @@ public class PreferenceSubCameraControlsMore extends PreferenceSubScreen {
                             //String uri = sharedPreferences.getString(PreferenceKeys.getSaveLocationSAFPreferenceKey(), "");
                             //if( uri.length() == 0 )
                             {
+                                // Also switch preference back off, and turn it on only once the new folder is selected in
+                                // MainActivity.onActivityResult().
+                                // This is better than turning SAF back off if the user cancels, as it also
+                                // works if the activity is ended whilst showing the SAF dialog (but before
+                                // the user selected a folder).
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
+                                editor.apply();
+
                                 MainActivity main_activity = (MainActivity)PreferenceSubCameraControlsMore.this.getActivity();
                                 Toast.makeText(main_activity, R.string.saf_select_save_location, Toast.LENGTH_SHORT).show();
                                 main_activity.openFolderChooserDialogSAF(true);
