@@ -279,7 +279,7 @@
     <string name="audio_listener_started">Fes un soroll fort</string>
 
     <string name="auto_stabilise_info">L\'estabilització automàtica girarà les fotos perquè apareguin anivellades.\n\nTingues present que les imatges sortiran amb una resolució lleugerament menor com a conseqüència de la rotació i el retall.</string>
-    <string name="raw_info">Els fitxers DNG contenen la informació completa de la càmera sense comprimir-la ni processar-la.\n\nTingues present que moltes aplicacions de galeria no reconeixen els fitxers DNG i potser hauràs de fer servir un editor d\'imatge especialitzat.\n\nTingues també present que algunes opcions de processament com ara "Estampa les fotos" o "Estabilització automàtica" només s\'aplicaran a les imatges no-DNG (JPEG/etc) i no a les imatges DNG.</string>
+    <string name="raw_info">Els fitxers DNG contenen la informació completa de la càmera sense comprimir-la ni processar-la.\n\nTingues present que moltes aplicacions de galeria no reconeixen els fitxers DNG i potser hauràs de fer servir un editor d\'imatge especialitzat.\n\nTingues també present que algunes opcions de processament com ara \"Estampa les fotos\" o \"Estabilització automàtica\" només s\'aplicaran a les imatges no-DNG (JPEG/etc) i no a les imatges DNG.</string>
     <string name="hdr_info">El mode HDR es útil per fer fotos amb una gran variació de lluminositat. Funciona fent múltiples fotos amb diferents exposicions i combinant-les per crear la imatge final.\n\nTingues present que l\'HDR no és adequat per a escenes amb moviment ràpid i pot donar com a resultat una reproducció de color menys precisa.\n\nFer fotos en mode HDR serà més lent.</string>
 
     <string name="dont_show_again">No ho tornis a mostrar</string>
@@ -454,9 +454,9 @@
     
     <string name="preference_category_exif_tags">Personalització d\'etiquetes Exif</string>
     <string name="preference_exif_artist">Autor</string>
-    <string name="preference_exif_artist_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta "Autor" (només en formats JPEG/etc). Deixa-ho en blanc per a cap</string>
+    <string name="preference_exif_artist_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta \"Autor\" (només en formats JPEG/etc). Deixa-ho en blanc per a cap</string>
     <string name="preference_exif_copyright">Copyright</string>
-    <string name="preference_exif_copyright_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta "Copyright" (només en formats JPEG/etc). Deixa-ho en blanc per a cap</string>
+    <string name="preference_exif_copyright_summary">Text que s\'emmagatzemarà a les metadades per a l\'etiqueta \"Copyright\" (només en formats JPEG/etc). Deixa-ho en blanc per a cap</string>
 
     <string name="processing">Processant…</string>
 
@@ -701,7 +701,7 @@
     <string name="preference_audio_noise_control_sensitivity_m3">-3 (baixa sensibilitat)</string>
     
     <string name="preference_hdr_contrast_enhancement">Millora del contrast HDR</string>
-    <string name="preference_hdr_contrast_enhancement_summary">Quan s\'usa un algorisme de millora del contrast per a HDR. Això pot millorar l\'aparença en els casos en què hi ha un rang dinàmic molt alt a l\'escena i confereix també un "aire HDR" als resultats.\n%s</string>
+    <string name="preference_hdr_contrast_enhancement_summary">Quan s\'usa un algorisme de millora del contrast per a HDR. Això pot millorar l\'aparença en els casos en què hi ha un rang dinàmic molt alt a l\'escena i confereix també un \"aire HDR\" als resultats.\n%s</string>
     <string name="preference_hdr_contrast_enhancement_off">Inhabilitat</string>
     <string name="preference_hdr_contrast_enhancement_smart">Intel·ligent</string>
     <string name="preference_hdr_contrast_enhancement_always">Sempre</string>

@@ -450,9 +450,9 @@
 
     <string name="preference_category_exif_tags">Spezifische Exif-Kennungen</string>
     <string name="preference_exif_artist">Ersteller</string>
-    <string name="preference_exif_artist_summary">Text für den "Ersteller"-Eintrag in den Foto-Metadaten (nur JPEG-Format usw, freilassen, falls nicht verwendet.)</string>
+    <string name="preference_exif_artist_summary">Text für den \"Ersteller\"-Eintrag in den Foto-Metadaten (nur JPEG-Format usw, freilassen, falls nicht verwendet.)</string>
     <string name="preference_exif_copyright">Copyright</string>
-    <string name="preference_exif_copyright_summary">Text für den "Copyright"-Eintrag in den Foto-Metadaten (nur JPEG-Format usw, freilassen, falls nicht verwendet.)</string>
+    <string name="preference_exif_copyright_summary">Text für den \"Copyright\"-Eintrag in den Foto-Metadaten (nur JPEG-Format usw, freilassen, falls nicht verwendet.)</string>
 
     <string name="processing">Bearbeitung…</string>
 
@@ -694,7 +694,7 @@
     <string name="preference_audio_noise_control_sensitivity_m3">-3 (Niedrige Empfindlichkeit)</string>
 
     <string name="preference_hdr_contrast_enhancement">HDR-Kontrastverstärkung</string>
-    <string name="preference_hdr_contrast_enhancement_summary">Verwendet einen Algorithmus zur Verstärkung des HDR-Kontrasts. Das kann die Aufnahme verbessern, wenn eine Szene einen sehr hohen Dynamikumfang hat aber einen "HDR-Look" bekommen soll.\n%s</string>
+    <string name="preference_hdr_contrast_enhancement_summary">Verwendet einen Algorithmus zur Verstärkung des HDR-Kontrasts. Das kann die Aufnahme verbessern, wenn eine Szene einen sehr hohen Dynamikumfang hat aber einen \"HDR-Look\" bekommen soll.\n%s</string>
     <string name="preference_hdr_contrast_enhancement_off">Aus</string>
     <string name="preference_hdr_contrast_enhancement_smart">Smart</string>
     <string name="preference_hdr_contrast_enhancement_always">Immer</string>

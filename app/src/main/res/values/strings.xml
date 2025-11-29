@@ -280,7 +280,7 @@
     <string name="audio_listener_started">Make a loud noise</string>
 
     <string name="auto_stabilise_info">Auto-level will automatically rotate photos so that they appear level.\n\nNote that this means images will come out a slightly lower resolution (due to the rotation and cropping that\'s required).</string>
-    <string name="raw_info">DNG files contain the full uncompressed and unprocessed information from your camera.\n\nNote that some gallery apps don\'t recognise DNG files. DNG images can be used with specialised image editors.\n\nNote that various processing options such as "Stamp photos" and "Auto-level" will only apply to the non-DNG (JPEG/etc) images, and not the DNG images.</string>
+    <string name="raw_info">DNG files contain the full uncompressed and unprocessed information from your camera.\n\nNote that some gallery apps don\'t recognise DNG files. DNG images can be used with specialised image editors.\n\nNote that various processing options such as \"Stamp photos\" and \"Auto-level\" will only apply to the non-DNG (JPEG/etc) images, and not the DNG images.</string>
     <string name="hdr_info">HDR mode is useful for shots with a large variation in brightness. It works by taking multiple shots at different exposures, and combining them to create the final image.\n\nNote that HDR is not suitable for scenes with fast movement, and may result in less accurate color reproduction.\n\nTaking photos in HDR mode will be slower.</string>
 
     <string name="dont_show_again">Don\'t show again</string>
@@ -456,9 +456,9 @@
 
     <string name="preference_category_exif_tags">Custom Exif tags</string>
     <string name="preference_exif_artist">Artist</string>
-    <string name="preference_exif_artist_summary">Text to store in the image metadata for the "artist" tag, for non-RAW (JPEG/etc) images only. (Leave blank for none.)</string>
+    <string name="preference_exif_artist_summary">Text to store in the image metadata for the \"artist\" tag, for non-RAW (JPEG/etc) images only. (Leave blank for none.)</string>
     <string name="preference_exif_copyright">Copyright</string>
-    <string name="preference_exif_copyright_summary">Text to store in the image metadata for the "copyright" tag, for non-RAW (JPEG/etc) images. (Leave blank for none.)</string>
+    <string name="preference_exif_copyright_summary">Text to store in the image metadata for the \"copyright\" tag, for non-RAW (JPEG/etc) images. (Leave blank for none.)</string>
 
     <string name="processing">Processing…</string>
 
@@ -705,7 +705,7 @@
     <string name="preference_audio_noise_control_sensitivity_m3">-3 (low sensitivity)</string>
 
     <string name="preference_hdr_contrast_enhancement">HDR contrast enhancement</string>
-    <string name="preference_hdr_contrast_enhancement_summary">When to use a contrast enhancement algorithm for HDR. This can improve the appearance in cases where there is a very high dynamic range in the scene, and also gives a "HDR look" to the results.\n%s</string>
+    <string name="preference_hdr_contrast_enhancement_summary">When to use a contrast enhancement algorithm for HDR. This can improve the appearance in cases where there is a very high dynamic range in the scene, and also gives a \"HDR look\" to the results.\n%s</string>
     <string name="preference_hdr_contrast_enhancement_off">Off</string>
     <string name="preference_hdr_contrast_enhancement_smart">Smart</string>
     <string name="preference_hdr_contrast_enhancement_always">Always</string>

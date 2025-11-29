@@ -277,7 +277,7 @@
     <string name="audio_listener_started">Naredite glasen zvok.</string>
 	
 	<string name="auto_stabilise_info">Samodejna poravnava bo zavrtela fotografije, da bodo videti poravnane.\n\nUpoštevajte, da se bo ločljivost slik rahlo zmanjšala (zaradi zahtevanega vrtenja in obrezovanja).</string>
-    <string name="raw_info">Datoteke DNG vsebujejo nestisnjene in neobdelane podatke iz fotoaparata.\n\nVečina programov za galerijo ne prepozna oblike DNG, zato jo uporabljajte s posebnimi programi.\n\nUpoštevajte, da se bodo razne možnosti obdelave, kot sta "Dodaj žig" in "Samodejno izravnaj", uporabile samo za slike, ki niso v obliki DNG (JPEG itd.).</string>
+    <string name="raw_info">Datoteke DNG vsebujejo nestisnjene in neobdelane podatke iz fotoaparata.\n\nVečina programov za galerijo ne prepozna oblike DNG, zato jo uporabljajte s posebnimi programi.\n\nUpoštevajte, da se bodo razne možnosti obdelave, kot sta \"Dodaj žig\" in \"Samodejno izravnaj\", uporabile samo za slike, ki niso v obliki DNG (JPEG itd.).</string>
     <string name="hdr_info">Način HDR je uporaben za posnetke z velikimi odstopanji v svetlosti.  Deluje tako, da zajame več posnetkov z različnimi osvetlitvami in jih potem združi v končno sliko.\n\nUpoštevajte, da HDR ni primeren za hitro gibajoče prizore in lahko povzroči barvna odstopanja.\n\nSlikanje fotografij v načinu HDR je počasnejše.</string>
 
     <string name="dont_show_again">Ne prikazuj več</string>
@@ -451,9 +451,9 @@
 	
 	<string name="preference_category_exif_tags">Oznake Exif po meri</string>
     <string name="preference_exif_artist">Avtor</string>
-    <string name="preference_exif_artist_summary">Besedilo, ki se shrani med metapodatke slike v oznako "Avtor" (samo oblika JPEG/itd)</string>
+    <string name="preference_exif_artist_summary">Besedilo, ki se shrani med metapodatke slike v oznako \"Avtor\" (samo oblika JPEG/itd)</string>
     <string name="preference_exif_copyright">Avtorske pravice</string>
-    <string name="preference_exif_copyright_summary">Besedilo, ki se shrani med metapodatke slike v oznako "Avtorske pravice" (samo oblika JPEG/itd)</string>
+    <string name="preference_exif_copyright_summary">Besedilo, ki se shrani med metapodatke slike v oznako \"Avtorske pravice\" (samo oblika JPEG/itd)</string>
 
     <string name="processing">Obdelovanje …</string>
 
@@ -698,7 +698,7 @@
     <string name="preference_audio_noise_control_sensitivity_m3">-3 (nizka občutljivost)</string>
 	
 	<string name="preference_hdr_contrast_enhancement">Izboljšava kontrasta HDR</string>
-    <string name="preference_hdr_contrast_enhancement_summary">Kdaj naj se uporabi algoritem za izboljšavo kontrasta v načinu HDR.  To lahko izboljša videz v primerih zelo visokega dinamičnega razpona prizora in rezultatom doda "HDR-videz".\n%s</string>
+    <string name="preference_hdr_contrast_enhancement_summary">Kdaj naj se uporabi algoritem za izboljšavo kontrasta v načinu HDR.  To lahko izboljša videz v primerih zelo visokega dinamičnega razpona prizora in rezultatom doda \"HDR-videz\".\n%s</string>
     <string name="preference_hdr_contrast_enhancement_off">Izk.</string>
     <string name="preference_hdr_contrast_enhancement_smart">Pametno</string>
     <string name="preference_hdr_contrast_enhancement_always">Vedno</string>
