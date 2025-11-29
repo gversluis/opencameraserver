@@ -115,7 +115,7 @@ public class PreferenceSubCameraControlsMore extends PreferenceSubScreen {
                         if( sharedPreferences.getBoolean(PreferenceKeys.UsingSAFPreferenceKey, false) ) {
                             if( MyDebug.LOG )
                                 Log.d(TAG, "saf is now enabled");
-                            // seems better to alway re-show the dialog when the user selects, to make it clear where files will be saved (as the SAF location in general will be different to the non-SAF one)
+                            // seems better to always re-show the dialog when the user selects, to make it clear where files will be saved (as the SAF location in general will be different to the non-SAF one)
                             //String uri = sharedPreferences.getString(PreferenceKeys.getSaveLocationSAFPreferenceKey(), "");
                             //if( uri.length() == 0 )
                             {
