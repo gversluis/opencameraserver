@@ -3248,6 +3248,24 @@ public class ImageSaver extends Thread {
                     storageUtils.clearLastMediaScanned();
                 }
 
+                // Must be done before broadcastFile()
+                // see corresponding note in saveImageNowRaw()
+                if( raw_only ) {
+                    // no saved image to record
+                }
+                else if( request.image_capture_intent ) {
+                    // no need to store as last image
+                }
+                else if( saveUri == null ) {
+                    applicationInterface.addLastImage(picFile, share_image);
+                }
+                else if( storageUtils.isUsingSAF() ){
+                    applicationInterface.addLastImageSAF(saveUri, share_image);
+                }
+                else if( use_media_store ){
+                    applicationInterface.addLastImageMediaStore(saveUri, share_image);
+                }
+
                 boolean hasnoexifdatetime = request.remove_device_exif != Request.RemoveDeviceExif.OFF && request.remove_device_exif != Request.RemoveDeviceExif.KEEP_DATETIME;
 
                 if( picFile != null && saveUri == null ) {
@@ -3308,19 +3326,6 @@ public class ImageSaver extends Thread {
             // update: no longer have copyFileToUri() (as no longer use temporary files for SAF), but might as well keep this
             MyDebug.logStackTrace(TAG, "security exception writing file", e);
             main_activity.getPreview().showToast(null, R.string.failed_to_save_photo);
-        }
-
-        if( raw_only ) {
-            // no saved image to record
-        }
-        else if( success && saveUri == null ) {
-            applicationInterface.addLastImage(picFile, share_image);
-        }
-        else if( success && storageUtils.isUsingSAF() ){
-            applicationInterface.addLastImageSAF(saveUri, share_image);
-        }
-        else if( success && use_media_store ){
-            applicationInterface.addLastImageMediaStore(saveUri, share_image);
         }
 
         // I have received crashes where camera_controller was null - could perhaps happen if this thread was running just as the camera is closing?
