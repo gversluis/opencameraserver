@@ -3519,6 +3519,15 @@ public class CameraController2 extends CameraController {
                     camera_features.supports_white_balance_temperature = true;
                     camera_features.min_temperature = min_white_balance_temperature_c;
                     camera_features.max_temperature = max_white_balance_temperature_c;
+                    if( MyDebug.LOG ) {
+                        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA ) {
+                            int [] color_correction_modes = characteristics.get(CameraCharacteristics.COLOR_CORRECTION_AVAILABLE_MODES);
+                            for(int color_correction_mode : color_correction_modes) {
+                                if( MyDebug.LOG )
+                                    Log.d(TAG, "color_correction_mode: " + color_correction_mode);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -3551,6 +3560,17 @@ public class CameraController2 extends CameraController {
                         if( MyDebug.LOG )
                             Log.d(TAG, "boost max_exposure_time, was: " + max_exposure_time);
                         camera_features.max_exposure_time = Math.max(camera_features.max_exposure_time, 1000000000L/2);
+                    }
+
+                    if( MyDebug.LOG ) {
+                        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA ) {
+                            // check for mixed manual/auto ISO and exposure:
+                            int [] priority_modes = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_PRIORITY_MODES);
+                            for(int priority_mode : priority_modes) {
+                                if( MyDebug.LOG )
+                                    Log.d(TAG, "priority_mode: " + priority_mode);
+                            }
+                        }
                     }
                 }
             }
