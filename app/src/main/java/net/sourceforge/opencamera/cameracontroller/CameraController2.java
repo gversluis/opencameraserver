@@ -2759,7 +2759,7 @@ public class CameraController2 extends CameraController {
 
             if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ) {
                 Capability [] capabilities = characteristics.get(CameraCharacteristics.CONTROL_AVAILABLE_EXTENDED_SCENE_MODE_CAPABILITIES);
-                Log.d(TAG, "capabilities:");
+                Log.d(TAG, "extended scene mode capabilities:");
                 if( capabilities == null ) {
                     Log.d(TAG, "    none");
                 }
