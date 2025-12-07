@@ -2942,6 +2942,22 @@ public class CameraController2 extends CameraController {
                     Log.d(TAG, "camera supports ultra high resolution");
             }
             else if( capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_STREAM_USE_CASE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ) {
+                if( MyDebug.LOG )
+                    Log.d(TAG, "camera supports stream use cases");
+                if( MyDebug.LOG ) {
+                    long [] stream_use_cases = characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_STREAM_USE_CASES);
+                    if( stream_use_cases != null ) {
+                        for(long stream_use_case : stream_use_cases) {
+                            if( MyDebug.LOG )
+                                Log.d(TAG, "stream use case: " + stream_use_case);
+                            if( stream_use_case == CameraCharacteristics.SCALER_AVAILABLE_STREAM_USE_CASES_CROPPED_RAW && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ) {
+                                if( MyDebug.LOG )
+                                    Log.d(TAG, "camera supports SCALER_AVAILABLE_STREAM_USE_CASES_CROPPED_RAW");
+                            }
+                        }
+                    }
+                }
+            }
         }
         boolean capabilities_logical_multi_camera = false;
         for(int capability : logical_capabilities) {
