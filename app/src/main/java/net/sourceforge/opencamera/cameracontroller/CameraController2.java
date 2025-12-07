@@ -2941,6 +2941,7 @@ public class CameraController2 extends CameraController {
                 if( MyDebug.LOG )
                     Log.d(TAG, "camera supports ultra high resolution");
             }
+            else if( capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_STREAM_USE_CASE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ) {
         }
         boolean capabilities_logical_multi_camera = false;
         for(int capability : logical_capabilities) {
