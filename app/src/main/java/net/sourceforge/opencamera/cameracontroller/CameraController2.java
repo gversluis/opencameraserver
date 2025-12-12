@@ -3539,9 +3539,11 @@ public class CameraController2 extends CameraController {
                     if( MyDebug.LOG ) {
                         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA ) {
                             int [] color_correction_modes = characteristics.get(CameraCharacteristics.COLOR_CORRECTION_AVAILABLE_MODES);
-                            for(int color_correction_mode : color_correction_modes) {
-                                if( MyDebug.LOG )
-                                    Log.d(TAG, "color_correction_mode: " + color_correction_mode);
+                            if( color_correction_modes != null ) {
+                                for(int color_correction_mode : color_correction_modes) {
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "color_correction_mode: " + color_correction_mode);
+                                }
                             }
                         }
                     }
@@ -3583,9 +3585,11 @@ public class CameraController2 extends CameraController {
                         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA ) {
                             // check for mixed manual/auto ISO and exposure:
                             int [] priority_modes = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_PRIORITY_MODES);
-                            for(int priority_mode : priority_modes) {
-                                if( MyDebug.LOG )
-                                    Log.d(TAG, "priority_mode: " + priority_mode);
+                            if( priority_modes != null ) {
+                                for(int priority_mode : priority_modes) {
+                                    if( MyDebug.LOG )
+                                        Log.d(TAG, "priority_mode: " + priority_mode);
+                                }
                             }
                         }
                     }
