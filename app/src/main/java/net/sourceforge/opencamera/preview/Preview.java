@@ -2744,7 +2744,12 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                                         public void run() {
                                             if( MyDebug.LOG )
                                                 Log.d(TAG, "announceForAccessibility: " + string_f);
-                                            Preview.this.getView().announceForAccessibility(string_f);
+                                            // announceForAccessibility deprecated in Android 16 - but testing on Galaxy S24+ with talkback, setStateDescription has
+                                            // no effect (but announceForAccessibility is fine)
+                                            /*if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA )
+                                                Preview.this.getView().setStateDescription(string_f);
+                                            else*/
+                                                Preview.this.getView().announceForAccessibility(string_f);
                                         }
                                     }, 500);
                                 }
