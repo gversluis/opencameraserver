@@ -3363,9 +3363,10 @@ public class MyApplicationInterface extends BasicApplicationInterface {
      *                  as separate images.
      * @param images The set of images.
      * @param current_date The current date/time stamp for the images.
+     * @param location The location for the image.
      * @return Whether saving was successful.
      */
-    private boolean saveImage(boolean save_expo, List<byte []> images, Date current_date) {
+    private boolean saveImage(boolean save_expo, List<byte []> images, Date current_date, Location location) {
         if( MyDebug.LOG )
             Log.d(TAG, "saveImage");
 
@@ -3422,8 +3423,10 @@ public class MyApplicationInterface extends BasicApplicationInterface {
         String preference_units_distance = this.getUnitsDistancePref();
         boolean panorama_crop = sharedPreferences.getString(PreferenceKeys.PanoramaCropPreferenceKey, "preference_panorama_crop_on").equals("preference_panorama_crop_on");
         ImageSaver.Request.RemoveDeviceExif remove_device_exif = getRemoveDeviceExifPref();
-        boolean store_location = getGeotaggingPref() && getLocation() != null;
-        Location location = store_location ? getLocation() : null;
+        // check getGeotaggingPref() again to be safe, just in case
+        boolean store_location = getGeotaggingPref() && location != null;
+        if( !store_location )
+            location = null;
         boolean store_geo_direction = main_activity.getPreview().hasGeoDirection() && getGeodirectionPref();
         double geo_direction = main_activity.getPreview().hasGeoDirection() ? main_activity.getPreview().getGeoDirection() : 0.0;
         String custom_tag_artist = sharedPreferences.getString(PreferenceKeys.ExifArtistPreferenceKey, "");
@@ -3643,7 +3646,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
     }
 
     @Override
-    public boolean onPictureTaken(byte [] data, Date current_date) {
+    public boolean onPictureTaken(byte [] data, Date current_date, Location location) {
         if( MyDebug.LOG )
             Log.d(TAG, "onPictureTaken");
 
@@ -3654,7 +3657,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
         List<byte []> images = new ArrayList<>();
         images.add(data);
 
-        boolean success = saveImage(false, images, current_date);
+        boolean success = saveImage(false, images, current_date, location);
 
         if( MyDebug.LOG )
             Log.d(TAG, "onPictureTaken complete, success: " + success);
@@ -3663,7 +3666,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
     }
 
     @Override
-    public boolean onBurstPictureTaken(List<byte []> images, Date current_date) {
+    public boolean onBurstPictureTaken(List<byte []> images, Date current_date, Location location) {
         if( MyDebug.LOG )
             Log.d(TAG, "onBurstPictureTaken: received " + images.size() + " images");
 
@@ -3682,7 +3685,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
             if( MyDebug.LOG )
                 Log.d(TAG, "save_expo: " + save_expo);
 
-            success = saveImage(save_expo, images, current_date);
+            success = saveImage(save_expo, images, current_date, location);
         }
         else {
             if( MyDebug.LOG ) {
@@ -3691,7 +3694,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
                     Log.e(TAG, "onBurstPictureTaken called with unexpected photo mode?!: " + photo_mode);
             }
 
-            success = saveImage(true, images, current_date);
+            success = saveImage(true, images, current_date, location);
         }
         return success;
     }

@@ -6630,7 +6630,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             cancelAutoFocus();
         }
         removePendingContinuousFocusReset(); // to avoid switching back to continuous focus mode while taking a photo - instead we'll always make sure we switch back after taking a photo
-        updateParametersFromLocation(); // do this now, not before, so we don't set location parameters during focus (sometimes get RuntimeException)
+        final Location location = updateParametersFromLocation(); // do this now, not before, so we don't set location parameters during focus (sometimes get RuntimeException)
 
         focus_success = FOCUS_DONE; // clear focus rectangle if not already done
         successfully_focused = false; // so next photo taken will require an autofocus
@@ -6748,7 +6748,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                 if( MyDebug.LOG )
                     Log.d(TAG, "onPictureTaken");
                 initDate();
-                if( !applicationInterface.onPictureTaken(data, current_date) ) {
+                if( !applicationInterface.onPictureTaken(data, current_date, location) ) {
                     if( MyDebug.LOG )
                         Log.e(TAG, "applicationInterface.onPictureTaken failed");
                     success = false;
@@ -6774,7 +6774,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                 initDate();
 
                 success = true;
-                if( !applicationInterface.onBurstPictureTaken(images, current_date) ) {
+                if( !applicationInterface.onBurstPictureTaken(images, current_date, location) ) {
                     if( MyDebug.LOG )
                         Log.e(TAG, "applicationInterface.onBurstPictureTaken failed");
                     success = false;
@@ -8384,8 +8384,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     }
 
     /** If geotagging is enabled, pass the location info to the camera controller (for photos).
+     * @return The location, if geotagging is enabled.
      */
-    private void updateParametersFromLocation() {
+    private Location updateParametersFromLocation() {
         if( MyDebug.LOG )
             Log.d(TAG, "updateParametersFromLocation");
         if( camera_controller != null ) {
@@ -8397,6 +8398,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                     // don't log location, in case of privacy!
                 }
                 camera_controller.setLocationInfo(location);
+                return location;
             }
             else {
                 if( MyDebug.LOG )
@@ -8404,6 +8406,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                 camera_controller.removeLocationInfo();
             }
         }
+        return null;
     }
 
     public void enablePreviewBitmap(boolean use_preview_bitmap_small, boolean use_preview_bitmap_full) {

@@ -657,7 +657,7 @@ public abstract class BasicApplicationInterface implements ApplicationInterface 
     }
 
     @Override
-    public boolean onBurstPictureTaken(List<byte[]> images, Date current_date) {
+    public boolean onBurstPictureTaken(List<byte[]> images, Date current_date, Location location) {
         return false;
     }
 

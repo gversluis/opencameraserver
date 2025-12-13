@@ -266,8 +266,8 @@ public interface ApplicationInterface {
 
     // callbacks
     void onDrawPreview(Canvas canvas);
-    boolean onPictureTaken(byte [] data, Date current_date);
-    boolean onBurstPictureTaken(List<byte []> images, Date current_date);
+    boolean onPictureTaken(byte [] data, Date current_date, Location location);
+    boolean onBurstPictureTaken(List<byte []> images, Date current_date, Location location);
     boolean onRawPictureTaken(RawImage raw_image, Date current_date);
     boolean onRawBurstPictureTaken(List<RawImage> raw_images, Date current_date);
     void onCaptureStarted(); // called immediately before we start capturing the picture
