@@ -1366,6 +1366,8 @@ public class CameraController2 extends CameraController {
     }
 
     private boolean hasCaptureSession() {
+        if( camera == null ) // capture session shouldn't be started if camera not opened, but check just in case
+            return false;
         if( sessionType == SessionType.SESSIONTYPE_EXTENSION )
             return extensionSession != null;
         return captureSession != null;
@@ -1549,7 +1551,7 @@ public class CameraController2 extends CameraController {
             public void run() {
                 if( MyDebug.LOG )
                     Log.d(TAG, "take picture after delay for next slow burst");
-                if( camera != null && hasCaptureSession() ) { // make sure camera wasn't released in the meantime
+                if( hasCaptureSession() ) { // make sure camera wasn't released in the meantime
                     // check for imageQueueWouldBlock needed for focus bracketing
                     if( picture_cb.imageQueueWouldBlock(imageReaderRaw != null ? 1 : 0, 1) ) {
                         if( MyDebug.LOG ) {
@@ -1726,7 +1728,7 @@ public class CameraController2 extends CameraController {
                     }
                     if( burst_type != BurstType.BURSTTYPE_FOCUS ) {
                         /*try {
-                            if( camera != null && hasCaptureSession() ) { // make sure camera wasn't released in the meantime
+                            if( hasCaptureSession() ) { // make sure camera wasn't released in the meantime
                                 captureSession.capture(slow_burst_capture_requests.get(n_burst_taken), previewCaptureCallback, handler);
                             }
                         }
@@ -6061,7 +6063,7 @@ public class CameraController2 extends CameraController {
         if( MyDebug.LOG )
             Log.d(TAG, "setRepeatingRequest");
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -6101,7 +6103,7 @@ public class CameraController2 extends CameraController {
         if( MyDebug.LOG )
             Log.d(TAG, "capture: " + request);
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -6846,7 +6848,7 @@ public class CameraController2 extends CameraController {
 
     public void stopPreview(boolean close_capture_session) {
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -6971,7 +6973,7 @@ public class CameraController2 extends CameraController {
         AutoFocusCallback push_autofocus_cb = null;
         synchronized( background_camera_lock ) {
             fake_precapture_torch_focus_performed = false;
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 // should call the callback, so the application isn't left waiting (e.g., when we autofocus before trying to take a photo)
@@ -7124,7 +7126,7 @@ public class CameraController2 extends CameraController {
         if( MyDebug.LOG )
             Log.d(TAG, "cancelAutoFocus");
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -7255,7 +7257,7 @@ public class CameraController2 extends CameraController {
         ErrorCallback push_take_picture_error_cb = null;
 
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -7347,7 +7349,7 @@ public class CameraController2 extends CameraController {
 
         if( ok ) {
             synchronized( background_camera_lock ) {
-                if( camera == null || !hasCaptureSession() ) {
+                if( !hasCaptureSession() ) {
                     if( MyDebug.LOG )
                         Log.d(TAG, "no camera or capture session");
                     return;
@@ -7505,7 +7507,7 @@ public class CameraController2 extends CameraController {
         ErrorCallback push_take_picture_error_cb = null;
 
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -7803,7 +7805,7 @@ public class CameraController2 extends CameraController {
 
         if( ok ) {
             synchronized( background_camera_lock ) {
-                if( camera == null || !hasCaptureSession() ) {
+                if( !hasCaptureSession() ) {
                     if( MyDebug.LOG )
                         Log.d(TAG, "no camera or capture session");
                     return;
@@ -7966,7 +7968,7 @@ public class CameraController2 extends CameraController {
         ErrorCallback push_take_picture_error_cb = null;
 
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -8116,7 +8118,7 @@ public class CameraController2 extends CameraController {
 
         if( ok ) {
             synchronized( background_camera_lock ) {
-                if( camera == null || !hasCaptureSession() ) {
+                if( !hasCaptureSession() ) {
                     if( MyDebug.LOG )
                         Log.d(TAG, "no camera or capture session");
                     return;
@@ -8180,7 +8182,7 @@ public class CameraController2 extends CameraController {
         ErrorCallback push_take_picture_error_cb = null;
 
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 return;
@@ -8390,7 +8392,7 @@ public class CameraController2 extends CameraController {
         boolean call_runPrecapture = false;
 
         synchronized( background_camera_lock ) {
-            if( camera == null || !hasCaptureSession() ) {
+            if( !hasCaptureSession() ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "no camera or capture session");
                 error.onError();
@@ -9710,7 +9712,7 @@ public class CameraController2 extends CameraController {
                 if( CameraController2.this.run_post_capture != null ) {
                     if( MyDebug.LOG )
                         Log.d(TAG, "take picture after delay for long manual exposure");
-                    if( camera != null && hasCaptureSession() ) { // make sure camera wasn't released in the meantime
+                    if( hasCaptureSession() ) { // make sure camera wasn't released in the meantime
                         // need to wait a further ~500ms for Galaxy S10e at least (although on Galaxy S24+, it's fine if we don't do via a postDelayed at all)
                         handler.postDelayed(new Runnable() {
                             @Override
