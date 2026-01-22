@@ -3579,7 +3579,7 @@ public class CameraController2 extends CameraController {
                         // update: as of 1.54, we now can go above the max_preview_exposure_time_c, by using RequestTagType.RUN_POST_CAPTURE
                         // (see adjustPreviewToStill())
                         if( MyDebug.LOG )
-                            Log.d(TAG, "boost max_exposure_time, was: " + max_exposure_time);
+                            Log.d(TAG, "boost max_exposure_time, was: " + camera_features.max_exposure_time);
                         camera_features.max_exposure_time = Math.max(camera_features.max_exposure_time, 1000000000L/2);
                     }
 
