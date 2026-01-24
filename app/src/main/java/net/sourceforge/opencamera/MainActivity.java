@@ -79,7 +79,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-import androidx.exifinterface.media.ExifInterface;
 
 import android.text.Html;
 import android.text.InputFilter;
