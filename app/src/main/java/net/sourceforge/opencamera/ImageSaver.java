@@ -1079,126 +1079,6 @@ public class ImageSaver extends Thread {
             Log.d(TAG, "waitUntilDone: images all saved");
     }
 
-    private void setBitmapOptionsSampleSize(BitmapFactory.Options options, int inSampleSize) {
-        if( MyDebug.LOG )
-            Log.d(TAG, "setBitmapOptionsSampleSize: " + inSampleSize);
-        //options.inSampleSize = inSampleSize;
-        if( inSampleSize > 1 ) {
-            // use inDensity for better quality, as inSampleSize uses nearest neighbour
-            options.inDensity = inSampleSize;
-            options.inTargetDensity = 1;
-        }
-    }
-
-    /** Loads a single jpeg as a Bitmaps.
-     * @param mutable Whether the bitmap should be mutable. Note that when converting to bitmaps
-     *                for the image post-processing (auto-stabilise etc), in general we need the
-     *                bitmap to be mutable (for photostamp to work).
-     */
-    private Bitmap loadBitmap(byte [] jpeg_image, boolean mutable, int inSampleSize) {
-        if( MyDebug.LOG ) {
-            Log.d(TAG, "loadBitmap");
-            Log.d(TAG, "mutable?: " + mutable);
-        }
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        if( MyDebug.LOG )
-            Log.d(TAG, "options.inMutable is: " + options.inMutable);
-        options.inMutable = mutable;
-        setBitmapOptionsSampleSize(options, inSampleSize);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(jpeg_image, 0, jpeg_image.length, options);
-        if( bitmap == null ) {
-            Log.e(TAG, "failed to decode bitmap");
-        }
-        return bitmap;
-    }
-
-    /** Helper class for loadBitmaps().
-     */
-    private static class LoadBitmapThread extends Thread {
-        Bitmap bitmap;
-        final BitmapFactory.Options options;
-        final byte [] jpeg;
-        LoadBitmapThread(BitmapFactory.Options options, byte [] jpeg) {
-            super("LoadBitmapThread");
-            this.options = options;
-            this.jpeg = jpeg;
-        }
-
-        public void run() {
-            this.bitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length, options);
-        }
-    }
-
-    /** Converts the array of jpegs to Bitmaps. The bitmap with index mutable_id will be marked as mutable (or set to -1 to have no mutable bitmaps, or -2 to have all be mutable bitmaps).
-     */
-    private List<Bitmap> loadBitmaps(List<byte []> jpeg_images, int mutable_id, int inSampleSize) {
-        if( MyDebug.LOG ) {
-            Log.d(TAG, "loadBitmaps");
-            Log.d(TAG, "mutable_id: " + mutable_id);
-        }
-        BitmapFactory.Options mutable_options = new BitmapFactory.Options();
-        mutable_options.inMutable = true; // bitmap that needs to be writable
-        setBitmapOptionsSampleSize(mutable_options, inSampleSize);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = false; // later bitmaps don't need to be writable
-        setBitmapOptionsSampleSize(options, inSampleSize);
-        LoadBitmapThread [] threads = new LoadBitmapThread[jpeg_images.size()];
-        for(int i=0;i<jpeg_images.size();i++) {
-            threads[i] = new LoadBitmapThread( (i==mutable_id || mutable_id==-2) ? mutable_options : options, jpeg_images.get(i) );
-        }
-        // start threads
-        if( MyDebug.LOG )
-            Log.d(TAG, "start threads");
-        for(int i=0;i<jpeg_images.size();i++) {
-            threads[i].start();
-        }
-        // wait for threads to complete
-        boolean ok = true;
-        if( MyDebug.LOG )
-            Log.d(TAG, "wait for threads to complete");
-        try {
-            for(int i=0;i<jpeg_images.size();i++) {
-                threads[i].join();
-            }
-        }
-        catch(InterruptedException e) {
-            MyDebug.logStackTrace(TAG, "threads interrupted", e);
-            ok = false;
-        }
-        if( MyDebug.LOG )
-            Log.d(TAG, "threads completed");
-
-        List<Bitmap> bitmaps = new ArrayList<>();
-        for(int i=0;i<jpeg_images.size() && ok;i++) {
-            Bitmap bitmap = threads[i].bitmap;
-            if( bitmap == null ) {
-                Log.e(TAG, "failed to decode bitmap in thread: " + i);
-                ok = false;
-            }
-            else {
-                if( MyDebug.LOG )
-                    Log.d(TAG, "bitmap " + i + ": " + bitmap + " is mutable? " + bitmap.isMutable());
-            }
-            bitmaps.add(bitmap);
-        }
-
-        if( !ok ) {
-            if( MyDebug.LOG )
-                Log.d(TAG, "cleanup from failure");
-            for(int i=0;i<jpeg_images.size();i++) {
-                if( threads[i].bitmap != null ) {
-                    threads[i].bitmap.recycle();
-                    threads[i].bitmap = null;
-                }
-            }
-            bitmaps.clear();
-            System.gc();
-            return null;
-        }
-
-        return bitmaps;
-    }
-
     /** Chooses the hdr_alpha to use for contrast enhancement in the HDR algorithm, based on the user
      *  preferences and scene details.
      */
@@ -1522,15 +1402,15 @@ public class ImageSaver extends Thread {
                         for(int j=0;j<n_load;j++) {
                             sub_jpeg_list.add(request.jpeg_images.get(j));
                         }
-                        bitmaps = loadBitmaps(sub_jpeg_list, -1, inSampleSize);
+                        bitmaps = ImageUtils.loadBitmaps(sub_jpeg_list, -1, inSampleSize);
                         if( MyDebug.LOG )
                             Log.d(TAG, "length of bitmaps list is now: " + bitmaps.size());
                         bitmap0 = bitmaps.get(0);
                         bitmap1 = bitmaps.get(1);
                     }
                     else {
-                        bitmap0 = loadBitmap(request.jpeg_images.get(0), false, inSampleSize);
-                        bitmap1 = loadBitmap(request.jpeg_images.get(1), false, inSampleSize);
+                        bitmap0 = ImageUtils.loadBitmap(request.jpeg_images.get(0), false, inSampleSize);
+                        bitmap1 = ImageUtils.loadBitmap(request.jpeg_images.get(1), false, inSampleSize);
                     }
                     if( MyDebug.LOG ) {
                         Log.d(TAG, "*** time for loading first bitmaps: " + (System.currentTimeMillis() - this_time_s));
@@ -1575,7 +1455,7 @@ public class ImageSaver extends Thread {
                                 for(int j=i;j<i+n_load;j++) {
                                     sub_jpeg_list.add(request.jpeg_images.get(j));
                                 }
-                                List<Bitmap> new_bitmaps = loadBitmaps(sub_jpeg_list, -1, inSampleSize);
+                                List<Bitmap> new_bitmaps = ImageUtils.loadBitmaps(sub_jpeg_list, -1, inSampleSize);
                                 bitmaps.addAll(new_bitmaps);
                                 if( MyDebug.LOG )
                                     Log.d(TAG, "length of bitmaps list is now: " + bitmaps.size());
@@ -1583,7 +1463,7 @@ public class ImageSaver extends Thread {
                             }
                         }
                         else {
-                            new_bitmap = loadBitmap(request.jpeg_images.get(i), false, inSampleSize);
+                            new_bitmap = ImageUtils.loadBitmap(request.jpeg_images.get(i), false, inSampleSize);
                         }
                         if( MyDebug.LOG ) {
                             Log.d(TAG, "*** time for loading extra bitmap: " + (System.currentTimeMillis() - this_time_s));
@@ -1663,7 +1543,7 @@ public class ImageSaver extends Thread {
             int base_bitmap = (request.jpeg_images.size()-1)/2;
             if( MyDebug.LOG )
                 Log.d(TAG, "base_bitmap: " + base_bitmap);
-            List<Bitmap> bitmaps = loadBitmaps(request.jpeg_images, base_bitmap, 1);
+            List<Bitmap> bitmaps = ImageUtils.loadBitmaps(request.jpeg_images, base_bitmap, 1);
             if( bitmaps == null ) {
                 if( MyDebug.LOG )
                     Log.e(TAG, "failed to load bitmaps");
@@ -1804,7 +1684,7 @@ public class ImageSaver extends Thread {
             // need all to be mutable - n.b., in practice setting to -1
             // doesn't cause a problem on some devices e.g. Galaxy S24+ because the bitmaps may be made
             // mutable in rotateForExif, but this can be reproduced on on emulator at least
-            List<Bitmap> bitmaps = loadBitmaps(request.jpeg_images, -2, 1);
+            List<Bitmap> bitmaps = ImageUtils.loadBitmaps(request.jpeg_images, -2, 1);
             if( bitmaps == null ) {
                 if( MyDebug.LOG )
                     Log.e(TAG, "failed to load bitmaps");
@@ -1818,7 +1698,7 @@ public class ImageSaver extends Thread {
             // rotate the bitmaps if necessary for exif tags
             for(int i=0;i<bitmaps.size();i++) {
                 Bitmap bitmap = bitmaps.get(i);
-                bitmap = rotateForExif(bitmap, request.jpeg_images.get(0));
+                bitmap = ImageUtils.rotateForExif(bitmap, request.jpeg_images.get(0));
                 bitmaps.set(i, bitmap);
             }
             if( MyDebug.LOG ) {
@@ -2514,7 +2394,7 @@ public class ImageSaver extends Thread {
             if( MyDebug.LOG )
                 Log.d(TAG, "need to decode bitmap to auto-stabilise");
             // bitmap doesn't need to be mutable here, as this won't be the final bitmap returned from the auto-stabilise code
-            bitmap = loadBitmapWithRotation(data, false);
+            bitmap = ImageUtils.loadBitmapWithRotation(data, false);
             if( bitmap == null ) {
                 main_activity.getPreview().showToast(null, R.string.failed_to_auto_stabilise);
                 System.gc();
@@ -2637,7 +2517,7 @@ public class ImageSaver extends Thread {
             if( MyDebug.LOG )
                 Log.d(TAG, "need to decode bitmap to mirror");
             // bitmap doesn't need to be mutable here, as this won't be the final bitmap returned from the mirroring code
-            bitmap = loadBitmapWithRotation(data, false);
+            bitmap = ImageUtils.loadBitmapWithRotation(data, false);
             if( bitmap == null ) {
                 // don't bother warning to the user - we simply won't mirror the image
                 System.gc();
@@ -2677,7 +2557,7 @@ public class ImageSaver extends Thread {
             if( bitmap == null ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "decode bitmap in order to stamp info");
-                bitmap = loadBitmapWithRotation(data, true);
+                bitmap = ImageUtils.loadBitmapWithRotation(data, true);
                 if( bitmap == null ) {
                     main_activity.getPreview().showToast(null, R.string.failed_to_stamp);
                     System.gc();
@@ -2921,7 +2801,7 @@ public class ImageSaver extends Thread {
                 // rotate the bitmap if necessary for exif tags
                 if( MyDebug.LOG )
                     Log.d(TAG, "rotate pre-existing bitmap for exif tags?");
-                bitmap = rotateForExif(bitmap, data);
+                bitmap = ImageUtils.rotateForExif(bitmap, data);
             }
         }
 
@@ -2937,7 +2817,7 @@ public class ImageSaver extends Thread {
         if( request.image_format != Request.ImageFormat.STD && bitmap == null ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "need to decode bitmap to convert file format");
-            bitmap = loadBitmapWithRotation(data, true);
+            bitmap = ImageUtils.loadBitmapWithRotation(data, true);
             if( bitmap == null ) {
                 // if we can't load bitmap for converting file formats, don't want to continue
                 System.gc();
@@ -2949,7 +2829,7 @@ public class ImageSaver extends Thread {
                 Log.d(TAG, "need to decode bitmap to strip exif tags");
             // if removing device exif data, it's easier to do this by going through the codepath that
             // resaves the bitmap, and then we avoid transferring/adding exif tags that we don't want
-            bitmap = loadBitmapWithRotation(data, true);
+            bitmap = ImageUtils.loadBitmapWithRotation(data, true);
             if( bitmap == null ) {
                 // if we can't load bitmap for removing device tags, don't want to continue
                 System.gc();
@@ -3073,7 +2953,7 @@ public class ImageSaver extends Thread {
                         if( MyDebug.LOG )
                             Log.d(TAG, "create bitmap");
                         // bitmap we return doesn't need to be mutable
-                        bitmap = loadBitmapWithRotation(data, false);
+                        bitmap = ImageUtils.loadBitmapWithRotation(data, false);
                     }
                     if( bitmap != null ) {
                         int width = bitmap.getWidth();
@@ -3354,7 +3234,7 @@ public class ImageSaver extends Thread {
                 // now get the rotation from the Exif data
                 if( MyDebug.LOG )
                     Log.d(TAG, "rotate thumbnail for exif tags?");
-                thumbnail = rotateForExif(thumbnail, data);
+                thumbnail = ImageUtils.rotateForExif(thumbnail, data);
             }
             else {
                 int width = bitmap.getWidth();
@@ -4189,109 +4069,6 @@ public class ImageSaver extends Thread {
         main_activity.savingImage(false);
 
         return success;
-    }
-
-    /** Rotates the supplied bitmap according to the orientation tag stored in the exif data. If no
-     *  rotation is required, the input bitmap is returned. If rotation is required, the input
-     *  bitmap is recycled.
-     * @param data Jpeg data containing the Exif information to use.
-     */
-    private Bitmap rotateForExif(Bitmap bitmap, byte [] data) {
-        if( MyDebug.LOG )
-            Log.d(TAG, "rotateForExif");
-        if( bitmap == null ) {
-            // support thumbnail being null - as this can happen according to Google Play crashes, see comment in saveSingleImageNow()
-            return null;
-        }
-        InputStream inputStream = null;
-        try {
-            ExifInterface exif;
-
-            if( MyDebug.LOG )
-                Log.d(TAG, "use data stream to read exif tags");
-            inputStream = new ByteArrayInputStream(data);
-            exif = new ExifInterface(inputStream);
-
-            int exif_orientation_s = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-            if( MyDebug.LOG )
-                Log.d(TAG, "    exif orientation string: " + exif_orientation_s);
-            boolean needs_tf = false;
-            int exif_orientation = 0;
-            // see http://jpegclub.org/exif_orientation.html
-            // and http://stackoverflow.com/questions/20478765/how-to-get-the-correct-orientation-of-the-image-selected-from-the-default-image
-            switch (exif_orientation_s) {
-                case ExifInterface.ORIENTATION_UNDEFINED:
-                case ExifInterface.ORIENTATION_NORMAL:
-                    // leave unchanged
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    needs_tf = true;
-                    exif_orientation = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    needs_tf = true;
-                    exif_orientation = 90;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    needs_tf = true;
-                    exif_orientation = 270;
-                    break;
-                default:
-                    // just leave unchanged for now
-                    if (MyDebug.LOG)
-                        Log.e(TAG, "    unsupported exif orientation: " + exif_orientation_s);
-                    break;
-            }
-            if( MyDebug.LOG )
-                Log.d(TAG, "    exif orientation: " + exif_orientation);
-
-            if( needs_tf ) {
-                if( MyDebug.LOG )
-                    Log.d(TAG, "    need to rotate bitmap due to exif orientation tag");
-                Matrix m = new Matrix();
-                m.setRotate(exif_orientation, bitmap.getWidth() * 0.5f, bitmap.getHeight() * 0.5f);
-                Bitmap rotated_bitmap = Bitmap.createBitmap(bitmap, 0, 0,bitmap.getWidth(), bitmap.getHeight(), m, true);
-                if( rotated_bitmap != bitmap ) {
-                    bitmap.recycle();
-                    bitmap = rotated_bitmap;
-                }
-            }
-        }
-        catch(IOException e) {
-            MyDebug.logStackTrace(TAG, "exif orientation ioexception", e);
-        }
-        catch(NoClassDefFoundError e) {
-            // have had Google Play crashes from new ExifInterface() for Galaxy Ace4 (vivalto3g), Galaxy S Duos3 (vivalto3gvn)
-            MyDebug.logStackTrace(TAG, "exif orientation NoClassDefFoundError", e);
-        }
-        finally {
-            if( inputStream != null ) {
-                try {
-                    inputStream.close();
-                }
-                catch(IOException e) {
-                    MyDebug.logStackTrace(TAG, "failed to close inputStream", e);
-                }
-            }
-        }
-        return bitmap;
-    }
-
-    /** Loads the bitmap from the supplied jpeg data, rotating if necessary according to the
-     *  supplied EXIF orientation tag.
-     * @param data The jpeg data.
-     * @param mutable Whether to create a mutable bitmap.
-     * @return A bitmap representing the correctly rotated jpeg.
-     */
-    private Bitmap loadBitmapWithRotation(byte [] data, boolean mutable) {
-        Bitmap bitmap = loadBitmap(data, mutable, 1);
-        if( bitmap != null ) {
-            // rotate the bitmap if necessary for exif tags
-            if( MyDebug.LOG )
-                Log.d(TAG, "rotate bitmap for exif tags?");
-            bitmap = rotateForExif(bitmap, data);
-        }
-        return bitmap;
     }
 
     /* In some cases we may create an ExifInterface with a FileDescriptor obtained from a

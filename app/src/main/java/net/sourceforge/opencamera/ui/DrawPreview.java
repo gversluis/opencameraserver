@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 
 import net.sourceforge.opencamera.GyroSensor;
 import net.sourceforge.opencamera.ImageSaver;
+import net.sourceforge.opencamera.ImageUtils;
 import net.sourceforge.opencamera.LocationSupplier;
 import net.sourceforge.opencamera.MainActivity;
 import net.sourceforge.opencamera.MyApplicationInterface;
@@ -896,7 +897,7 @@ public class DrawPreview {
 
         // now need to take exif orientation into account, as some devices or camera apps store the orientation in the exif tag,
         // which getBitmap() doesn't account for
-        bitmap = main_activity.rotateForExif(bitmap, uri);
+        bitmap = ImageUtils.rotateForExif(getContext(), bitmap, uri);
 
         return bitmap;
     }
