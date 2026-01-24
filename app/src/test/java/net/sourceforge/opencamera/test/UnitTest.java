@@ -4,6 +4,7 @@ import android.media.CamcorderProfile;
 
 import net.sourceforge.opencamera.MainActivity;
 import net.sourceforge.opencamera.MyApplicationInterface;
+import net.sourceforge.opencamera.Preshots;
 import net.sourceforge.opencamera.cameracontroller.CameraController;
 import net.sourceforge.opencamera.cameracontroller.CameraController2;
 import net.sourceforge.opencamera.HDRProcessor;
@@ -1176,7 +1177,7 @@ public class UnitTest {
 
     private void checkAdjustResolutionForVideoCapabilities(int video_width, int video_height, ImageSaver.IntRange supported_widths, ImageSaver.IntRange supported_heights, int width_alignment, int height_alignment, int expected_width, int expected_height) {
         Log.d(TAG, "test size: " + video_width + " x " + video_height);
-        CameraController.Size size = ImageSaver.adjustResolutionForVideoCapabilities(video_width, video_height, supported_widths, supported_heights, width_alignment, height_alignment);
+        CameraController.Size size = Preshots.adjustResolutionForVideoCapabilities(video_width, video_height, supported_widths, supported_heights, width_alignment, height_alignment);
         Log.d(TAG, "    adjusted size: " + size.width + " x " + size.height);
         assertEquals(expected_width, size.width);
         assertEquals(expected_height, size.height);
