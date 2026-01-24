@@ -122,7 +122,7 @@ public class PopupView extends LinearLayout {
         if( MyDebug.LOG )
             Log.d(TAG, "PopupView time 2: " + (System.nanoTime() - debug_time));
 
-        if( !main_activity.getMainUI().showCycleFlashIcon() )
+        if( !main_activity.getMainUI().getOnScreenIcons().showCycleFlashIcon() )
         {
             List<String> supported_flash_values = preview.getSupportedFlashValues();
             if( preview.isVideo() && supported_flash_values != null ) {
@@ -343,7 +343,7 @@ public class PopupView extends LinearLayout {
                 });
             }
 
-            if( main_activity.supportsAutoStabilise() && !main_activity.getMainUI().showAutoLevelIcon() ) {
+            if( main_activity.supportsAutoStabilise() && !main_activity.getMainUI().getOnScreenIcons().showAutoLevelIcon() ) {
                 // don't show auto-stabilise checkbox on popup if there's an on-screen icon
                 CheckBox checkBox = new CheckBox(main_activity);
                 checkBox.setText(getResources().getString(R.string.preference_auto_stabilise));
@@ -366,7 +366,7 @@ public class PopupView extends LinearLayout {
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(@NonNull CompoundButton buttonView,
                                                  boolean isChecked) {
-                        main_activity.clickedAutoLevel();
+                        main_activity.getMainUI().getOnScreenIcons().clickedAutoLevel();
                     }
                 });
 

@@ -190,12 +190,8 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 
     private final ToastBoxer switch_video_toast = new ToastBoxer();
     private final ToastBoxer screen_locked_toast = new ToastBoxer();
-    private final ToastBoxer stamp_toast = new ToastBoxer();
     private final ToastBoxer changed_auto_stabilise_toast = new ToastBoxer();
-    private final ToastBoxer white_balance_lock_toast = new ToastBoxer();
-    private final ToastBoxer exposure_lock_toast = new ToastBoxer();
     private final ToastBoxer audio_control_toast = new ToastBoxer();
-    private final ToastBoxer store_location_toast = new ToastBoxer();
     private boolean block_startup_toast = false; // used when returning from Settings/Popup - if we're displaying a toast anyway, don't want to display the info toast too
     private String push_info_toast_text; // can be used to "push" extra text to the info text for showPhotoVideoToast()
     private boolean push_switched_camera = false; // whether to display animation for switching front/back cameras
@@ -507,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         zoomSeekbar.setVisibility(View.INVISIBLE);
 
         // initialise state of on-screen icons
-        mainUI.updateOnScreenIcons();
+        mainUI.getOnScreenIcons().updateOnScreenIcons();
 
         if( MainActivity.lock_to_landscape ) {
             // listen for orientation event change (only required if lock_to_landscape==true
@@ -2088,200 +2084,64 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         applicationInterface.stopPanorama(true);
     }
 
+    public void clickedExposureLock(View view) {
+        if( MyDebug.LOG )
+            Log.d(TAG, "clickedExposureLock");
+        this.mainUI.getOnScreenIcons().clickedExposureLock();
+    }
+
+    public void clickedWhiteBalanceLock(View view) {
+        if( MyDebug.LOG )
+            Log.d(TAG, "clickedWhiteBalanceLock");
+        this.mainUI.getOnScreenIcons().clickedWhiteBalanceLock();
+    }
+
     public void clickedCycleRaw(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedCycleRaw");
-
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String new_value = null;
-        switch( sharedPreferences.getString(PreferenceKeys.RawPreferenceKey, "preference_raw_no") ) {
-            case "preference_raw_no":
-                new_value = "preference_raw_yes";
-                break;
-            case "preference_raw_yes":
-                new_value = "preference_raw_only";
-                break;
-            case "preference_raw_only":
-                new_value = "preference_raw_no";
-                break;
-            default:
-                Log.e(TAG, "unrecognised raw preference");
-                break;
-        }
-        if( new_value != null ) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(PreferenceKeys.RawPreferenceKey, new_value);
-            editor.apply();
-
-            mainUI.updateCycleRawIcon();
-            applicationInterface.getDrawPreview().updateSettings();
-            preview.reopenCamera(); // needed for RAW options to take effect
-        }
+        this.mainUI.getOnScreenIcons().clickedCycleRaw();
     }
 
     public void clickedStoreLocation(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedStoreLocation");
-        boolean value = applicationInterface.getGeotaggingPref();
-        value = !value;
-
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(PreferenceKeys.LocationPreferenceKey, value);
-        editor.apply();
-
-        mainUI.updateStoreLocationIcon();
-        applicationInterface.getDrawPreview().updateSettings(); // because we cache the geotagging setting
-        initLocation(); // required to enable or disable GPS, also requests permission if necessary
-        this.closePopup();
-
-        String message = getResources().getString(R.string.preference_location) + ": " + getResources().getString(value ? R.string.on : R.string.off);
-        preview.showToast(store_location_toast, message, true);
+        this.mainUI.getOnScreenIcons().clickedStoreLocation();
     }
 
     public void clickedTextStamp(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedTextStamp");
-        this.closePopup();
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle(R.string.preference_textstamp);
-
-        final View dialog_view = LayoutInflater.from(this).inflate(R.layout.alertdialog_edittext, null);
-        final EditText editText = dialog_view.findViewById(R.id.edit_text);
-        // set hint instead of content description for EditText, see https://support.google.com/accessibility/android/answer/6378120
-        editText.setHint(getResources().getString(R.string.preference_textstamp));
-        editText.setText(applicationInterface.getTextStampPref());
-        alertDialog.setView(dialog_view);
-        alertDialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if( MyDebug.LOG )
-                    Log.d(TAG, "custom text stamp clicked okay");
-
-                String custom_text = editText.getText().toString();
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(PreferenceKeys.TextStampPreferenceKey, custom_text);
-                editor.apply();
-
-                mainUI.updateTextStampIcon();
-            }
-        });
-        alertDialog.setNegativeButton(android.R.string.cancel, null);
-
-        final AlertDialog alert = alertDialog.create();
-        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                if( MyDebug.LOG )
-                    Log.d(TAG, "custom stamp text dialog dismissed");
-                setWindowFlagsForCamera();
-                showPreview(true);
-            }
-        });
-
-        showPreview(false);
-        setWindowFlagsForSettings();
-        showAlert(alert);
+        this.mainUI.getOnScreenIcons().clickedTextStamp();
     }
 
     public void clickedStamp(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedStamp");
-
-        this.closePopup();
-
-        boolean value = applicationInterface.getStampPref().equals("preference_stamp_yes");
-        value = !value;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(PreferenceKeys.StampPreferenceKey, value ? "preference_stamp_yes" : "preference_stamp_no");
-        editor.apply();
-
-        mainUI.updateStampIcon();
-        applicationInterface.getDrawPreview().updateSettings();
-        preview.showToast(stamp_toast, value ? R.string.stamp_enabled : R.string.stamp_disabled, true);
+        this.mainUI.getOnScreenIcons().clickedStamp();
     }
 
     public void clickedFocusPeaking(View view) {
-        clickedFocusPeaking();
-    }
-
-    public void clickedFocusPeaking() {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedFocusPeaking");
-        boolean value = applicationInterface.getFocusPeakingPref();
-        value = !value;
-
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(PreferenceKeys.FocusPeakingPreferenceKey, value ? "preference_focus_peaking_on" : "preference_focus_peaking_off");
-        editor.apply();
-
-        mainUI.updateFocusPeakingIcon();
-        applicationInterface.getDrawPreview().updateSettings(); // needed to update focus peaking
+        this.mainUI.getOnScreenIcons().clickedFocusPeaking();
     }
 
     public void clickedAutoLevel(View view) {
-        clickedAutoLevel();
-    }
-
-    public void clickedAutoLevel() {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedAutoLevel");
-        boolean value = applicationInterface.getAutoStabilisePref();
-        value = !value;
-
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(PreferenceKeys.AutoStabilisePreferenceKey, value);
-        editor.apply();
-
-        boolean done_dialog = false;
-        if( value ) {
-            boolean done_auto_stabilise_info = sharedPreferences.contains(PreferenceKeys.AutoStabiliseInfoPreferenceKey);
-            if( !done_auto_stabilise_info ) {
-                mainUI.showInfoDialog(R.string.preference_auto_stabilise, R.string.auto_stabilise_info, PreferenceKeys.AutoStabiliseInfoPreferenceKey);
-                done_dialog = true;
-            }
-        }
-
-        if( !done_dialog ) {
-            String message = getResources().getString(R.string.preference_auto_stabilise) + ": " + getResources().getString(value ? R.string.on : R.string.off);
-            preview.showToast(this.getChangedAutoStabiliseToastBoxer(), message, true);
-        }
-
-        mainUI.updateAutoLevelIcon();
-        applicationInterface.getDrawPreview().updateSettings(); // because we cache the auto-stabilise setting
-        this.closePopup();
+        this.mainUI.getOnScreenIcons().clickedAutoLevel();
     }
 
     public void clickedCycleFlash(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedCycleFlash");
-
-        preview.cycleFlash(true, true);
-        mainUI.updateCycleFlashIcon();
+        this.mainUI.getOnScreenIcons().clickedCycleFlash();
     }
 
     public void clickedFaceDetection(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedFaceDetection");
-
-        this.closePopup();
-
-        boolean value = applicationInterface.getFaceDetectionPref();
-        value = !value;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(PreferenceKeys.FaceDetectionPreferenceKey, value);
-        editor.apply();
-
-        mainUI.updateFaceDetectionIcon();
-        preview.showToast(stamp_toast, value ? R.string.face_detection_enabled : R.string.face_detection_disabled, true);
-        block_startup_toast = true; // so the toast from reopening camera is suppressed, otherwise it conflicts with the face detection toast
-        preview.reopenCamera();
+        this.mainUI.getOnScreenIcons().clickedFaceDetection();
     }
 
     public void clickedAudioControl(View view) {
@@ -2783,27 +2643,11 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 
         // ensure icons invisible if they're affected by being in video mode or not (e.g., on-screen RAW icon)
         // (if enabling them, we'll make the icon visible later on)
-        checkDisableGUIIcons();
+        mainUI.getOnScreenIcons().checkDisableGUIIcons();
 
         if( !block_startup_toast ) {
             this.showPhotoVideoToast(true);
         }
-    }
-
-    public void clickedWhiteBalanceLock(View view) {
-        if( MyDebug.LOG )
-            Log.d(TAG, "clickedWhiteBalanceLock");
-        this.preview.toggleWhiteBalanceLock();
-        mainUI.updateWhiteBalanceLockIcon();
-        preview.showToast(white_balance_lock_toast, preview.isWhiteBalanceLocked() ? R.string.white_balance_locked : R.string.white_balance_unlocked, true);
-    }
-
-    public void clickedExposureLock(View view) {
-        if( MyDebug.LOG )
-            Log.d(TAG, "clickedExposureLock");
-        this.preview.toggleExposureLock();
-        mainUI.updateExposureLockIcon();
-        preview.showToast(exposure_lock_toast, preview.isExposureLocked() ? R.string.exposure_locked : R.string.exposure_unlocked, true);
     }
 
     public void clickedExposure(View view) {
@@ -3486,7 +3330,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 
         // ensure icons invisible if disabling them from showing from the Settings
         // (if enabling them, we'll make the icon visible later on)
-        checkDisableGUIIcons();
+        mainUI.getOnScreenIcons().checkDisableGUIIcons();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String audio_control = sharedPreferences.getString(PreferenceKeys.AudioControlPreferenceKey, "none");
@@ -3571,79 +3415,14 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         }
     }
 
-    /** Disables the optional on-screen icons if either user doesn't want to enable them, or not
-     *  supported). Note that displaying icons is done via MainUI.showGUI.
-     * @return Whether an icon's visibility was changed.
+    /** Closes and reopens the camera.
+     *  The camera will be closed and opened on a background thread, so won't be available upon
+     *  exit of this function.
+     * @param block_startup_toast Whether to block the usual info toast that's displayed when opening the camera
      */
-    private boolean checkDisableGUIIcons() {
-        if( MyDebug.LOG )
-            Log.d(TAG, "checkDisableGUIIcons");
-        boolean changed = false;
-        if( !supportsExposureButton() ) {
-            View button = findViewById(R.id.exposure);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showExposureLockIcon() ) {
-            View button = findViewById(R.id.exposure_lock);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showWhiteBalanceLockIcon() ) {
-            View button = findViewById(R.id.white_balance_lock);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showCycleRawIcon() ) {
-            View button = findViewById(R.id.cycle_raw);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showStoreLocationIcon() ) {
-            View button = findViewById(R.id.store_location);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showTextStampIcon() ) {
-            View button = findViewById(R.id.text_stamp);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showStampIcon() ) {
-            View button = findViewById(R.id.stamp);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showFocusPeakingIcon() ) {
-            View button = findViewById(R.id.focus_peaking);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showAutoLevelIcon() ) {
-            View button = findViewById(R.id.auto_level);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showCycleFlashIcon() ) {
-            View button = findViewById(R.id.cycle_flash);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !mainUI.showFaceDetectionIcon() ) {
-            View button = findViewById(R.id.face_detection);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( !showSwitchMultiCamIcon() ) {
-            // also handle the multi-cam icon here, as this can change when switching between front/back cameras
-            // (e.g., if say a device only has multiple back cameras)
-            View button = findViewById(R.id.switch_multi_camera);
-            changed = changed || (button.getVisibility() != View.GONE);
-            button.setVisibility(View.GONE);
-        }
-        if( MyDebug.LOG )
-            Log.d(TAG, "checkDisableGUIIcons: " + changed);
-        return changed;
+    public void reopenCamera(boolean block_startup_toast) {
+        this.block_startup_toast = block_startup_toast;
+        preview.reopenCamera();
     }
 
     public MyPreferenceFragment getPreferenceFragment() {
@@ -3678,7 +3457,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         applicationInterface.getDrawPreview().setCoverPreview(true);
 
         if( preferencesListener.anyChange() ) {
-            mainUI.updateOnScreenIcons();
+            mainUI.getOnScreenIcons().updateOnScreenIcons();
         }
 
         if( preferencesListener.anySignificantChange() ) {
@@ -6002,14 +5781,14 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 
         // needed as availability of some icons is per-camera (e.g., flash, RAW)
         // for making icons visible, this is done elsewhere in call to MainUI.showGUI()
-        if( checkDisableGUIIcons() ) {
+        if( mainUI.getOnScreenIcons().checkDisableGUIIcons() ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "cameraSetup: need to layoutUI as we hid some icons");
             mainUI.layoutUI();
         }
 
         // need to update some icons, e.g., white balance and exposure lock due to them being turned off when pause/resuming
-        mainUI.updateOnScreenIcons();
+        mainUI.getOnScreenIcons().updateOnScreenIcons();
 
         mainUI.setPopupIcon(); // needed so that the icon is set right even if no flash mode is set when starting up camera (e.g., switching to front camera with no flash)
         if( MyDebug.LOG )

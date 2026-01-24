@@ -5,7 +5,6 @@ import net.sourceforge.opencamera.cameracontroller.CameraController;
 import net.sourceforge.opencamera.MainActivity;
 import net.sourceforge.opencamera.MyDebug;
 import net.sourceforge.opencamera.PreferenceKeys;
-import net.sourceforge.opencamera.preview.ApplicationInterface;
 import net.sourceforge.opencamera.preview.Preview;
 import net.sourceforge.opencamera.R;
 
@@ -52,6 +51,8 @@ public class MainUI {
     private static final String TAG = "MainUI";
 
     private final MainActivity main_activity;
+
+    private final OnScreenIcons onScreenIcons;
 
     private volatile boolean popup_view_is_open; // must be volatile for test project reading the state
     private PopupView popup_view;
@@ -107,7 +108,13 @@ public class MainUI {
             Log.d(TAG, "MainUI");
         this.main_activity = main_activity;
 
+        this.onScreenIcons = new OnScreenIcons(main_activity);
+
         this.setSeekbarColors();
+    }
+
+    public OnScreenIcons getOnScreenIcons() {
+        return this.onScreenIcons;
     }
 
     private void setSeekbarColors() {
@@ -462,16 +469,9 @@ public class MainUI {
             buttons_permanent.add(main_activity.findViewById(R.id.exposure));
             //buttons_permanent.add(main_activity.findViewById(R.id.switch_video));
             //buttons_permanent.add(main_activity.findViewById(R.id.switch_camera));
-            buttons_permanent.add(main_activity.findViewById(R.id.exposure_lock));
-            buttons_permanent.add(main_activity.findViewById(R.id.white_balance_lock));
-            buttons_permanent.add(main_activity.findViewById(R.id.cycle_raw));
-            buttons_permanent.add(main_activity.findViewById(R.id.store_location));
-            buttons_permanent.add(main_activity.findViewById(R.id.text_stamp));
-            buttons_permanent.add(main_activity.findViewById(R.id.stamp));
-            buttons_permanent.add(main_activity.findViewById(R.id.focus_peaking));
-            buttons_permanent.add(main_activity.findViewById(R.id.auto_level));
-            buttons_permanent.add(main_activity.findViewById(R.id.cycle_flash));
-            buttons_permanent.add(main_activity.findViewById(R.id.face_detection));
+
+            onScreenIcons.addOnScreenIcons(buttons_permanent);
+
             buttons_permanent.add(main_activity.findViewById(R.id.audio_control));
             buttons_permanent.add(main_activity.findViewById(R.id.kraken_icon));
 
@@ -1226,86 +1226,6 @@ public class MainUI {
         }
     }
 
-    public boolean showExposureLockIcon() {
-        if( !main_activity.getPreview().supportsExposureLock() )
-            return false;
-        if( main_activity.getApplicationInterface().isCameraExtensionPref() ) {
-            // not supported for camera extensions
-            return false;
-        }
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowExposureLockPreferenceKey, true);
-    }
-
-    public boolean showWhiteBalanceLockIcon() {
-        if( !main_activity.getPreview().supportsWhiteBalanceLock() )
-            return false;
-        if( main_activity.getApplicationInterface().isCameraExtensionPref() ) {
-            // not supported for camera extensions
-            return false;
-        }
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowWhiteBalanceLockPreferenceKey, false);
-    }
-
-    public boolean showCycleRawIcon() {
-        if( !main_activity.getPreview().supportsRaw() )
-            return false;
-        if( !main_activity.getApplicationInterface().isRawAllowed(main_activity.getApplicationInterface().getPhotoMode()) )
-            return false;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowCycleRawPreferenceKey, false);
-    }
-
-    public boolean showStoreLocationIcon() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowStoreLocationPreferenceKey, false);
-    }
-
-    public boolean showTextStampIcon() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowTextStampPreferenceKey, false);
-    }
-
-    public boolean showStampIcon() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowStampPreferenceKey, false);
-    }
-
-    public boolean showFocusPeakingIcon() {
-        if( !main_activity.supportsPreviewBitmaps() )
-            return false;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowFocusPeakingPreferenceKey, false);
-    }
-
-    public boolean showAutoLevelIcon() {
-        if( !main_activity.supportsAutoStabilise() )
-            return false;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowAutoLevelPreferenceKey, false);
-    }
-
-    public boolean showCycleFlashIcon() {
-        if( !main_activity.getPreview().supportsFlash() )
-            return false;
-        if( main_activity.getPreview().isVideo() )
-            return false; // no point showing flash icon in video mode, as we only allow flash auto and flash torch, and we don't support torch on the on-screen cycle flash icon
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowCycleFlashPreferenceKey, false);
-    }
-
-    public boolean showFaceDetectionIcon() {
-        if( !main_activity.getPreview().supportsFaceDetection() )
-            return false;
-        if( main_activity.getApplicationInterface().isCameraExtensionPref() ) {
-            // not supported for camera extensions
-            return false;
-        }
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
-        return sharedPreferences.getBoolean(PreferenceKeys.ShowFaceDetectionPreferenceKey, false);
-    }
-
     public void setImmersiveMode(final boolean immersive_mode) {
         if( MyDebug.LOG )
             Log.d(TAG, "setImmersiveMode: " + immersive_mode);
@@ -1323,16 +1243,6 @@ public class MainUI {
                 View switchMultiCameraButton = main_activity.findViewById(R.id.switch_multi_camera);
                 View switchVideoButton = main_activity.findViewById(R.id.switch_video);
                 View exposureButton = main_activity.findViewById(R.id.exposure);
-                View exposureLockButton = main_activity.findViewById(R.id.exposure_lock);
-                View whiteBalanceLockButton = main_activity.findViewById(R.id.white_balance_lock);
-                View cycleRawButton = main_activity.findViewById(R.id.cycle_raw);
-                View storeLocationButton = main_activity.findViewById(R.id.store_location);
-                View textStampButton = main_activity.findViewById(R.id.text_stamp);
-                View stampButton = main_activity.findViewById(R.id.stamp);
-                View focusPeakingButton = main_activity.findViewById(R.id.focus_peaking);
-                View autoLevelButton = main_activity.findViewById(R.id.auto_level);
-                View cycleFlashButton = main_activity.findViewById(R.id.cycle_flash);
-                View faceDetectionButton = main_activity.findViewById(R.id.face_detection);
                 View audioControlButton = main_activity.findViewById(R.id.audio_control);
                 View popupButton = main_activity.findViewById(R.id.popup);
                 View galleryButton = main_activity.findViewById(R.id.gallery);
@@ -1347,26 +1257,7 @@ public class MainUI {
                 switchVideoButton.setVisibility(visibility);
                 if( main_activity.supportsExposureButton() )
                     exposureButton.setVisibility(visibility);
-                if( showExposureLockIcon() )
-                    exposureLockButton.setVisibility(visibility);
-                if( showWhiteBalanceLockIcon() )
-                    whiteBalanceLockButton.setVisibility(visibility);
-                if( showCycleRawIcon() )
-                    cycleRawButton.setVisibility(visibility);
-                if( showStoreLocationIcon() )
-                    storeLocationButton.setVisibility(visibility);
-                if( showTextStampIcon() )
-                    textStampButton.setVisibility(visibility);
-                if( showStampIcon() )
-                    stampButton.setVisibility(visibility);
-                if( showFocusPeakingIcon() )
-                    focusPeakingButton.setVisibility(visibility);
-                if( showAutoLevelIcon() )
-                    autoLevelButton.setVisibility(visibility);
-                if( showCycleFlashIcon() )
-                    cycleFlashButton.setVisibility(visibility);
-                if( showFaceDetectionIcon() )
-                    faceDetectionButton.setVisibility(visibility);
+                onScreenIcons.setVisibility(visibility, visibility);
                 if( main_activity.hasAudioControl() )
                     audioControlButton.setVisibility(visibility);
                 popupButton.setVisibility(visibility);
@@ -1447,16 +1338,6 @@ public class MainUI {
                 View switchMultiCameraButton = main_activity.findViewById(R.id.switch_multi_camera);
                 View switchVideoButton = main_activity.findViewById(R.id.switch_video);
                 View exposureButton = main_activity.findViewById(R.id.exposure);
-                View exposureLockButton = main_activity.findViewById(R.id.exposure_lock);
-                View whiteBalanceLockButton = main_activity.findViewById(R.id.white_balance_lock);
-                View cycleRawButton = main_activity.findViewById(R.id.cycle_raw);
-                View storeLocationButton = main_activity.findViewById(R.id.store_location);
-                View textStampButton = main_activity.findViewById(R.id.text_stamp);
-                View stampButton = main_activity.findViewById(R.id.stamp);
-                View focusPeakingButton = main_activity.findViewById(R.id.focus_peaking);
-                View autoLevelButton = main_activity.findViewById(R.id.auto_level);
-                View cycleFlashButton = main_activity.findViewById(R.id.cycle_flash);
-                View faceDetectionButton = main_activity.findViewById(R.id.face_detection);
                 View audioControlButton = main_activity.findViewById(R.id.audio_control);
                 View popupButton = main_activity.findViewById(R.id.popup);
                 settingsButton.setVisibility(visibility_video); // still allow settings when recording video - arguably we shouldn't, but looks wierd given that the other default icons aren't hidden when recording video
@@ -1467,26 +1348,7 @@ public class MainUI {
                 switchVideoButton.setVisibility(visibility);
                 if( main_activity.supportsExposureButton() )
                     exposureButton.setVisibility(visibility_video); // still allow exposure when recording video
-                if( showExposureLockIcon() )
-                    exposureLockButton.setVisibility(visibility_video); // still allow exposure lock when recording video
-                if( showWhiteBalanceLockIcon() )
-                    whiteBalanceLockButton.setVisibility(visibility_video); // still allow white balance lock when recording video
-                if( showCycleRawIcon() )
-                    cycleRawButton.setVisibility(visibility);
-                if( showStoreLocationIcon() )
-                    storeLocationButton.setVisibility(visibility);
-                if( showTextStampIcon() )
-                    textStampButton.setVisibility(visibility);
-                if( showStampIcon() )
-                    stampButton.setVisibility(visibility);
-                if( showFocusPeakingIcon() )
-                    focusPeakingButton.setVisibility(visibility);
-                if( showAutoLevelIcon() )
-                    autoLevelButton.setVisibility(visibility);
-                if( showCycleFlashIcon() )
-                    cycleFlashButton.setVisibility(visibility);
-                if( showFaceDetectionIcon() )
-                    faceDetectionButton.setVisibility(visibility);
+                onScreenIcons.setVisibility(visibility, visibility_video);
                 if( main_activity.hasAudioControl() )
                     audioControlButton.setVisibility(visibility);
                 if( !(show_gui_photo && show_gui_video) ) {
@@ -1510,131 +1372,6 @@ public class MainUI {
                 }
             }
         });
-    }
-
-    public void updateExposureLockIcon() {
-        ImageButton view = main_activity.findViewById(R.id.exposure_lock);
-        boolean enabled = main_activity.getPreview().isExposureLocked();
-        view.setImageResource(enabled ? R.drawable.exposure_locked : R.drawable.exposure_unlocked);
-        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.exposure_unlock : R.string.exposure_lock) );
-    }
-
-    public void updateWhiteBalanceLockIcon() {
-        ImageButton view = main_activity.findViewById(R.id.white_balance_lock);
-        boolean enabled = main_activity.getPreview().isWhiteBalanceLocked();
-        view.setImageResource(enabled ? R.drawable.white_balance_locked : R.drawable.white_balance_unlocked);
-        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.white_balance_unlock : R.string.white_balance_lock) );
-    }
-
-    public void updateCycleRawIcon() {
-        ApplicationInterface.RawPref raw_pref = main_activity.getApplicationInterface().getRawPref();
-        ImageButton view = main_activity.findViewById(R.id.cycle_raw);
-        if( raw_pref == ApplicationInterface.RawPref.RAWPREF_JPEG_DNG ) {
-            if( main_activity.getApplicationInterface().isRawOnly() ) {
-                // actually RAW only
-                view.setImageResource(R.drawable.raw_only_icon);
-            }
-            else {
-                view.setImageResource(R.drawable.raw_icon);
-            }
-        }
-        else {
-            view.setImageResource(R.drawable.raw_off_icon);
-        }
-    }
-
-    public void updateStoreLocationIcon() {
-        ImageButton view = main_activity.findViewById(R.id.store_location);
-        boolean enabled = main_activity.getApplicationInterface().getGeotaggingPref();
-        view.setImageResource(enabled ? R.drawable.ic_gps_fixed_red_48dp : R.drawable.ic_gps_fixed_white_48dp);
-        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.preference_location_disable : R.string.preference_location_enable) );
-    }
-
-    public void updateTextStampIcon() {
-        ImageButton view = main_activity.findViewById(R.id.text_stamp);
-        boolean enabled = !main_activity.getApplicationInterface().getTextStampPref().isEmpty();
-        view.setImageResource(enabled ? R.drawable.baseline_text_fields_red_48 : R.drawable.baseline_text_fields_white_48);
-    }
-
-    public void updateStampIcon() {
-        ImageButton view = main_activity.findViewById(R.id.stamp);
-        boolean enabled = main_activity.getApplicationInterface().getStampPref().equals("preference_stamp_yes");
-        view.setImageResource(enabled ? R.drawable.ic_text_format_red_48dp : R.drawable.ic_text_format_white_48dp);
-        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.stamp_disable : R.string.stamp_enable) );
-    }
-
-    public void updateFocusPeakingIcon() {
-        ImageButton view = main_activity.findViewById(R.id.focus_peaking);
-        boolean enabled = main_activity.getApplicationInterface().getFocusPeakingPref();
-        view.setImageResource(enabled ? R.drawable.key_visualizer_red : R.drawable.key_visualizer);
-        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.focus_peaking_disable : R.string.focus_peaking_enable) );
-    }
-
-    public void updateAutoLevelIcon() {
-        ImageButton view = main_activity.findViewById(R.id.auto_level);
-        boolean enabled = main_activity.getApplicationInterface().getAutoStabilisePref();
-        view.setImageResource(enabled ? R.drawable.auto_stabilise_icon_red : R.drawable.auto_stabilise_icon);
-        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.auto_level_disable : R.string.auto_level_enable) );
-    }
-
-    public void updateCycleFlashIcon() {
-        // n.b., read from preview rather than saved application preference - so the icon updates correctly when in flash
-        // auto mode, but user switches to manual ISO where flash auto isn't supported
-        String flash_value = main_activity.getPreview().getCurrentFlashValue();
-        if( flash_value != null ) {
-            ImageButton view = main_activity.findViewById(R.id.cycle_flash);
-            switch( flash_value ) {
-                case "flash_off":
-                    view.setImageResource(R.drawable.flash_off);
-                    break;
-                case "flash_auto":
-                case "flash_frontscreen_auto":
-                    view.setImageResource(R.drawable.flash_auto);
-                    break;
-                case "flash_on":
-                case "flash_frontscreen_on":
-                    view.setImageResource(R.drawable.flash_on);
-                    break;
-                case "flash_torch":
-                case "flash_frontscreen_torch":
-                    view.setImageResource(R.drawable.baseline_highlight_white_48);
-                    break;
-                case "flash_red_eye":
-                    view.setImageResource(R.drawable.baseline_remove_red_eye_white_48);
-                    break;
-                default:
-                    // just in case??
-                    Log.e(TAG, "unknown flash value " + flash_value);
-                    view.setImageResource(R.drawable.flash_off);
-                    break;
-            }
-        }
-        else {
-            ImageButton view = main_activity.findViewById(R.id.cycle_flash);
-            view.setImageResource(R.drawable.flash_off);
-        }
-    }
-
-    public void updateFaceDetectionIcon() {
-        ImageButton view = main_activity.findViewById(R.id.face_detection);
-        boolean enabled = main_activity.getApplicationInterface().getFaceDetectionPref();
-        view.setImageResource(enabled ? R.drawable.ic_face_red_48dp : R.drawable.ic_face_white_48dp);
-        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.face_detection_disable : R.string.face_detection_enable) );
-    }
-
-    public void updateOnScreenIcons() {
-        if( MyDebug.LOG )
-            Log.d(TAG, "updateOnScreenIcons");
-        this.updateExposureLockIcon();
-        this.updateWhiteBalanceLockIcon();
-        this.updateCycleRawIcon();
-        this.updateStoreLocationIcon();
-        this.updateTextStampIcon();
-        this.updateStampIcon();
-        this.updateFocusPeakingIcon();
-        this.updateAutoLevelIcon();
-        this.updateCycleFlashIcon();
-        this.updateFaceDetectionIcon();
     }
 
     public void audioControlStarted() {
@@ -2373,7 +2110,7 @@ public class MainUI {
         String flash_value = main_activity.getPreview().getCurrentFlashValue();
         if( MyDebug.LOG )
             Log.d(TAG, "flash_value: " + flash_value);
-        if( main_activity.getMainUI().showCycleFlashIcon() ) {
+        if( main_activity.getMainUI().getOnScreenIcons().showCycleFlashIcon() ) {
             popup.setImageResource(R.drawable.popup);
         }
         else if( flash_value != null && flash_value.equals("flash_off") ) {
