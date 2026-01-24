@@ -2146,47 +2146,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     public void clickedAudioControl(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedAudioControl");
-        // check hasAudioControl just in case!
-        if( !hasAudioControl() ) {
-            if( MyDebug.LOG )
-                Log.e(TAG, "clickedAudioControl, but hasAudioControl returns false!");
-            return;
-        }
-        this.closePopup();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String audio_control = sharedPreferences.getString(PreferenceKeys.AudioControlPreferenceKey, "none");
-        /*if( audio_control.equals("voice") && speechControl.hasSpeechRecognition() ) {
-            if( speechControl.isStarted() ) {
-                speechControl.stopListening();
-            }
-            else {
-                boolean has_audio_permission = true;
-                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-                    // we restrict the checks to Android 6 or later just in case, see note in LocationSupplier.setupLocationListener()
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "check for record audio permission");
-                    if( ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
-                        if( MyDebug.LOG )
-                            Log.d(TAG, "record audio permission not available");
-                        applicationInterface.requestRecordAudioPermission();
-                        has_audio_permission = false;
-                    }
-                }
-                if( has_audio_permission ) {
-                    speechControl.showToast(true);
-                    speechControl.startSpeechRecognizerIntent();
-                    speechControl.speechRecognizerStarted();
-                }
-            }
-        }
-        else*/ if( audio_control.equals("noise") ){
-            if( audio_listener != null ) {
-                freeAudioListener(false);
-            }
-            else {
-                startAudioListener();
-            }
-        }
+        this.mainUI.getOnScreenIcons().clickedAudioControl();
     }
 
     /* Returns the cameraId that the "Switch camera" button will switch to.
@@ -3330,16 +3290,6 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         // ensure icons invisible if disabling them from showing from the Settings
         // (if enabling them, we'll make the icon visible later on)
         mainUI.getOnScreenIcons().checkDisableGUIIcons();
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String audio_control = sharedPreferences.getString(PreferenceKeys.AudioControlPreferenceKey, "none");
-        // better to only display the audio control icon if it matches specific known supported types
-        // (important now that "voice" is no longer supported)
-        //if( !audio_control.equals("voice") && !audio_control.equals("noise") ) {
-        if( !audio_control.equals("noise") ) {
-            View speechRecognizerButton = findViewById(R.id.audio_control);
-            speechRecognizerButton.setVisibility(View.GONE);
-        }
 
         //speechControl.initSpeechRecognizer(); // in case we've enabled or disabled speech recognizer
 
@@ -6522,7 +6472,11 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         push_info_toast_text = null; // reset
     }
 
-    private void freeAudioListener(boolean wait_until_done) {
+    public boolean hasAudioListener() {
+        return audio_listener != null;
+    }
+
+    public void freeAudioListener(boolean wait_until_done) {
         if( MyDebug.LOG )
             Log.d(TAG, "freeAudioListener");
         if( audio_listener != null ) {
@@ -6532,7 +6486,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         mainUI.audioControlStopped();
     }
 
-    private void startAudioListener() {
+    public void startAudioListener() {
         if( MyDebug.LOG )
             Log.d(TAG, "startAudioListener");
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
@@ -6588,18 +6542,6 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             audio_listener = null;
             preview.showToast(null, R.string.audio_listener_failed);
         }
-    }
-
-    public boolean hasAudioControl() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String audio_control = sharedPreferences.getString(PreferenceKeys.AudioControlPreferenceKey, "none");
-        /*if( audio_control.equals("voice") ) {
-            return speechControl.hasSpeechRecognition();
-        }
-        else*/ if( audio_control.equals("noise") ) {
-            return true;
-        }
-        return false;
     }
 
 	/*void startAudioListeners() {

@@ -58,6 +58,7 @@ public class OnScreenIcons {
         buttons.add(main_activity.findViewById(R.id.auto_level));
         buttons.add(main_activity.findViewById(R.id.cycle_flash));
         buttons.add(main_activity.findViewById(R.id.face_detection));
+        buttons.add(main_activity.findViewById(R.id.audio_control));
     }
 
     public void updateOnScreenIcons() {
@@ -200,6 +201,7 @@ public class OnScreenIcons {
         View autoLevelButton = main_activity.findViewById(R.id.auto_level);
         View cycleFlashButton = main_activity.findViewById(R.id.cycle_flash);
         View faceDetectionButton = main_activity.findViewById(R.id.face_detection);
+        View audioControlButton = main_activity.findViewById(R.id.audio_control);
 
         if( showExposureLockIcon() )
             exposureLockButton.setVisibility(visibility_video); // still allow exposure lock when recording video
@@ -221,6 +223,8 @@ public class OnScreenIcons {
             cycleFlashButton.setVisibility(visibility);
         if( showFaceDetectionIcon() )
             faceDetectionButton.setVisibility(visibility);
+        if( showAudioControlIcon() )
+            audioControlButton.setVisibility(visibility);
     }
 
     /** Disables the optional on-screen icons if either user doesn't want to enable them, or not
@@ -283,6 +287,11 @@ public class OnScreenIcons {
         }
         if( !showFaceDetectionIcon() ) {
             View button = main_activity.findViewById(R.id.face_detection);
+            changed = changed || (button.getVisibility() != View.GONE);
+            button.setVisibility(View.GONE);
+        }
+        if( !showAudioControlIcon() ) {
+            View button = main_activity.findViewById(R.id.audio_control);
             changed = changed || (button.getVisibility() != View.GONE);
             button.setVisibility(View.GONE);
         }
@@ -376,6 +385,18 @@ public class OnScreenIcons {
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
         return sharedPreferences.getBoolean(PreferenceKeys.ShowFaceDetectionPreferenceKey, false);
+    }
+
+    public boolean showAudioControlIcon() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+        String audio_control = sharedPreferences.getString(PreferenceKeys.AudioControlPreferenceKey, "none");
+        /*if( audio_control.equals("voice") ) {
+            return speechControl.hasSpeechRecognition();
+        }
+        else*/ if( audio_control.equals("noise") ) {
+            return true;
+        }
+        return false;
     }
 
     public void clickedExposureLock() {
@@ -579,5 +600,51 @@ public class OnScreenIcons {
         updateFaceDetectionIcon();
         main_activity.getPreview().showToast(face_detection_toast, value ? R.string.face_detection_enabled : R.string.face_detection_disabled, true);
         main_activity.reopenCamera(true);
+    }
+
+    public void clickedAudioControl() {
+        if( MyDebug.LOG )
+            Log.d(TAG, "clickedAudioControl");
+        // check hasAudioControl just in case!
+        if( !showAudioControlIcon() ) {
+            if( MyDebug.LOG )
+                Log.e(TAG, "clickedAudioControl, but hasAudioControl returns false!");
+            return;
+        }
+        main_activity.closePopup();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+        String audio_control = sharedPreferences.getString(PreferenceKeys.AudioControlPreferenceKey, "none");
+        /*if( audio_control.equals("voice") && speechControl.hasSpeechRecognition() ) {
+            if( speechControl.isStarted() ) {
+                speechControl.stopListening();
+            }
+            else {
+                boolean has_audio_permission = true;
+                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+                    // we restrict the checks to Android 6 or later just in case, see note in LocationSupplier.setupLocationListener()
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "check for record audio permission");
+                    if( ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "record audio permission not available");
+                        applicationInterface.requestRecordAudioPermission();
+                        has_audio_permission = false;
+                    }
+                }
+                if( has_audio_permission ) {
+                    speechControl.showToast(true);
+                    speechControl.startSpeechRecognizerIntent();
+                    speechControl.speechRecognizerStarted();
+                }
+            }
+        }
+        else*/ if( audio_control.equals("noise") ){
+            if( main_activity.hasAudioListener() ) {
+                main_activity.freeAudioListener(false);
+            }
+            else {
+                main_activity.startAudioListener();
+            }
+        }
     }
 }

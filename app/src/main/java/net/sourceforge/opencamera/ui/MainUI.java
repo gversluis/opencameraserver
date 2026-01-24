@@ -472,7 +472,6 @@ public class MainUI {
 
             onScreenIcons.addOnScreenIcons(buttons_permanent);
 
-            buttons_permanent.add(main_activity.findViewById(R.id.audio_control));
             buttons_permanent.add(main_activity.findViewById(R.id.kraken_icon));
 
             List<View> buttons_all = new ArrayList<>(buttons_permanent);
@@ -1243,7 +1242,6 @@ public class MainUI {
                 View switchMultiCameraButton = main_activity.findViewById(R.id.switch_multi_camera);
                 View switchVideoButton = main_activity.findViewById(R.id.switch_video);
                 View exposureButton = main_activity.findViewById(R.id.exposure);
-                View audioControlButton = main_activity.findViewById(R.id.audio_control);
                 View popupButton = main_activity.findViewById(R.id.popup);
                 View galleryButton = main_activity.findViewById(R.id.gallery);
                 View settingsButton = main_activity.findViewById(R.id.settings);
@@ -1258,8 +1256,6 @@ public class MainUI {
                 if( main_activity.supportsExposureButton() )
                     exposureButton.setVisibility(visibility);
                 onScreenIcons.setVisibility(visibility, visibility);
-                if( main_activity.hasAudioControl() )
-                    audioControlButton.setVisibility(visibility);
                 popupButton.setVisibility(visibility);
                 galleryButton.setVisibility(visibility);
                 settingsButton.setVisibility(visibility);
@@ -1338,7 +1334,6 @@ public class MainUI {
                 View switchMultiCameraButton = main_activity.findViewById(R.id.switch_multi_camera);
                 View switchVideoButton = main_activity.findViewById(R.id.switch_video);
                 View exposureButton = main_activity.findViewById(R.id.exposure);
-                View audioControlButton = main_activity.findViewById(R.id.audio_control);
                 View popupButton = main_activity.findViewById(R.id.popup);
                 settingsButton.setVisibility(visibility_video); // still allow settings when recording video - arguably we shouldn't, but looks wierd given that the other default icons aren't hidden when recording video
                 if( main_activity.getPreview().getCameraControllerManager().getNumberOfCameras() > 1 )
@@ -1349,8 +1344,6 @@ public class MainUI {
                 if( main_activity.supportsExposureButton() )
                     exposureButton.setVisibility(visibility_video); // still allow exposure when recording video
                 onScreenIcons.setVisibility(visibility, visibility_video);
-                if( main_activity.hasAudioControl() )
-                    audioControlButton.setVisibility(visibility);
                 if( !(show_gui_photo && show_gui_video) ) {
                     closePopup(); // we still allow the popup when recording video, but need to update the UI (so it only shows flash options), so easiest to just close
                 }
