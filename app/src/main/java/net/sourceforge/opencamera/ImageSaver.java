@@ -2827,7 +2827,7 @@ public class ImageSaver extends Thread {
         return success;
     }
 
-    /** As setExifFromFile, but can read the Exif tags directly from the jpeg data rather than a file.
+    /** Transfers exif tags from the JPEG data to the image file, and then applies any extra Exif tags according to the preferences in the request.
      */
     private static void setExifFromData(final Request request, byte [] data, File to_file) throws IOException {
         if( MyDebug.LOG ) {
@@ -2855,7 +2855,7 @@ public class ImageSaver extends Thread {
         storageUtils.broadcastUri(saveUri, true, false, set_last_scanned, hasnoexifdatetime, image_capture_intent);
     }
 
-    /** As setExifFromFile, but can read the Exif tags directly from the jpeg data, and to a file descriptor, rather than a file.
+    /** Transfers exif tags from the JPEG data to the image file descriptor, and then applies any extra Exif tags according to the preferences in the request.
      */
     private static void setExifFromData(final Request request, byte [] data, FileDescriptor to_file_descriptor) throws IOException {
         if( MyDebug.LOG ) {
