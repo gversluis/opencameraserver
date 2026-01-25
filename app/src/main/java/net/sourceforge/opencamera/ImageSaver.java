@@ -28,6 +28,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -2647,7 +2648,7 @@ public class ImageSaver extends Thread {
                         }
                     }
                     else {
-                        updateExif(request, picFile, saveUri);
+                        updateExif(main_activity, request, picFile, saveUri);
                         if( MyDebug.LOG ) {
                             Log.d(TAG, "Save single image performance: time after updateExif: " + (System.currentTimeMillis() - time_s));
                         }
@@ -2828,7 +2829,7 @@ public class ImageSaver extends Thread {
 
     /** As setExifFromFile, but can read the Exif tags directly from the jpeg data rather than a file.
      */
-    private void setExifFromData(final Request request, byte [] data, File to_file) throws IOException {
+    private static void setExifFromData(final Request request, byte [] data, File to_file) throws IOException {
         if( MyDebug.LOG ) {
             Log.d(TAG, "setExifFromData");
             Log.d(TAG, "to_file: " + to_file);
@@ -2877,7 +2878,7 @@ public class ImageSaver extends Thread {
 
     /** Transfers device exif info. Should only be called if request.remove_device_exif == Request.RemoveDeviceExif.OFF.
      */
-    private void transferDeviceExif(ExifInterface exif, ExifInterface exif_new) {
+    private static void transferDeviceExif(ExifInterface exif, ExifInterface exif_new) {
         if( MyDebug.LOG )
             Log.d(TAG, "transferDeviceExif");
 
@@ -3139,7 +3140,7 @@ public class ImageSaver extends Thread {
 
     /** Transfers device exif info related to date and time.
      */
-    private void transferDeviceExifDateTime(ExifInterface exif, ExifInterface exif_new) {
+    private static void transferDeviceExifDateTime(ExifInterface exif, ExifInterface exif_new) {
         if( MyDebug.LOG )
             Log.d(TAG, "transferDeviceExifDateTime");
 
@@ -3178,7 +3179,7 @@ public class ImageSaver extends Thread {
 
     /** Transfers device exif info related to gps location.
      */
-    private void transferDeviceExifGPS(ExifInterface exif, ExifInterface exif_new) {
+    private static void transferDeviceExifGPS(ExifInterface exif, ExifInterface exif_new) {
         if( MyDebug.LOG )
             Log.d(TAG, "transferDeviceExifGPS");
 
@@ -3226,7 +3227,7 @@ public class ImageSaver extends Thread {
      *  transferred across. This method is for extra paranoia: first to reduce the risk of future
      *  bugs, secondly just in case saving via a bitmap does ever add exif tags.
      */
-    private void removeExifTags(ExifInterface exif_new, final Request request) {
+    private static void removeExifTags(ExifInterface exif_new, final Request request) {
         if( MyDebug.LOG )
             Log.d(TAG, "removeExifTags");
 
@@ -3413,7 +3414,7 @@ public class ImageSaver extends Thread {
      *  the same string value (e.g., TAG_APERTURE replaced with TAG_F_NUMBER, but both have value "FNumber"). We use the deprecated versions
      *  to avoid complicating the code (we'd still have to read the deprecated values for older devices).
      */
-    private void setExif(final Request request, ExifInterface exif, ExifInterface exif_new) throws IOException {
+    private static void setExif(final Request request, ExifInterface exif, ExifInterface exif_new) throws IOException {
         if( MyDebug.LOG )
             Log.d(TAG, "setExif");
 
@@ -3645,7 +3646,7 @@ public class ImageSaver extends Thread {
      *  return null if this method was unable to create the exif interface.
      *  The caller should call close() on the returned ExifInterfaceHolder when no longer required.
      */
-    private ExifInterfaceHolder createExifInterface(File picFile, Uri saveUri) throws IOException {
+    private static ExifInterfaceHolder createExifInterface(Context context, File picFile, Uri saveUri) throws IOException {
         ParcelFileDescriptor parcelFileDescriptor = null;
         ExifInterface exif = null;
         if( picFile != null ) {
@@ -3656,7 +3657,7 @@ public class ImageSaver extends Thread {
         else {
             if( MyDebug.LOG )
                 Log.d(TAG, "write direct to saveUri: " + saveUri);
-            parcelFileDescriptor = main_activity.getContentResolver().openFileDescriptor(saveUri, "rw");
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(saveUri, "rw");
             if( parcelFileDescriptor != null ) {
                 FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
                 exif = new ExifInterface(fileDescriptor);
@@ -3673,7 +3674,7 @@ public class ImageSaver extends Thread {
      *  If picFile==null, then saveUri must be non-null, and will be used instead to write the exif
      *  tags too.
      */
-    private void updateExif(Request request, File picFile, Uri saveUri) throws IOException {
+    private static void updateExif(Context context, Request request, File picFile, Uri saveUri) throws IOException {
         if( MyDebug.LOG )
             Log.d(TAG, "updateExif: " + picFile);
         if( request.store_geo_direction || request.store_ypr || hasCustomExif(request.custom_tag_artist, request.custom_tag_copyright) ||
@@ -3683,7 +3684,7 @@ public class ImageSaver extends Thread {
             if( MyDebug.LOG )
                 Log.d(TAG, "add additional exif info");
             try {
-                ExifInterfaceHolder exif_holder = createExifInterface(picFile, saveUri);
+                ExifInterfaceHolder exif_holder = createExifInterface(context, picFile, saveUri);
                 if( MyDebug.LOG )
                     Log.d(TAG, "*** time after create exif: " + (System.currentTimeMillis() - time_s));
                 try {
@@ -3718,7 +3719,7 @@ public class ImageSaver extends Thread {
     /** Makes various modifications to the exif data, if necessary.
      *  Any fix-ups should respect the setting of RemoveDeviceExif!
      */
-    private void modifyExif(ExifInterface exif, Request.RemoveDeviceExif remove_device_exif, boolean is_jpeg, boolean using_camera2, boolean using_camera_extensions, Date current_date, boolean store_location, Location location, boolean store_geo_direction, double geo_direction, String custom_tag_artist, String custom_tag_copyright, double level_angle, double pitch_angle, boolean store_ypr) {
+    private static void modifyExif(ExifInterface exif, Request.RemoveDeviceExif remove_device_exif, boolean is_jpeg, boolean using_camera2, boolean using_camera_extensions, Date current_date, boolean store_location, Location location, boolean store_geo_direction, double geo_direction, String custom_tag_artist, String custom_tag_copyright, double level_angle, double pitch_angle, boolean store_ypr) {
         if( MyDebug.LOG )
             Log.d(TAG, "modifyExif");
         setGPSDirectionExif(exif, store_geo_direction, geo_direction);
@@ -3779,7 +3780,7 @@ public class ImageSaver extends Thread {
         }
     }
 
-    private void setGPSDirectionExif(ExifInterface exif, boolean store_geo_direction, double geo_direction) {
+    private static void setGPSDirectionExif(ExifInterface exif, boolean store_geo_direction, double geo_direction) {
         if( MyDebug.LOG )
             Log.d(TAG, "setGPSDirectionExif");
         if( store_geo_direction ) {
@@ -3801,7 +3802,7 @@ public class ImageSaver extends Thread {
 
     /** Whether custom exif tags need to be applied to the image file.
      */
-    private boolean hasCustomExif(String custom_tag_artist, String custom_tag_copyright) {
+    private static boolean hasCustomExif(String custom_tag_artist, String custom_tag_copyright) {
         if( custom_tag_artist != null && !custom_tag_artist.isEmpty() )
             return true;
         if( custom_tag_copyright != null && !custom_tag_copyright.isEmpty() )
@@ -3811,7 +3812,7 @@ public class ImageSaver extends Thread {
 
     /** Applies the custom exif tags to the ExifInterface.
      */
-    private void setCustomExif(ExifInterface exif, String custom_tag_artist, String custom_tag_copyright) {
+    private static void setCustomExif(ExifInterface exif, String custom_tag_artist, String custom_tag_copyright) {
         if( MyDebug.LOG )
             Log.d(TAG, "setCustomExif");
         if( custom_tag_artist != null && !custom_tag_artist.isEmpty() ) {
@@ -3831,7 +3832,7 @@ public class ImageSaver extends Thread {
     /** Adds exif tags for datetime from the supplied date, if not present. Needed for camera vendor
      *  extensions which (at least on Galaxy S10e) don't seem to have these tags set at all!
      */
-    private void addDateTimeExif(ExifInterface exif, Date current_date) {
+    private static void addDateTimeExif(ExifInterface exif, Date current_date) {
         if( MyDebug.LOG )
             Log.d(TAG, "addDateTimeExif");
         String exif_datetime = exif.getAttribute(ExifInterface.TAG_DATETIME);
@@ -3864,7 +3865,7 @@ public class ImageSaver extends Thread {
         }
     }
 
-    private void fixGPSTimestamp(ExifInterface exif, Date current_date) {
+    private static void fixGPSTimestamp(ExifInterface exif, Date current_date) {
         if( MyDebug.LOG ) {
             Log.d(TAG, "fixGPSTimestamp");
             Log.d(TAG, "current datestamp: " + exif.getAttribute(ExifInterface.TAG_GPS_DATESTAMP));
@@ -3904,7 +3905,7 @@ public class ImageSaver extends Thread {
      *  Also some devices (e.g. Pixel 6 Pro) have problem that location is not stored in images with Camera2 API, so we need to
      *  enter modifyExif() to add it if not present; similarly Fairphone 5 needs correcting due to storing longitude as 0.0.
      */
-    private boolean needGPSExifFix(boolean is_jpeg, boolean using_camera2, boolean store_location) {
+    private static boolean needGPSExifFix(boolean is_jpeg, boolean using_camera2, boolean store_location) {
         if( is_jpeg && using_camera2 ) {
             return store_location;
         }
