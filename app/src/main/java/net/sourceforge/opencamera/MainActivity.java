@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     private SoundPoolManager soundPoolManager;
     private MagneticSensor magneticSensor;
     //private SpeechControl speechControl;
+    private MultiCamHandler multiCamHandler;
 
     private Preview preview;
     private OrientationEventListener orientationEventListener;
@@ -176,16 +177,6 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     public static volatile boolean test_force_window_insets; // test flag, if set to true, then the OnApplyWindowInsetsListener will read from the following flags
     public static volatile Insets test_insets; // test insets for WindowInsets.Type.navigationBars() | WindowInsets.Type.displayCutout()
     public static volatile Insets test_cutout_insets; // test insets for WindowInsets.Type.displayCutout()
-
-    // whether this is a multi-camera device (note, this isn't simply having more than 1 camera, but also having more than one with the same facing)
-    // note that in most cases, code should check the MultiCamButtonPreferenceKey preference as well as the is_multi_cam flag,
-    // this can be done via isMultiCamEnabled().
-    private boolean is_multi_cam;
-    // These lists are lists of camera IDs with the same "facing" (front, back or external).
-    // Only initialised if is_multi_cam==true.
-    private List<Integer> back_camera_ids;
-    private List<Integer> front_camera_ids;
-    private List<Integer> other_camera_ids;
 
     private final ToastBoxer switch_video_toast = new ToastBoxer();
     private final ToastBoxer screen_locked_toast = new ToastBoxer();
@@ -426,57 +417,11 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 
         // Setup multi-camera buttons (must be done after creating preview so we know which Camera API is being used,
         // and before initialising on-screen visibility).
-        // We only allow the separate icon for switching cameras if:
-        // - there are at least 2 types of "facing" camera, and
-        // - there are at least 2 cameras with the same "facing".
-        // If there are multiple cameras but all with different "facing", then the switch camera
-        // icon is used to iterate over all cameras.
-        // If there are more than two cameras, but all cameras have the same "facing, we still stick
-        // with using the switch camera icon to iterate over all cameras.
-        int n_cameras = preview.getCameraControllerManager().getNumberOfCameras();
-        if( n_cameras > 2 ) {
-            this.back_camera_ids = new ArrayList<>();
-            this.front_camera_ids = new ArrayList<>();
-            this.other_camera_ids = new ArrayList<>();
-            for(int i=0;i<n_cameras;i++) {
-                switch( preview.getCameraControllerManager().getFacing(i) ) {
-                    case FACING_BACK:
-                        back_camera_ids.add(i);
-                        break;
-                    case FACING_FRONT:
-                        front_camera_ids.add(i);
-                        break;
-                    default:
-                        // we assume any unknown cameras are also external
-                        other_camera_ids.add(i);
-                        break;
-                }
-            }
-            boolean multi_same_facing = back_camera_ids.size() >= 2 || front_camera_ids.size() >= 2 || other_camera_ids.size() >= 2;
-            int n_facing = 0;
-            if( !back_camera_ids.isEmpty() )
-                n_facing++;
-            if( !front_camera_ids.isEmpty() )
-                n_facing++;
-            if( !other_camera_ids.isEmpty() )
-                n_facing++;
-            this.is_multi_cam = multi_same_facing && n_facing >= 2;
-            //this.is_multi_cam = false; // test
-            if( MyDebug.LOG ) {
-                Log.d(TAG, "multi_same_facing: " + multi_same_facing);
-                Log.d(TAG, "n_facing: " + n_facing);
-                Log.d(TAG, "is_multi_cam: " + is_multi_cam);
-            }
-
-            if( !is_multi_cam ) {
-                this.back_camera_ids = null;
-                this.front_camera_ids = null;
-                this.other_camera_ids = null;
-            }
-        }
+        this.multiCamHandler = new MultiCamHandler(preview.getCameraControllerManager());
 
         // initialise on-screen button visibility
         View switchCameraButton = findViewById(R.id.switch_camera);
+        final int n_cameras = preview.getCameraControllerManager().getNumberOfCameras();
         switchCameraButton.setVisibility(n_cameras > 1 ? View.VISIBLE : View.GONE);
         // switchMultiCameraButton visibility updated below in mainUI.updateOnScreenIcons(), as it also depends on user preference
         View speechRecognizerButton = findViewById(R.id.audio_control);
@@ -752,15 +697,14 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     /** Whether this is a multi camera device, and the user preference is set to enable the multi-camera button.
      */
     public boolean isMultiCamEnabled() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        return is_multi_cam && sharedPreferences.getBoolean(PreferenceKeys.MultiCamButtonPreferenceKey, true);
+        return multiCamHandler.isMultiCamEnabled(this);
     }
 
     /** Whether this is a multi camera device, whether or not the user preference is set to enable
      *  the multi-camera button.
      */
     public boolean isMultiCam() {
-        return is_multi_cam;
+        return multiCamHandler.isMultiCam();
     }
 
     /* Returns the camera Id in use by the preview - or the one we requested, if the camera failed
@@ -794,19 +738,8 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         }
         if( isMultiCamEnabled() ) {
             int cameraId = getActualCameraId();
-            switch( preview.getCameraControllerManager().getFacing(cameraId) ) {
-                case FACING_BACK:
-                    if( back_camera_ids.size() > 1 )
-                        return true;
-                    break;
-                case FACING_FRONT:
-                    if( front_camera_ids.size() > 1 )
-                        return true;
-                    break;
-                default:
-                    if( other_camera_ids.size() > 1 )
-                        return true;
-                    break;
+            if( this.multiCamHandler.hasMultiCameras(preview.getCameraControllerManager().getFacing(cameraId)) ) {
+                return true;
             }
         }
         return false;
@@ -2160,33 +2093,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         if( MyDebug.LOG )
             Log.d(TAG, "current cameraId: " + cameraId);
         if( this.preview.canSwitchCamera() ) {
-            if( isMultiCamEnabled() ) {
-                // don't use preview.getCameraController(), as it may be null if user quickly switches between cameras
-                switch( preview.getCameraControllerManager().getFacing(cameraId) ) {
-                    case FACING_BACK:
-                        if( !front_camera_ids.isEmpty() )
-                            cameraId = front_camera_ids.get(0);
-                        else if( !other_camera_ids.isEmpty() )
-                            cameraId = other_camera_ids.get(0);
-                        break;
-                    case FACING_FRONT:
-                        if( !other_camera_ids.isEmpty() )
-                            cameraId = other_camera_ids.get(0);
-                        else if( !back_camera_ids.isEmpty() )
-                            cameraId = back_camera_ids.get(0);
-                        break;
-                    default:
-                        if( !back_camera_ids.isEmpty() )
-                            cameraId = back_camera_ids.get(0);
-                        else if( !front_camera_ids.isEmpty() )
-                            cameraId = front_camera_ids.get(0);
-                        break;
-                }
-            }
-            else {
-                int n_cameras = preview.getCameraControllerManager().getNumberOfCameras();
-                cameraId = (cameraId+1) % n_cameras;
-            }
+            cameraId = this.multiCamHandler.getNextCameraId(this, preview.getCameraControllerManager(), cameraId);
         }
         if( MyDebug.LOG )
             Log.d(TAG, "next cameraId: " + cameraId);
@@ -2331,16 +2238,8 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     /** Returns list of logical cameras with same facing as the supplied camera_id.
      */
     public List<Integer> getSameFacingLogicalCameras(int camera_id) {
-        List<Integer> logical_camera_ids = new ArrayList<>();
         CameraController.Facing this_facing = preview.getCameraControllerManager().getFacing(camera_id);
-        for(int i=0;i<preview.getCameraControllerManager().getNumberOfCameras();i++) {
-            if( preview.getCameraControllerManager().getFacing(i) != this_facing ) {
-                // only show cameras with same facing
-                continue;
-            }
-            logical_camera_ids.add(i);
-        }
-        return logical_camera_ids;
+        return this.multiCamHandler.getSameFacingLogicalCameras(preview.getCameraControllerManager(), this_facing);
     }
 
     private AlertDialog switch_multi_camera_dialog;
@@ -2906,7 +2805,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         bundle.putBoolean("supports_white_balance_temperature", this.preview.supportsWhiteBalanceTemperature());
         bundle.putInt("white_balance_temperature_min", this.preview.getMinimumWhiteBalanceTemperature());
         bundle.putInt("white_balance_temperature_max", this.preview.getMaximumWhiteBalanceTemperature());
-        bundle.putBoolean("is_multi_cam", this.is_multi_cam);
+        bundle.putBoolean("is_multi_cam", this.multiCamHandler.isMultiCam());
         bundle.putBoolean("has_physical_cameras", this.preview.hasPhysicalCameras());
         bundle.putBoolean("supports_optical_stabilization", this.preview.supportsOpticalStabilization());
         bundle.putBoolean("optical_stabilization_enabled", this.preview.getOpticalStabilization());
