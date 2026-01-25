@@ -322,7 +322,7 @@ public class Preshots {
                     bitmap = bitmaps.get(0);
                 }*/
 
-                ImageSaver.PostProcessBitmapResult postProcessBitmapResult = image_saver.postProcessBitmap(preshot_request, null, bitmap, true);
+                PostProcessing.PostProcessBitmapResult postProcessBitmapResult = image_saver.getPostProcessing().postProcessBitmap(preshot_request, null, bitmap, true);
                 bitmap = postProcessBitmapResult.bitmap;
                 preshot_bitmaps.set(i, bitmap);
             }

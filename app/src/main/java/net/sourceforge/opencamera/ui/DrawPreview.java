@@ -13,12 +13,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import net.sourceforge.opencamera.GyroSensor;
-import net.sourceforge.opencamera.ImageSaver;
 import net.sourceforge.opencamera.ImageUtils;
 import net.sourceforge.opencamera.LocationSupplier;
 import net.sourceforge.opencamera.MainActivity;
 import net.sourceforge.opencamera.MyApplicationInterface;
 import net.sourceforge.opencamera.MyDebug;
+import net.sourceforge.opencamera.PostProcessing;
 import net.sourceforge.opencamera.PreferenceKeys;
 import net.sourceforge.opencamera.preview.ApplicationInterface;
 import net.sourceforge.opencamera.R;
@@ -2589,7 +2589,7 @@ public class DrawPreview {
             double w0 = (w1 * Math.cos(level_angle_rad_abs) + h1 * Math.sin(level_angle_rad_abs));
             double h0 = (w1 * Math.sin(level_angle_rad_abs) + h1 * Math.cos(level_angle_rad_abs));
 
-            if( ImageSaver.autoStabiliseCrop(auto_stabilise_crop, level_angle_rad_abs, w0, h0, w1, h1, canvas.getWidth(), canvas.getHeight()) ) {
+            if( PostProcessing.autoStabiliseCrop(auto_stabilise_crop, level_angle_rad_abs, w0, h0, w1, h1, canvas.getWidth(), canvas.getHeight()) ) {
                 int w2 = auto_stabilise_crop[0];
                 int h2 = auto_stabilise_crop[1];
                 int cx = canvas.getWidth()/2;
