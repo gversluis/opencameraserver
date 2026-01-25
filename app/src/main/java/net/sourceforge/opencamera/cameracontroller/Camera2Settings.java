@@ -266,15 +266,10 @@ public class Camera2Settings {
         else {
             if( MyDebug.LOG )
                 Log.d(TAG, "setting scene mode: " + scene_mode);
-            int new_mode;
-            if( scene_mode == CameraMetadata.CONTROL_SCENE_MODE_DISABLED ) {
-                // note we set CONTROL_MODE_AUTO even if using manual exposure, focus or awb, as we set that separately via
-                // CONTROL_AE_MODE_OFF etc
-                new_mode = CameraMetadata.CONTROL_MODE_AUTO;
-            }
-            else {
-                new_mode = CameraMetadata.CONTROL_MODE_USE_SCENE_MODE;
-            }
+            // note we set CONTROL_MODE_AUTO even if using manual exposure, focus or awb, as we set that separately via
+            // CONTROL_AE_MODE_OFF etc
+            int new_mode = scene_mode == CameraMetadata.CONTROL_SCENE_MODE_DISABLED ?
+                    CameraMetadata.CONTROL_MODE_AUTO : CameraMetadata.CONTROL_MODE_USE_SCENE_MODE;
             builder.set(CaptureRequest.CONTROL_MODE, new_mode);
             builder.set(CaptureRequest.CONTROL_SCENE_MODE, scene_mode);
             if( current_mode == null || current_mode != new_mode || current_scene_mode == null || current_scene_mode != scene_mode )
@@ -844,19 +839,18 @@ public class Camera2Settings {
                         // of the x values we use)
                         // can be reproduced on at least OnePlus 3T and Galaxy S10e (although the exact behaviour of the
                         // poor results is different on those devices)
-                        int n_values = CameraController2.tonemap_log_max_curve_points_c;
-                        if( is_samsung ) {
-                            // unfortunately odd bug on Samsung devices (at least S7 and S10e) where if more than 32 control points,
-                            // the maximum brightness value is reduced (can best be seen with 64 points, and using gamma==1.0)
-                            // note that Samsung devices also need at least 16 control points - or in some cases 32, see comments for
-                            // enforceMinTonemapCurvePoints().
-                            // 32 is better than 16 anyway, as better to have more points for finer curve where possible.
-                            n_values = 32;
-                        }
+
+                        // unfortunately odd bug on Samsung devices (at least S7 and S10e) where if more than 32 control points,
+                        // the maximum brightness value is reduced (can best be seen with 64 points, and using gamma==1.0)
+                        // note that Samsung devices also need at least 16 control points - or in some cases 32, see comments for
+                        // CameraController2.enforceMinTonemapCurvePoints().
+                        // 32 is better than 16 anyway, as better to have more points for finer curve where possible.
+                        int n_values = is_samsung ? 32 : CameraController2.tonemap_log_max_curve_points_c;
                         //int n_values = test_new ? 32 : 128;
                         //int n_values = 32;
                         if( MyDebug.LOG )
                             Log.d(TAG, "n_values: " + n_values);
+
                         values = new float [2*n_values];
                         for(int i=0;i<n_values;i++) {
                             float in = ((float)i) / (n_values-1.0f);
