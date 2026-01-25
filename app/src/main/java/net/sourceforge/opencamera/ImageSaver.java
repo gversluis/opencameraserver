@@ -2857,7 +2857,7 @@ public class ImageSaver extends Thread {
 
     /** As setExifFromFile, but can read the Exif tags directly from the jpeg data, and to a file descriptor, rather than a file.
      */
-    private void setExifFromData(final Request request, byte [] data, FileDescriptor to_file_descriptor) throws IOException {
+    private static void setExifFromData(final Request request, byte [] data, FileDescriptor to_file_descriptor) throws IOException {
         if( MyDebug.LOG ) {
             Log.d(TAG, "setExifFromData");
             Log.d(TAG, "to_file_descriptor: " + to_file_descriptor);
