@@ -101,14 +101,6 @@
 
 <p>Color effects don't work on the Nexus 7.</p>
 
-<h3>Huawei</h3>
-
-<p>I've had reports of expo bracketing and HDR in Camera2 mode not working properly on some Huawei devices
-        (Huawei P8 lite 2017, P9). See <a href="https://sourceforge.net/p/opencamera/tickets/368/">here</a> for details.</p>
-
-<p>I've also had reports of RAW/DNG images being saved with red/blue swapped. See
-<a href="https://sourceforge.net/p/opencamera/tickets/422/">here</a> for details.</p>
-
 <h3>Nokia</h3>
 
 <p>I've tested Open Camera with the Nokia 8. Everything seems to work as far as I can tell, including Camera2 API with full
@@ -118,31 +110,6 @@ manual controls, RAW and 120fps video.</p>
 
 <p>I've tested Open Camera with the OnePlus Pad. Everything seems to work as far as I can tell, including Camera2 API with full
         manual controls, and RAW.</p>
-
-<p>The OnePlus 3T had problems related to Camera2 API and manual exposure:</p>
-<ul>
-        <li>Manual exposure sometimes fails (the preview corrupts or the device may freeze for a few moments), this also
-                includes HDR.</li>
-        <li>Low light scenes show the wrong ISO and shutter speed, both on-screen and in the saved Exif info (although the
-                photos themselves still come out okay); also a knock on effect of this bug is that HDR and expo bracketing
-                don't work in low light. Manual ISO also doesn't work above 799 (the images still come out with ISO at 799).</li>
-</ul>
-<p>See <a href="https://community.oneplus.com/thread/506100">this thread</a> for more
-        details.</p>
-
-<p>The OnePlus 5 seems to have the same problems with Camera2 API as the OnePlus 3T (see above). Issues with RAW images have been
-        reported for third party camera applications - see
-        <a href="https://sourceforge.net/p/opencamera/discussion/general/thread/0a9b5bef/">here</a>,
-        <a href="https://forums.oneplus.net/threads/pink-tint-on-dng.562049/">here</a> and
-        <a href="https://forums.oneplus.net/threads/raw-camera-purple-halo.565588/">here</a>. As of August 2017,
-        <a href="https://forums.oneplus.net/threads/pink-cast-on-dng-files-when-shooting-with-other-apps.580035/">this
-                seems to have been fixed</a>.
-        But as of December 2017, there seem to be
-        <a href="https://forums.oneplus.net/threads/raw-pictures-with-third-party-camera-app-are-greenish.727594/">additional
-                problems with RAW on Android 8.</a>
-</p>
-
-<p>The OnePlus 3T and 5 are rather old devices - as I say, the more recent OnePlus Pad does not seem to have these problems.</p>
 
 <h3>Samsung</h3>
 
@@ -183,21 +150,6 @@ in general this is more likely to be available for the flagship S devices runnin
 <p>Some Samsung devices do not have any "scene modes" (in some cases this can depend on even which variant of a device is
         used).</p>
 
-<!--<p>I've had reports of picture quality being poor on Camera2 API the Galaxy S7 and S7 Edge, though improvements were made in
-        v1.42.1 onwards of Open Camera. See
-        <a href="https://sourceforge.net/p/opencamera/discussion/general/thread/48bd836b/">here</a> for details.</p>
--->
-
-<p>At least some Samsung devices don't seem to have support for high speed frame rates for video for third party camera applications.
-        Filmic have documented issues for the
-        <a href="https://filmicpro.helpscoutdocs.com/article/41-samsung-s9-and-s9-filmic-pro-v6-compatibility-guide">S9 and S9+</a>, and
-        <a href="https://filmicpro.helpscoutdocs.com/article/42-samsung-note-9-filmic-pro-v6-compatibility-guide">Note 9</a> (these articles
-        are for Filmic Pro, but the issues faced likely affect all third party camera applications, including Open Camera).</p>
-
-<p>On a related note, the Galaxy Note 4 and 5 were used with Open Camera to film
-        <a href="https://sourceforge.net/p/opencamera/blog/2015/10/cai-lan-gong---worlds-first-feature-film-shot-with-a-smartphone-at-4k-resolution/">the
-                world's first 4K feature film shot on a phone</a>.</p>
-
 <h3>Sony Xperia</h3>
 
 <p>To enable the 23MP photo resolution, you need to set Settings/"Camera API" to "Camera2 API". Someone has reported to me this works on the
@@ -205,11 +157,6 @@ in general this is more likely to be available for the flagship S devices runnin
 <!--<p>23MP photo resolution isn't available, the maximum seems to be 8MP. This seems to be due to
         <a href="http://talk.sonymobile.com/t5/Xperia-Z5-Z5-Compact-Z5-Premium/Full-camera-res-in-third-party-apps/td-p/1045437/highlight/true/page/4">Sony
                 not making this available for third party camera applications</a>.</p>-->
-
-<p>Sony devices <a href="https://talk.sonymobile.com/t5/Software-Updates/Camera2-API/td-p/974742/page/122">don't seem to support
-        RAW/DNG</a> at the time of writing.</p>
-
-<p>I've had a report that manual white balance temperature doesn't work (Sony Xperia X Compact).</p>
 
 <hr>
 <p><a href="privacy_oc.html">Open Camera Privacy Policy.</a></p>
