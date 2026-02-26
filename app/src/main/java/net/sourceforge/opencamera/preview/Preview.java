@@ -1,6 +1,7 @@
 package net.sourceforge.opencamera.preview;
 
 import net.sourceforge.opencamera.JavaImageFunctions;
+import net.sourceforge.opencamera.JavaImageFunctionsPreview;
 import net.sourceforge.opencamera.JavaImageProcessing;
 import net.sourceforge.opencamera.cameracontroller.RawImage;
 //import net.sourceforge.opencamera.MainActivity;
@@ -8907,7 +8908,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 
                     int zebra_stripes_width = zebra_stripes_bitmap_buffer.getWidth()/20;
 
-                    JavaImageFunctions.ZebraStripesApplyFunction function = new JavaImageFunctions.ZebraStripesApplyFunction(preview.zebra_stripes_threshold, preview.zebra_stripes_color_foreground, preview.zebra_stripes_color_background, zebra_stripes_width);
+                    JavaImageFunctionsPreview.ZebraStripesApplyFunction function = new JavaImageFunctionsPreview.ZebraStripesApplyFunction(preview.zebra_stripes_threshold, preview.zebra_stripes_color_foreground, preview.zebra_stripes_color_background, zebra_stripes_width);
                     JavaImageProcessing.applyFunction(function, preview_bitmap, zebra_stripes_bitmap_buffer, 0, 0, preview_bitmap.getWidth(), preview_bitmap.getHeight());
 
                     // The original orientation of the bitmap we get from textureView.getBitmap() needs to be rotated to
@@ -8959,10 +8960,10 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                         debug_time_focus_peaking = System.currentTimeMillis();
                     }
 
-                    JavaImageFunctions.FocusPeakingApplyFunction function = new JavaImageFunctions.FocusPeakingApplyFunction(preview_bitmap);
+                    JavaImageFunctionsPreview.FocusPeakingApplyFunction function = new JavaImageFunctionsPreview.FocusPeakingApplyFunction(preview_bitmap);
                     JavaImageProcessing.applyFunction(function, preview_bitmap, focus_peaking_bitmap_buffer_temp, 0, 0, preview_bitmap.getWidth(), preview_bitmap.getHeight());
 
-                    JavaImageFunctions.FocusPeakingFilteredApplyFunction function_filtered = new JavaImageFunctions.FocusPeakingFilteredApplyFunction(focus_peaking_bitmap_buffer_temp);
+                    JavaImageFunctionsPreview.FocusPeakingFilteredApplyFunction function_filtered = new JavaImageFunctionsPreview.FocusPeakingFilteredApplyFunction(focus_peaking_bitmap_buffer_temp);
                     JavaImageProcessing.applyFunction(function_filtered, focus_peaking_bitmap_buffer_temp, focus_peaking_bitmap_buffer, 0, 0, preview_bitmap.getWidth(), preview_bitmap.getHeight());
 
                     // See comments above for zebra stripes

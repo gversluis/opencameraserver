@@ -54,7 +54,7 @@ public class PanoramaProcessor {
         //final boolean use_reduce_2d = true;
         final boolean use_reduce_2d = false; // faster to do reduce as two 1D passes (note this gives minor differences in resultant images due to numerical wobble)
         if( use_reduce_2d ) {
-            JavaImageFunctions.ReduceBitmapFunction function = new JavaImageFunctions.ReduceBitmapFunction(bitmap);
+            JavaImageFunctionsPanorama.ReduceBitmapFunction function = new JavaImageFunctionsPanorama.ReduceBitmapFunction(bitmap);
             JavaImageProcessing.applyFunction(function, null, reduced_bitmap, 0, 0, reduced_bitmap.getWidth(), reduced_bitmap.getHeight());
         }
         else {
@@ -63,12 +63,12 @@ public class PanoramaProcessor {
             // work on bitmap directly:
 
             Bitmap reduced_bitmap_x = Bitmap.createBitmap(width/2, height, Bitmap.Config.ARGB_8888);
-            JavaImageFunctions.ReduceBitmapXFunction function_x = new JavaImageFunctions.ReduceBitmapXFunction(bitmap);
+            JavaImageFunctionsPanorama.ReduceBitmapXFunction function_x = new JavaImageFunctionsPanorama.ReduceBitmapXFunction(bitmap);
             JavaImageProcessing.applyFunction(function_x, null, reduced_bitmap_x, 0, 0, reduced_bitmap_x.getWidth(), reduced_bitmap_x.getHeight());
             if( MyDebug.LOG )
                 Log.d(TAG, "### time for reduceBitmapX: " + (System.currentTimeMillis() - time_s));
 
-            JavaImageFunctions.ReduceBitmapYFunction function_y = new JavaImageFunctions.ReduceBitmapYFunction(reduced_bitmap_x);
+            JavaImageFunctionsPanorama.ReduceBitmapYFunction function_y = new JavaImageFunctionsPanorama.ReduceBitmapYFunction(reduced_bitmap_x);
             JavaImageProcessing.applyFunction(function_y, null, reduced_bitmap, 0, 0, reduced_bitmap.getWidth(), reduced_bitmap.getHeight());
 
             reduced_bitmap_x.recycle();
@@ -91,7 +91,7 @@ public class PanoramaProcessor {
             }
 
             byte [] reduced_bitmap_x_argb = new byte[4*(width/2)*(height)];
-            JavaImageFunctions.ReduceBitmapXFullFunction function_x = new JavaImageFunctions.ReduceBitmapXFullFunction(bitmap_argb, reduced_bitmap_x_argb, width/2);
+            JavaImageFunctionsPanorama.ReduceBitmapXFullFunction function_x = new JavaImageFunctionsPanorama.ReduceBitmapXFullFunction(bitmap_argb, reduced_bitmap_x_argb, width/2);
             JavaImageProcessing.applyFunction(function_x, null, null, 0, 0, width/2,  height);
             if( MyDebug.LOG )
                 Log.d(TAG, "### time for reduceBitmapX: " + (System.currentTimeMillis() - time_s));
@@ -100,7 +100,7 @@ public class PanoramaProcessor {
             bitmap_argb = null; // help garbage collection
 
             byte [] reduced_bitmap_argb = new byte[4*(width/2)*(height/2)];
-            JavaImageFunctions.ReduceBitmapYFullFunction function_y = new JavaImageFunctions.ReduceBitmapYFullFunction(reduced_bitmap_x_argb, reduced_bitmap_argb, width/2, height/2);
+            JavaImageFunctionsPanorama.ReduceBitmapYFullFunction function_y = new JavaImageFunctionsPanorama.ReduceBitmapYFullFunction(reduced_bitmap_x_argb, reduced_bitmap_argb, width/2, height/2);
             JavaImageProcessing.applyFunction(function_y, null, null, 0, 0, width/2,  height/2);
             if( MyDebug.LOG )
                 Log.d(TAG, "### time for reduceBitmapY: " + (System.currentTimeMillis() - time_s));
@@ -141,7 +141,7 @@ public class PanoramaProcessor {
         Bitmap expanded_bitmap = Bitmap.createBitmap(2*width, 2*height, Bitmap.Config.ARGB_8888);
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after create expanded_bitmap: " + (System.currentTimeMillis() - time_s));
-        JavaImageFunctions.ExpandBitmapFunction function = new JavaImageFunctions.ExpandBitmapFunction(bitmap);
+        JavaImageFunctionsPanorama.ExpandBitmapFunction function = new JavaImageFunctionsPanorama.ExpandBitmapFunction(bitmap);
         JavaImageProcessing.applyFunction(function, null, expanded_bitmap, 0, 0, expanded_bitmap.getWidth(), expanded_bitmap.getHeight());
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after expand: " + (System.currentTimeMillis() - time_s));
@@ -149,7 +149,7 @@ public class PanoramaProcessor {
         Bitmap temp_bitmap = Bitmap.createBitmap(2*width, 2*height, Bitmap.Config.ARGB_8888);
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after create temp_bitmap: " + (System.currentTimeMillis() - time_s));
-        JavaImageFunctions.Blur1dXFunction function_blur1dX = new JavaImageFunctions.Blur1dXFunction(expanded_bitmap);
+        JavaImageFunctionsPanorama.Blur1dXFunction function_blur1dX = new JavaImageFunctionsPanorama.Blur1dXFunction(expanded_bitmap);
         JavaImageProcessing.applyFunction(function_blur1dX, null, temp_bitmap, 0, 0, temp_bitmap.getWidth(), temp_bitmap.getHeight());
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after blur1dX: " + (System.currentTimeMillis() - time_s));
@@ -157,7 +157,7 @@ public class PanoramaProcessor {
         // now re-use expanded_bitmap for the result_bitmap
         @SuppressWarnings("UnnecessaryLocalVariable")
         Bitmap result_bitmap = expanded_bitmap;
-        JavaImageFunctions.Blur1dYFunction function_blur1dY = new JavaImageFunctions.Blur1dYFunction(temp_bitmap);
+        JavaImageFunctionsPanorama.Blur1dYFunction function_blur1dY = new JavaImageFunctionsPanorama.Blur1dYFunction(temp_bitmap);
         JavaImageProcessing.applyFunction(function_blur1dY, null, result_bitmap, 0, 0, result_bitmap.getWidth(), result_bitmap.getHeight());
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after blur1dY: " + (System.currentTimeMillis() - time_s));
@@ -191,7 +191,7 @@ public class PanoramaProcessor {
         }
 
         byte [] expanded_bitmap_argb = new byte[4*(2*width)*(2*height)];
-        JavaImageFunctions.ExpandBitmapFullFunction function = new JavaImageFunctions.ExpandBitmapFullFunction(bitmap_argb, expanded_bitmap_argb, 2*width, 2*height);
+        JavaImageFunctionsPanorama.ExpandBitmapFullFunction function = new JavaImageFunctionsPanorama.ExpandBitmapFullFunction(bitmap_argb, expanded_bitmap_argb, 2*width, 2*height);
         JavaImageProcessing.applyFunction(function, null, null, 0, 0, 2*width, 2*height);
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after expand: " + (System.currentTimeMillis() - time_s));
@@ -202,7 +202,7 @@ public class PanoramaProcessor {
         /*Bitmap expanded_bitmap = Bitmap.createBitmap(2*width, 2*height, Bitmap.Config.ARGB_8888);
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after create expanded_bitmap: " + (System.currentTimeMillis() - time_s));
-        JavaImageFunctions.ExpandBitmapFunction function = new JavaImageFunctions.ExpandBitmapFunction(bitmap);
+        JavaImageFunctionsPanorama.ExpandBitmapFunction function = new JavaImageFunctionsPanorama.ExpandBitmapFunction(bitmap);
         JavaImageProcessing.applyFunction(function, null, expanded_bitmap, 0, 0, expanded_bitmap.getWidth(), expanded_bitmap.getHeight());
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after expand: " + (System.currentTimeMillis() - time_s));
@@ -222,7 +222,7 @@ public class PanoramaProcessor {
         }*/
 
         byte [] temp_bitmap_argb = new byte[4*(2*width)*(2*height)];
-        JavaImageFunctions.Blur1dXFullFunction function_blur1dX = new JavaImageFunctions.Blur1dXFullFunction(expanded_bitmap_argb, temp_bitmap_argb, 2*width, 2*height);
+        JavaImageFunctionsPanorama.Blur1dXFullFunction function_blur1dX = new JavaImageFunctionsPanorama.Blur1dXFullFunction(expanded_bitmap_argb, temp_bitmap_argb, 2*width, 2*height);
         JavaImageProcessing.applyFunction(function_blur1dX, null, null, 0, 0, 2*width, 2*height);
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after blur1dX: " + (System.currentTimeMillis() - time_s));
@@ -230,7 +230,7 @@ public class PanoramaProcessor {
         /*Bitmap temp_bitmap = Bitmap.createBitmap(2*width, 2*height, Bitmap.Config.ARGB_8888);
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after create temp_bitmap: " + (System.currentTimeMillis() - time_s));
-        JavaImageFunctions.Blur1dXFunction function_blur1dX = new JavaImageFunctions.Blur1dXFunction(expanded_bitmap);
+        JavaImageFunctionsPanorama.Blur1dXFunction function_blur1dX = new JavaImageFunctionsPanorama.Blur1dXFunction(expanded_bitmap);
         JavaImageProcessing.applyFunction(function_blur1dX, null, temp_bitmap, 0, 0, temp_bitmap.getWidth(), temp_bitmap.getHeight());
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after blur1dX: " + (System.currentTimeMillis() - time_s));
@@ -255,7 +255,7 @@ public class PanoramaProcessor {
         @SuppressWarnings("UnnecessaryLocalVariable")
         byte [] result_bitmap_argb = expanded_bitmap_argb;
 
-        JavaImageFunctions.Blur1dYFullFunction function_blur1dY = new JavaImageFunctions.Blur1dYFullFunction(temp_bitmap_argb, result_bitmap_argb, 2*width, 2*height);
+        JavaImageFunctionsPanorama.Blur1dYFullFunction function_blur1dY = new JavaImageFunctionsPanorama.Blur1dYFullFunction(temp_bitmap_argb, result_bitmap_argb, 2*width, 2*height);
         JavaImageProcessing.applyFunction(function_blur1dY, null, null, 0, 0, 2*width, 2*height);
         if( MyDebug.LOG )
             Log.d(TAG, "### expandBitmap: time after blur1dY: " + (System.currentTimeMillis() - time_s));
@@ -299,7 +299,7 @@ public class PanoramaProcessor {
         }
         float [] result_rgbf = new float[3*width*height];
 
-        JavaImageFunctions.SubtractBitmapFunction function = new JavaImageFunctions.SubtractBitmapFunction(result_rgbf, bitmap1);
+        JavaImageFunctionsPanorama.SubtractBitmapFunction function = new JavaImageFunctionsPanorama.SubtractBitmapFunction(result_rgbf, bitmap1);
         JavaImageProcessing.applyFunction(function, bitmap0, null, 0, 0, bitmap0.getWidth(), bitmap0.getHeight());
 
         return result_rgbf;
@@ -318,7 +318,7 @@ public class PanoramaProcessor {
             Log.e(TAG, "bitmaps of different dimensions");
             throw new RuntimeException();
         }
-        JavaImageFunctions.AddBitmapFunction function = new JavaImageFunctions.AddBitmapFunction(bitmap1, width);
+        JavaImageFunctionsPanorama.AddBitmapFunction function = new JavaImageFunctionsPanorama.AddBitmapFunction(bitmap1, width);
         JavaImageProcessing.applyFunction(function, bitmap0, bitmap0, 0, 0, bitmap0.getWidth(), bitmap0.getHeight());
     }
 
@@ -555,7 +555,7 @@ public class PanoramaProcessor {
             // compute interpolated_best_path
             computeInterpolatedBestPath(interpolated_best_path, width, height, blend_width, best_path, best_path_n_x);
 
-            JavaImageFunctions.MergefFunction function = new JavaImageFunctions.MergefFunction(pyramid0.diffs.get(i), pyramid1.diffs.get(i), blend_width, width, interpolated_best_path);
+            JavaImageFunctionsPanorama.MergefFunction function = new JavaImageFunctionsPanorama.MergefFunction(pyramid0.diffs.get(i), pyramid1.diffs.get(i), blend_width, width, interpolated_best_path);
             JavaImageProcessing.applyFunction(function, null, null, 0, 0, width, height);
         }
         // now do top_level
@@ -576,7 +576,7 @@ public class PanoramaProcessor {
             // compute interpolated_best_path
             computeInterpolatedBestPath(interpolated_best_path, width, height, blend_width, best_path, best_path_n_x);
 
-            JavaImageFunctions.MergeFunction function = new JavaImageFunctions.MergeFunction(pyramid1.top_level, blend_width, interpolated_best_path);
+            JavaImageFunctionsPanorama.MergeFunction function = new JavaImageFunctionsPanorama.MergeFunction(pyramid1.top_level, blend_width, interpolated_best_path);
             JavaImageProcessing.applyFunction(function, pyramid0.top_level, pyramid0.top_level, 0, 0, width, height);
         }
     }
@@ -663,7 +663,7 @@ public class PanoramaProcessor {
                 saveBitmap(best_path_rhs, "best_path_rhs.jpg");
             }*/
 
-            JavaImageFunctions.PyramidBlendingComputeErrorFunction compute_error_function = new JavaImageFunctions.PyramidBlendingComputeErrorFunction(best_path_rhs);
+            JavaImageFunctionsPanorama.PyramidBlendingComputeErrorFunction compute_error_function = new JavaImageFunctionsPanorama.PyramidBlendingComputeErrorFunction(best_path_rhs);
 
             int window_width = Math.max(2, best_path_lhs.getWidth()/8);
             int start_y = 0, stop_y;
@@ -940,7 +940,7 @@ public class PanoramaProcessor {
                 if( MyDebug.LOG )
                     Log.d(TAG, "convert to greyscale");
                 Bitmap gs_bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
-                JavaImageFunctions.ConvertToGreyscaleFunction gs_function = new JavaImageFunctions.ConvertToGreyscaleFunction();
+                JavaImageFunctionsPanorama.ConvertToGreyscaleFunction gs_function = new JavaImageFunctionsPanorama.ConvertToGreyscaleFunction();
                 JavaImageProcessing.applyFunction(gs_function, bitmaps.get(i), gs_bitmap, 0, 0, width, height);
                 if( MyDebug.LOG )
                     Log.d(TAG, "### autoAlignmentByFeature: time after ConvertToGreyscaleFunction: " + (System.currentTimeMillis() - time_s));
@@ -949,7 +949,7 @@ public class PanoramaProcessor {
                     Log.d(TAG, "compute derivatives");
                 Bitmap ix_bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
                 Bitmap iy_bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
-                JavaImageFunctions.ComputeDerivativesFunction derivatives_function = new JavaImageFunctions.ComputeDerivativesFunction(ix_bitmap, iy_bitmap, gs_bitmap);
+                JavaImageFunctionsPanorama.ComputeDerivativesFunction derivatives_function = new JavaImageFunctionsPanorama.ComputeDerivativesFunction(ix_bitmap, iy_bitmap, gs_bitmap);
                 JavaImageProcessing.applyFunction(derivatives_function, null, null, 0, 0, width, height);
                 if( MyDebug.LOG )
                     Log.d(TAG, "### autoAlignmentByFeature: time after ComputeDerivativesFunction: " + (System.currentTimeMillis() - time_s));
@@ -959,7 +959,7 @@ public class PanoramaProcessor {
                 if( MyDebug.LOG )
                     Log.d(TAG, "call corner detector script for image: " + i);
                 strength_rgbf = new float[width*height]; // floating point format
-                JavaImageFunctions.CornerDetectorFunction corner_detector_function = new JavaImageFunctions.CornerDetectorFunction(strength_rgbf, ix_bitmap, iy_bitmap);
+                JavaImageFunctionsPanorama.CornerDetectorFunction corner_detector_function = new JavaImageFunctionsPanorama.CornerDetectorFunction(strength_rgbf, ix_bitmap, iy_bitmap);
                 JavaImageProcessing.applyFunction(corner_detector_function, null, null, 0, 0, width, height);
                 if( MyDebug.LOG )
                     Log.d(TAG, "### autoAlignmentByFeature: time after CornerDetectorFunction: " + (System.currentTimeMillis() - time_s));
@@ -1003,7 +1003,7 @@ public class PanoramaProcessor {
                     if( MyDebug.LOG )
                         Log.d(TAG, "### attempt " + count + " try threshold: " + threshold + " [ " + low_threshold + " : " + high_threshold + " ]");
 
-                    JavaImageFunctions.LocalMaximumFunction function = new JavaImageFunctions.LocalMaximumFunction(strength_rgbf, bytes, width, height, threshold);
+                    JavaImageFunctionsPanorama.LocalMaximumFunction function = new JavaImageFunctionsPanorama.LocalMaximumFunction(strength_rgbf, bytes, width, height, threshold);
                     JavaImageProcessing.applyFunction(function, null, null, 0, 0, width, height);
 
                     // find points
