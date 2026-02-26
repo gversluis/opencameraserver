@@ -1,6 +1,6 @@
 package net.sourceforge.opencamera.preview;
 
-import net.sourceforge.opencamera.JavaImageFunctions;
+import net.sourceforge.opencamera.JavaImageFunctionsHDR;
 import net.sourceforge.opencamera.JavaImageFunctionsPreview;
 import net.sourceforge.opencamera.JavaImageProcessing;
 import net.sourceforge.opencamera.cameracontroller.RawImage;
@@ -8866,27 +8866,27 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                         Log.d(TAG, "time before computeHistogram: " + (System.currentTimeMillis() - debug_time));
 
                     {
-                        JavaImageFunctions.ComputeHistogramApplyFunction.Type java_type;
+                        JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type java_type;
                         switch( preview.histogram_type ) {
                             case HISTOGRAM_TYPE_RGB:
-                                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_RGB;
+                                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_RGB;
                                 break;
                             case HISTOGRAM_TYPE_LUMINANCE:
-                                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_LUMINANCE;
+                                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_LUMINANCE;
                                 break;
                             case HISTOGRAM_TYPE_VALUE:
-                                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_VALUE;
+                                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_VALUE;
                                 break;
                             case HISTOGRAM_TYPE_INTENSITY:
-                                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_INTENSITY;
+                                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_INTENSITY;
                                 break;
                             case HISTOGRAM_TYPE_LIGHTNESS:
-                                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_LIGHTNESS;
+                                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_LIGHTNESS;
                                 break;
                             default:
                                 throw new RuntimeException("unknown histogram type: " + preview.histogram_type);
                         }
-                        JavaImageFunctions.ComputeHistogramApplyFunction function = new JavaImageFunctions.ComputeHistogramApplyFunction(java_type);
+                        JavaImageFunctionsHDR.ComputeHistogramApplyFunction function = new JavaImageFunctionsHDR.ComputeHistogramApplyFunction(java_type);
                         JavaImageProcessing.applyFunction(function, preview_bitmap, null, 0, 0, preview_bitmap.getWidth(), preview_bitmap.getHeight());
                         result.new_histogram = function.getHistogram();
                     }

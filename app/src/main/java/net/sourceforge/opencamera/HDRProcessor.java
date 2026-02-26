@@ -723,12 +723,12 @@ public class HDRProcessor {
             if( MyDebug.LOG )
                 Log.d(TAG, "### time before HDRApplyFunction: " + (System.currentTimeMillis() - time_s));
 
-            JavaImageFunctions.HDRApplyFunction function;
+            JavaImageFunctionsHDR.HDRApplyFunction function;
             if( use_hdr_n ) {
-                function = new JavaImageFunctions.HDRNApplyFunction(tonemapping_algorithm, tonemap_scale_c, W, linear_scale, bitmaps, offsets_x, offsets_y, width, height, parameters_A, parameters_B);
+                function = new JavaImageFunctionsHDR.HDRNApplyFunction(tonemapping_algorithm, tonemap_scale_c, W, linear_scale, bitmaps, offsets_x, offsets_y, width, height, parameters_A, parameters_B);
             }
             else {
-                function = new JavaImageFunctions.HDRApplyFunction(tonemapping_algorithm, tonemap_scale_c, W, linear_scale, bitmaps.get(0), bitmaps.get(2), offsets_x[0], offsets_y[0], offsets_x[2], offsets_y[2], width, height, parameters_A, parameters_B);
+                function = new JavaImageFunctionsHDR.HDRApplyFunction(tonemapping_algorithm, tonemap_scale_c, W, linear_scale, bitmaps.get(0), bitmaps.get(2), offsets_x[0], offsets_y[0], offsets_x[2], offsets_y[2], width, height, parameters_A, parameters_B);
             }
 
             JavaImageProcessing.applyFunction(function, bitmaps.get(base_bitmap), output_bitmap, 0, 0, width, height);
@@ -799,7 +799,7 @@ public class HDRProcessor {
                 //if( true )
                 //  throw new HDRProcessorException(HDRProcessorException.UNEQUAL_SIZES); // test
 
-                JavaImageFunctions.DROBrightenApplyFunction function = new JavaImageFunctions.DROBrightenApplyFunction(gain, gamma, low_x, mid_x, max_brightness);
+                JavaImageFunctionsHDR.DROBrightenApplyFunction function = new JavaImageFunctionsHDR.DROBrightenApplyFunction(gain, gamma, low_x, mid_x, max_brightness);
                 JavaImageProcessing.applyFunction(function, input_bitmap, output_bitmap, 0, 0, width, height);
 
                 // output is now the input for subsequent operations
@@ -838,7 +838,7 @@ public class HDRProcessor {
             if( MyDebug.LOG )
                 Log.d(TAG, "apply gain/gamma");
 
-            JavaImageFunctions.DROBrightenApplyFunction function = new JavaImageFunctions.DROBrightenApplyFunction(gain, gamma, low_x, mid_x, max_brightness);
+            JavaImageFunctionsHDR.DROBrightenApplyFunction function = new JavaImageFunctionsHDR.DROBrightenApplyFunction(gain, gamma, low_x, mid_x, max_brightness);
             JavaImageProcessing.applyFunction(function, bitmap, bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
         }
     }
@@ -1195,7 +1195,7 @@ public class HDRProcessor {
                 if( MyDebug.LOG )
                     Log.d(TAG, "### time after create pixels_rgbf_out: " + (System.currentTimeMillis() - time_s));
             }
-            JavaImageFunctions.AvgApplyFunction function = new JavaImageFunctions.AvgApplyFunction(pixels_rgbf_out, bitmap_new, bitmap_orig, width, height, offsets_x[1], offsets_y[1], avg_factor, wiener_C, wiener_C_cutoff);
+            JavaImageFunctionsHDR.AvgApplyFunction function = new JavaImageFunctionsHDR.AvgApplyFunction(pixels_rgbf_out, bitmap_new, bitmap_orig, width, height, offsets_x[1], offsets_y[1], avg_factor, wiener_C, wiener_C_cutoff);
             JavaImageProcessing.applyFunction(function, bitmap_avg, null, 0, 0, width, height);
             if( MyDebug.LOG )
                 Log.d(TAG, "### time after AvgApplyFunction: " + (System.currentTimeMillis() - time_s));
@@ -1417,7 +1417,7 @@ public class HDRProcessor {
 
             {
                 Bitmap output_mtb_bitmap = Bitmap.createBitmap(mtb_width, mtb_height, Bitmap.Config.ALPHA_8);
-                JavaImageFunctions.CreateMTBApplyFunction function = new JavaImageFunctions.CreateMTBApplyFunction(use_mtb, median_value);
+                JavaImageFunctionsHDR.CreateMTBApplyFunction function = new JavaImageFunctionsHDR.CreateMTBApplyFunction(use_mtb, median_value);
                 JavaImageProcessing.applyFunction(function, bitmaps.get(i), output_mtb_bitmap, mtb_x, mtb_y, mtb_x+mtb_width, mtb_y+mtb_height, 0, 0);
                 if( MyDebug.LOG )
                     Log.d(TAG, "### time after CreateMTBApplyFunction: " + (System.currentTimeMillis() - time_s));
@@ -1507,7 +1507,7 @@ public class HDRProcessor {
                 int [] errors;
 
                 {
-                    JavaImageFunctions.AlignMTBApplyFunction function = new JavaImageFunctions.AlignMTBApplyFunction(use_mtb, mtb_bitmaps[base_bitmap], mtb_bitmaps[i], offsets_x[i], offsets_y[i], pixel_step_size);
+                    JavaImageFunctionsHDR.AlignMTBApplyFunction function = new JavaImageFunctionsHDR.AlignMTBApplyFunction(use_mtb, mtb_bitmaps[base_bitmap], mtb_bitmaps[i], offsets_x[i], offsets_y[i], pixel_step_size);
                     JavaImageProcessing.applyFunction(function, null, null, 0, 0, stop_x, stop_y);
                     if( MyDebug.LOG )
                         Log.d(TAG, "### time after AlignMTBApplyFunction: " + (System.currentTimeMillis() - time_s));
@@ -1903,7 +1903,7 @@ public class HDRProcessor {
                     /*int [] pixels = new int[(stop_x-start_x)*(stop_y-start_y)];
                     bitmap_in.getPixels(pixels, 0, stop_x-start_x, start_x, start_y, stop_x-start_x, stop_y-start_y);
                     int [] histogram = computeHistogram(pixels);*/
-                    JavaImageFunctions.ComputeHistogramApplyFunction function = new JavaImageFunctions.ComputeHistogramApplyFunction(JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_VALUE);
+                    JavaImageFunctionsHDR.ComputeHistogramApplyFunction function = new JavaImageFunctionsHDR.ComputeHistogramApplyFunction(JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_VALUE);
                     JavaImageProcessing.applyFunction(function, bitmap_in, null, start_x, start_y, stop_x, stop_y);
                     int [] histogram = function.getHistogram();
 
@@ -1926,7 +1926,7 @@ public class HDRProcessor {
             if( MyDebug.LOG )
                 Log.d(TAG, "adjustHistogram: time after creating histograms: " + (System.currentTimeMillis() - time_s));
 
-            JavaImageFunctions.AdjustHistogramApplyFunction function = new JavaImageFunctions.AdjustHistogramApplyFunction(hdr_alpha, n_tiles, width, height, c_histogram);
+            JavaImageFunctionsHDR.AdjustHistogramApplyFunction function = new JavaImageFunctionsHDR.AdjustHistogramApplyFunction(hdr_alpha, n_tiles, width, height, c_histogram);
             JavaImageProcessing.applyFunction(function, bitmap_in, bitmap_out, 0, 0, width, height);
             if( MyDebug.LOG )
                 Log.d(TAG, "time after adjusting histogram: " + (System.currentTimeMillis() - time_s));
@@ -1956,27 +1956,27 @@ public class HDRProcessor {
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         int [] histogram = computeHistogram(pixels);*/
 
-        JavaImageFunctions.ComputeHistogramApplyFunction.Type java_type;
+        JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type java_type;
         switch( type ) {
             case HISTOGRAM_TYPE_RGB:
-                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_RGB;
+                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_RGB;
                 break;
             case HISTOGRAM_TYPE_LUMINANCE:
-                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_LUMINANCE;
+                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_LUMINANCE;
                 break;
             case HISTOGRAM_TYPE_VALUE:
-                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_VALUE;
+                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_VALUE;
                 break;
             case HISTOGRAM_TYPE_INTENSITY:
-                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_INTENSITY;
+                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_INTENSITY;
                 break;
             case HISTOGRAM_TYPE_LIGHTNESS:
-                java_type = JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_LIGHTNESS;
+                java_type = JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_LIGHTNESS;
                 break;
             default:
                 throw new RuntimeException("unknown histogram type: " + type);
         }
-        JavaImageFunctions.ComputeHistogramApplyFunction function = new JavaImageFunctions.ComputeHistogramApplyFunction(java_type);
+        JavaImageFunctionsHDR.ComputeHistogramApplyFunction function = new JavaImageFunctionsHDR.ComputeHistogramApplyFunction(java_type);
         JavaImageProcessing.applyFunction(function, bitmap, null, 0, 0, bitmap.getWidth(), bitmap.getHeight());
         int [] histogram = function.getHistogram();
 
@@ -1997,7 +1997,7 @@ public class HDRProcessor {
 
         long time_s = System.currentTimeMillis();
 
-        JavaImageFunctions.ComputeHistogramApplyFunction function = new JavaImageFunctions.ComputeHistogramApplyFunction(JavaImageFunctions.ComputeHistogramApplyFunction.Type.TYPE_VALUE);
+        JavaImageFunctionsHDR.ComputeHistogramApplyFunction function = new JavaImageFunctionsHDR.ComputeHistogramApplyFunction(JavaImageFunctionsHDR.ComputeHistogramApplyFunction.Type.TYPE_VALUE);
         function.setPixelsRGBf(pixels, width);
         JavaImageProcessing.applyFunction(function, null, null, 0, 0, width, height);
         int [] histogram = function.getHistogram();
@@ -2314,7 +2314,7 @@ public class HDRProcessor {
             Log.d(TAG, "median_filter_strength: " + median_filter_strength);
 
         Bitmap output_bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        JavaImageFunctions.AvgBrightenApplyFunction function = new JavaImageFunctions.AvgBrightenApplyFunction(pixels_in_rgbf, width, height, gain, gamma, low_x, mid_x, max_brightness, median_filter_strength, black_level);
+        JavaImageFunctionsHDR.AvgBrightenApplyFunction function = new JavaImageFunctionsHDR.AvgBrightenApplyFunction(pixels_in_rgbf, width, height, gain, gamma, low_x, mid_x, max_brightness, median_filter_strength, black_level);
         //JavaImageProcessing.applyFunction(function, input_bitmap, output_bitmap, 0, 0, width, height);
         JavaImageProcessing.applyFunction(function, null, output_bitmap, 0, 0, width, height);
         if( MyDebug.LOG )

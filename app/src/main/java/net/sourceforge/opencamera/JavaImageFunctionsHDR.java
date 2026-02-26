@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 
 import java.util.List;
 
-public class JavaImageFunctions {
-    private static final String TAG = "JavaImageFunctions";
+public class JavaImageFunctionsHDR {
+    private static final String TAG = "JavaImageFunctionsHDR";
 
     static class CreateMTBApplyFunction implements JavaImageProcessing.ApplyFunctionInterface {
         private final boolean use_mtb;
