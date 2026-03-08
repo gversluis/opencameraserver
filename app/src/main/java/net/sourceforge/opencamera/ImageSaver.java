@@ -3,6 +3,7 @@ package net.sourceforge.opencamera;
 import net.sourceforge.opencamera.cameracontroller.CameraController;
 import net.sourceforge.opencamera.cameracontroller.RawImage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -2042,7 +2044,12 @@ public class ImageSaver extends Thread {
                         if( MyDebug.LOG )
                             Log.d(TAG, "compress bitmap, quality " + request.image_quality);
                         Bitmap.CompressFormat compress_format = getBitmapCompressFormat(request.image_format);
-                        bitmap.compress(compress_format, request.image_quality, outputStream);
+                        if( request.process_type == Request.ProcessType.PANORAMA ) {
+                            savePanoramaBitmap(bitmap, compress_format, request.image_quality, request.jpeg_images.size(), outputStream);
+                        }
+                        else {
+                            bitmap.compress(compress_format, request.image_quality, outputStream);
+                        }
                     }
                     else {
                         outputStream.write(data);
@@ -2273,6 +2280,86 @@ public class ImageSaver extends Thread {
             Log.d(TAG, "Save single image performance: total time: " + (System.currentTimeMillis() - time_s));
         }
         return success;
+    }
+
+    private void savePanoramaBitmap(Bitmap bitmap, Bitmap.CompressFormat compress_format, int quality, int n_pics, OutputStream outputStream) throws IOException {
+        // need to write to a temporary stream, so we can insert XMP tags
+        ByteArrayOutputStream jpegStream = new ByteArrayOutputStream();
+        bitmap.compress(compress_format, quality, jpegStream);
+        byte [] jpegData = jpegStream.toByteArray();
+
+        if( jpegData[0] != (byte) 0xFF || jpegData[1] != (byte) 0xD8 ) {
+            // invalid jpeg header?! best not to mess with it
+            if( MyDebug.LOG )
+                Log.d(TAG, "invalid jpeg header, skip adding panorama xmp");
+            outputStream.write(jpegData, 0, jpegData.length);
+            return;
+        }
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        // see code in MyApplicationInterface.setNextPanoramaPoint()
+        float camera_angle_y = main_activity.getPreview().getViewAngleY(false); // angle spanned by one image
+        float angle_per_pic = camera_angle_y / MyApplicationInterface.getPanoramaPicsPerScreen(); // extra angle per extra pic
+        float total_angle = camera_angle_y + angle_per_pic * (n_pics-1);
+        float n_pics_for_360 = 360.0f/total_angle;
+        int full_width = (int)(width * n_pics_for_360 + 0.5f);
+
+        //int full_height = (int)(height * n_pics_for_360 * 0.5f + 0.5f);
+        //float camera_angle_x = main_activity.getPreview().getViewAngleX(false); // angle spanned by one image
+        //int full_height = (int)(height * (180.0f/camera_angle_x) + 0.5f);
+        int full_height = full_width/2; // full resolution is 360x180 degrees, and don't want to preserve aspect ratio
+        full_height = Math.max(full_height, height); // just in case!
+
+        int cropped_left = (full_width - width)/2;
+        int cropped_top = (full_height - height)/2;
+        if( MyDebug.LOG ) {
+            Log.d(TAG, "camera_angle_y: " + camera_angle_y);
+            Log.d(TAG, "angle_per_pic: " + angle_per_pic);
+            Log.d(TAG, "total_angle: " + total_angle);
+            Log.d(TAG, "n_pics_for_360: " + n_pics_for_360);
+            Log.d(TAG, "width: " + width);
+            Log.d(TAG, "full_width: " + full_width);
+            Log.d(TAG, "height: " + height);
+            Log.d(TAG, "full_height: " + full_height);
+            Log.d(TAG, "cropped_left: " + cropped_left);
+            Log.d(TAG, "cropped_top: " + cropped_top);
+        }
+
+        String xmp =
+                "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\">" +
+                        " <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">" +
+                        "  <rdf:Description xmlns:GPano=\"http://ns.google.com/photos/1.0/panorama/\"" +
+                        "    GPano:ProjectionType=\"equirectangular\"" +
+                        "    GPano:FullPanoWidthPixels=\"" + full_width + "\"" +
+                        "    GPano:FullPanoHeightPixels=\"" + full_height + "\"" +
+                        "    GPano:CroppedAreaImageWidthPixels=\"" + width + "\"" +
+                        "    GPano:CroppedAreaImageHeightPixels=\"" + height + "\"" +
+                        "    GPano:CroppedAreaLeftPixels=\"" + cropped_left + "\"" +
+                        "    GPano:CroppedAreaTopPixels=\"" + cropped_top + "\"" +
+                        "/>" +
+                        " </rdf:RDF>" +
+                        "</x:xmpmeta>";
+
+        String xmpPacket = "http://ns.adobe.com/xap/1.0/\u0000" + xmp;
+
+        byte [] xmpBytes = xmpPacket.getBytes(StandardCharsets.UTF_8);
+        int segmentLength = xmpBytes.length + 2;
+
+        // jpeg header
+        outputStream.write(0xFF);
+        outputStream.write(0xD8);
+
+        // XMP segment
+        outputStream.write(0xFF);
+        outputStream.write(0xE1); // APP1
+        outputStream.write((segmentLength >> 8) & 0xFF);
+        outputStream.write(segmentLength & 0xFF);
+        outputStream.write(xmpBytes);
+
+        // rest of JPEG data (skip original SOI)
+        outputStream.write(jpegData, 2, jpegData.length - 2);
     }
 
     private void broadcastSAFFile(Uri saveUri, boolean set_last_scanned, boolean hasnoexifdatetime, boolean image_capture_intent) {
