@@ -3091,13 +3091,8 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 		if( MyDebug.LOG )
 			Log.d(TAG, "saved_focus_value: " + saved_focus_value);*/
 
-        if( MyDebug.LOG )
-            Log.d(TAG, "update folder history");
-        save_location_history.updateFolderHistory(getStorageUtils().getSaveLocation(), true); // this also updates the last icon for ghost image, if that pref has changed
-        // no need to update save_location_history_saf, as we always do this in onActivityResult()
-        if( MyDebug.LOG ) {
-            Log.d(TAG, "updateForSettings: time after update folder history: " + (System.currentTimeMillis() - debug_time));
-        }
+        // no need to call save_location_history[_saf].updateFolderHistory(), as this is done directly when changing the save folder location,
+        // via updateSaveFolder() for non-SAF, or updateFolderHistorySAF() for SAF
 
         imageQueueChanged(); // needed at least for changing photo mode, but might as well call it always
 
