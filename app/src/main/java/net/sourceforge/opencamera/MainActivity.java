@@ -1621,6 +1621,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                 talkback_string += " " + getResources().getString(R.string.lens) + " " + cameraIdSPhysical;
             if( MyDebug.LOG )
                 Log.d(TAG, "talkback_string: " + talkback_string);
+
             // announceForAccessibility deprecated in Android 16 - but testing on Galaxy S24+ with talkback, setStateDescription has
             // no effect (but announceForAccessibility is fine)
             /*if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA )
