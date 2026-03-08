@@ -4700,12 +4700,20 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                     }
                     catch(SecurityException e) {
                         MyDebug.logStackTrace(TAG, "SecurityException failed to take permission", e);
-                        // in theory no need to switch SAF back off, as we only enable the SAF preference if a folder was selected
-                        // but do so just in case to be safe
+                        // If we're here because the user enabled the SAF switch, then no need to switch SAF back off,
+                        // as we only enable the SAF preference if a folder was selected (see code in
+                        // PreferenceSubCameraControlsMore).
+                        // If we're here because SAF was already enabled but the user requested to change save location,
+                        // we shouldn't turn it off - although put a check in case there is no save location set.
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
-                        editor.apply();
+                        String uri = sharedPreferences.getString(PreferenceKeys.SaveLocationSAFPreferenceKey, "");
+                        if( uri.isEmpty() ) {
+                            if( MyDebug.LOG )
+                                Log.d(TAG, "no SAF save location was set");
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
+                            editor.apply();
+                        }
                         preview.showToast(null, R.string.saf_permission_failed);
                     }
                 }
@@ -4713,11 +4721,14 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                     if( MyDebug.LOG )
                         Log.d(TAG, "SAF dialog cancelled");
                     // in theory no need to switch SAF back off, as we only enable the SAF preference if a folder was selected
-                    // but do so just in case to be safe
+                    // See note above under SecurityException.
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
-                    editor.apply();
+                    String uri = sharedPreferences.getString(PreferenceKeys.SaveLocationSAFPreferenceKey, "");
+                    if( uri.isEmpty() ) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, false);
+                        editor.apply();
+                    }
                     preview.showToast(null, R.string.saf_cancelled);
                 }
 
