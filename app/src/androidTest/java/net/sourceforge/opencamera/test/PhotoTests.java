@@ -25,24 +25,24 @@ public class PhotoTests {
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAutoLevelAngles"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAutoLevelAnglesLowMemory"));
         // other tests:
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhoto"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoContinuous"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoContinuousNoTouch"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashAuto"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashOn"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashTorch"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhoto"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoContinuous"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoContinuousNoTouch"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashAuto"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashOn"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashTorch"));
         if( !TestUtils.test_camera2 ) {
             suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAudioButton"));
         }
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoNoAutofocus"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoNoThumbnail"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashBug"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoNoAutofocus"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoNoThumbnail"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFlashBug"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFrontCameraAll"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFrontCamera"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFrontCameraMulti"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFrontCameraScreenFlash"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAutoFocus"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoLockedFocus"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoFrontCameraScreenFlash"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAutoFocus"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoLockedFocus"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoExposureCompensation"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoLockedLandscape"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoLockedPortrait"));
@@ -55,9 +55,9 @@ public class PhotoTests {
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoQuickFocus"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoRepeatFocus"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoRepeatFocusLocked"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAfterFocus"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoSingleTap"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoDoubleTap"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAfterFocus"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoSingleTap"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoDoubleTap"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAlt"));
         if( !TestUtils.test_camera2 ) {
             suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTimerBackground"));

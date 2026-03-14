@@ -3501,15 +3501,17 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue( mPreview.getCameraController() == null || mPreview.getCameraController().count_camera_parameters_exception == 0 );
     }
 
-    public void testTakePhoto() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhoto() throws InterruptedException {
         Log.d(TAG, "testTakePhoto");
         setToDefault();
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Test taking photo with JPEG + DNG (RAW).
      */
-    public void testTakePhotoRaw() throws InterruptedException {
+    /*public void testTakePhotoRaw() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRaw");
         setToDefault();
 
@@ -3524,11 +3526,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         updateForSettings();
 
         subTestTakePhoto(false, false, true, true, false, false, true, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Test taking photo with JPEG + DNG (RAW), with test_wait_capture_result.
      */
-    public void testTakePhotoRawWaitCaptureResult() throws InterruptedException {
+    /*public void testTakePhotoRawWaitCaptureResult() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRawWaitCaptureResult");
         setToDefault();
 
@@ -3551,7 +3554,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         editor.putBoolean(PreferenceKeys.PausePreviewPreferenceKey, true);
         editor.apply();
         subTestTakePhoto(false, false, true, true, false, false, true, true);
-    }
+    }*/
 
     /** Test taking multiple RAW photos.
      */
@@ -3650,9 +3653,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(n_new_files, 2 * n_repeat); // if we fail here, be careful we haven't lost images (i.e., waitUntilImageQueueEmpty() returns before all images are saved)
     }
 
+    // moved to InstrumentedTest
     /** Test taking photo with DNG (RAW) only.
      */
-    public void testTakePhotoRawOnly() throws InterruptedException {
+    /*public void testTakePhotoRawOnly() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRawOnly");
         setToDefault();
 
@@ -3693,11 +3697,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         else {
             subTestTakeVideoSnapshot();
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Test taking photo with JPEG + DNG (RAW) in Expo photo mode.
      */
-    public void testTakePhotoRawExpo() throws InterruptedException {
+    /*public void testTakePhotoRawExpo() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRawExpo");
         setToDefault();
 
@@ -3717,11 +3722,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Test taking photo with JPEG + DNG (RAW) in Expo photo mode, with test_wait_capture_result.
      */
-    public void testTakePhotoRawExpoWaitCaptureResult() throws InterruptedException {
+    /*public void testTakePhotoRawExpoWaitCaptureResult() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRawExpoWaitCaptureResult");
         setToDefault();
 
@@ -3742,11 +3748,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Test taking photo with DNG (RAW) only in Expo photo mode.
      */
-    public void testTakePhotoRawOnlyExpo() throws InterruptedException {
+    /*public void testTakePhotoRawOnlyExpo() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRawOnlyExpo");
         setToDefault();
 
@@ -3767,11 +3774,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertFalse(mActivity.supportsDRO());
 
         subTestTakePhoto(false, false, true, true, false, false, true, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** We no longer run this - superseded by testTakePhotoAutoLevel etc.
      */
-    public void testTakePhotoAutoStabilise() throws InterruptedException {
+    /*public void testTakePhotoAutoStabilise() throws InterruptedException {
         Log.d(TAG, "testTakePhotoAutoStabilise");
         setToDefault();
         assertFalse(mActivity.getApplicationInterface().getDrawPreview().getStoredAutoStabilisePref());
@@ -3783,36 +3791,39 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue(mActivity.getApplicationInterface().getDrawPreview().getStoredAutoStabilisePref());
 
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Test taking photo with continuous photo mode.
      *  Touching to focus will mean the photo is taken whilst the camera controller is actually
      *  in autofocus mode.
      */
-    public void testTakePhotoContinuous() throws InterruptedException {
+    /*public void testTakePhotoContinuous() throws InterruptedException {
         Log.d(TAG, "testTakePhotoContinuous");
         setToDefault();
         switchToFocusValue("focus_mode_continuous_picture");
         subTestTakePhoto(false, false, true, true, false, false, false, false);
 
         assertEquals(0, mPreview.getCameraController().test_af_state_null_focus);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Test taking photo with continuous photo mode. Don't touch to focus first, so we take the
      *  photo in continuous focus mode.
      */
-    public void testTakePhotoContinuousNoTouch() throws InterruptedException {
+    /*public void testTakePhotoContinuousNoTouch() throws InterruptedException {
         Log.d(TAG, "testTakePhotoContinuousNoTouch");
         setToDefault();
         switchToFocusValue("focus_mode_continuous_picture");
         subTestTakePhoto(false, false, false, false, false, false, false, false);
 
         assertEquals(0, mPreview.getCameraController().test_af_state_null_focus);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /**  May have precapture timeout if phone is face down and devices uses fake flash by default (e.g., OnePlus 3T) - see testTakePhotoFlashOnFakeMode.
      */
-    public void testTakePhotoFlashAuto() throws InterruptedException {
+    /*public void testTakePhotoFlashAuto() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFlashAuto");
         setToDefault();
 
@@ -3824,11 +3835,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
         subTestTakePhoto(false, false, false, false, false, false, false, false);
         assertTrue( mPreview.getCameraController() == null || mPreview.getCameraController().count_precapture_timeout == 0 );
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /**  May have precapture timeout if phone is face down and devices uses fake flash by default (e.g., OnePlus 3T) - see testTakePhotoFlashOnFakeMode.
      */
-    public void testTakePhotoFlashOn() throws InterruptedException {
+    /*public void testTakePhotoFlashOn() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFlashOn");
         setToDefault();
 
@@ -3840,9 +3852,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
         subTestTakePhoto(false, false, false, false, false, false, false, false);
         assertTrue( mPreview.getCameraController() == null || mPreview.getCameraController().count_precapture_timeout == 0 );
-    }
+    }*/
 
-    public void testTakePhotoFlashTorch() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoFlashTorch() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFlashTorch");
         setToDefault();
 
@@ -3853,15 +3866,16 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         switchToFlashValue("flash_torch");
         Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
         subTestTakePhoto(false, false, false, false, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests the "fake" flash mode. Important to do this even for devices where standard Camera2 flash work fine, as we use
      *  fake flash for modes like HDR (plus it's good to still test the fake flash mode on as many devices as possible).
      *  We do more tests with flash on than flash auto (especially due to bug on OnePlus 3T where fake flash auto never fires the flash
      *  anyway).
      *  May have precapture timeout if phone is face down, see note for testTakePhotoFlashOnFakeMode.
      */
-    public void testTakePhotoFlashAutoFakeMode() throws InterruptedException {
+    /*public void testTakePhotoFlashAutoFakeMode() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFlashAutoFakeMode");
         setToDefault();
 
@@ -3889,8 +3903,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         switchToFocusValue("focus_mode_continuous_picture");
         assertTrue( mPreview.getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
         subTestTakePhoto(false, false, false, false, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests the "fake" flash mode. Important to do this even for devices where standard Camera2 flash work fine, as we use
      *  fake flash for modes like HDR (plus it's good to still test the fake flash mode on as many devices as possible).
      *  We do more tests with flash on than flash auto (especially due to bug on OnePlus 3T where fake flash auto never fires the flash
@@ -3899,7 +3914,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
      *  so we think fake-precapture never starts when firing the flash for taking photo. I think this is when being face down means that
      *  although flash fires, it doesn't light up the picture.
      */
-    public void testTakePhotoFlashOnFakeMode() throws InterruptedException {
+    /*public void testTakePhotoFlashOnFakeMode() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFlashOnFakeMode");
         setToDefault();
 
@@ -3980,9 +3995,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(6, mPreview.getCameraController().test_fake_flash_photo);
 
         //mPreview.getCameraController().count_precapture_timeout = 0; // hack - precapture timeouts are more common with fake flash precapture mode, especially when phone is face down during testing
-    }
+    }*/
 
-    public void testTakePhotoSingleTap() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoSingleTap() throws InterruptedException {
         Log.d(TAG, "testTakePhotoSingleTap");
         setToDefault();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -3992,9 +4008,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         updateForSettings();
 
         subTestTakePhoto(false, false, true, true, true, false, false, false);
-    }
+    }*/
 
-    public void testTakePhotoDoubleTap() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoDoubleTap() throws InterruptedException {
         Log.d(TAG, "testTakePhotoDoubleTap");
         setToDefault();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -4004,15 +4021,17 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         updateForSettings();
 
         subTestTakePhoto(false, false, true, true, false, true, false, false);
-    }
+    }*/
 
-    public void testTakePhotoNoAutofocus() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoNoAutofocus() throws InterruptedException {
         Log.d(TAG, "testTakePhotoNoAutofocus");
         setToDefault();
         subTestTakePhoto(false, false, false, false, false, false, false, false);
-    }
+    }*/
 
-    public void testTakePhotoNoThumbnail() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoNoThumbnail() throws InterruptedException {
         Log.d(TAG, "testTakePhotoNoThumbnail");
         setToDefault();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -4020,18 +4039,20 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         editor.putBoolean(PreferenceKeys.ThumbnailAnimationPreferenceKey, false);
         editor.apply();
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /* Tests manually focusing, then immediately taking a photo.
      */
-    public void testTakePhotoAfterFocus() throws InterruptedException {
+    /*public void testTakePhotoAfterFocus() throws InterruptedException {
         Log.d(TAG, "testTakePhotoAfterFocus");
         setToDefault();
         subTestTakePhoto(false, false, true, false, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /* Tests bug fixed by take_photo_after_autofocus in Preview, where the app would hang due to taking a photo after touching to focus. */
-    public void testTakePhotoFlashBug() throws InterruptedException {
+    /*public void testTakePhotoFlashBug() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFlashBug");
         setToDefault();
 
@@ -4041,7 +4062,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         switchToFlashValue("flash_on");
         subTestTakePhoto(false, false, true, false, false, false, false, false);
-    }
+    }*/
 
     /** Tests cycling through cameras, simulating the multi-camera icon.
      */
@@ -4378,6 +4399,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         subTestTakePhotoMultiCameras(false, true);
     }
 
+    // moved to InstrumentedTest
     /** Tests taking a photo with front camera and screen flash.
      *  Note this test fails on Android emulator with old camera API, because on front camera when
      *  we switch from continuous to auto focus from touch to focus, we're still in continuous focus
@@ -4385,7 +4407,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
      *  switch to auto focus, and haven't reset to continuous! Could be a threading/synchronization
      *  issue from trying to read the camera parameters from the test thread?
      */
-    public void testTakePhotoFrontCameraScreenFlash() throws InterruptedException {
+    /*public void testTakePhotoFrontCameraScreenFlash() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFrontCameraScreenFlash");
         setToDefault();
 
@@ -4410,23 +4432,25 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         switchToFlashValue("flash_frontscreen_on");
 
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Take a photo in auto focus mode.
      */
-    public void testTakePhotoAutoFocus() throws InterruptedException {
+    /*public void testTakePhotoAutoFocus() throws InterruptedException {
         Log.d(TAG, "testTakePhotoAutoFocus");
         setToDefault();
         switchToFocusValue("focus_mode_auto");
         subTestTakePhoto(false, false, true, true, false, false, false, false);
 
         assertEquals(0, mPreview.getCameraController().test_af_state_null_focus);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Take a photo for Camera2 API when camera is released on UI thread whilst photo is taken on background thread (via
      *  autofocus callback).
      */
-    public void testTakePhotoAutoFocusReleaseDuringPhoto() throws InterruptedException {
+    /*public void testTakePhotoAutoFocusReleaseDuringPhoto() throws InterruptedException {
         Log.d(TAG, "testTakePhotoAutoFocusReleaseDuringPhoto");
 
         if( !mPreview.usingCamera2API() ) {
@@ -4453,14 +4477,15 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         Log.d(TAG, "done clicking take photo");
 
         Thread.sleep(5000);
-    }
+    }*/
 
-    public void testTakePhotoLockedFocus() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoLockedFocus() throws InterruptedException {
         Log.d(TAG, "testTakePhotoLockedFocus");
         setToDefault();
         switchToFocusValue("focus_mode_locked");
         subTestTakePhoto(true, false, true, true, false, false, false, false);
-    }
+    }*/
 
     public void testTakePhotoManualFocus() throws InterruptedException {
         Log.d(TAG, "testTakePhotoManualFocus");

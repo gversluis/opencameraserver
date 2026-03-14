@@ -6503,13 +6503,641 @@ public class InstrumentedTest {
 
     }
 
-    /*@Category(PhotoTests.class)
+    @Category(PhotoTests.class)
     @Test
     public void testTakePhoto() throws InterruptedException {
         Log.d(TAG, "testTakePhoto");
         setToDefault();
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }*/
+    }
+
+    /** Test taking photo with JPEG + DNG (RAW).
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRaw() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRaw");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_yes");
+            editor.apply();
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+    }
+
+    /** Test taking photo with JPEG + DNG (RAW), with test_wait_capture_result.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRawWaitCaptureResult() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRawWaitCaptureResult");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_yes");
+            editor.apply();
+
+            activity.getPreview().getCameraController().test_wait_capture_result = true;
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, false, false, true, true);
+
+        // now repeat with pause preview (guards against crash fixed in 1.44.1 where we got CalledFromWrongThreadException when
+        // setting visibility for icons with pause preview mode with test_wait_capture_result
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor = settings.edit();
+            editor.putBoolean(PreferenceKeys.PausePreviewPreferenceKey, true);
+            editor.apply();
+        });
+        subTestTakePhoto(false, false, true, true, false, false, true, true);
+    }
+
+    /** Test taking photo with DNG (RAW) only.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRawOnly() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRawOnly");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+
+        boolean supports_auto_stabilise = getActivityValue(activity -> activity.supportsAutoStabilise());
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_only");
+            editor.apply();
+        });
+        updateForSettings();
+
+        // test modes not supported in RAW only mode
+        assertFalse(getActivityValue(activity -> activity.supportsAutoStabilise()));
+        assertFalse(getActivityValue(activity -> activity.supportsDRO()));
+
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+
+        // switch to video mode
+        mActivityRule.getScenario().onActivity(activity -> {
+            View switchVideoButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_video);
+            if( !activity.getPreview().isVideo() ) {
+                clickView(switchVideoButton);
+            }
+        });
+        waitUntilCameraOpened();
+        assertTrue(getActivityValue(activity -> activity.getPreview().isVideo()));
+        assertTrue(getActivityValue(activity -> activity.getPreview().isPreviewStarted()));
+
+        // check auto-stabilise mode now available (since it'll apply to the snapshots, which are always JPEG)
+        assertEquals(supports_auto_stabilise, getActivityValue(activity -> activity.supportsAutoStabilise()));
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsPhotoVideoRecording()) )  {
+            Log.d(TAG, "video snapshot not supported");
+        }
+        else {
+            subTestTakeVideoSnapshot();
+        }
+    }
+
+    /** Test taking photo with JPEG + DNG (RAW) in Expo photo mode.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRawExpo() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRawExpo");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_yes");
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_expo_bracketing");
+            editor.apply();
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Test taking photo with JPEG + DNG (RAW) in Expo photo mode, with test_wait_capture_result.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRawExpoWaitCaptureResult() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRawExpoWaitCaptureResult");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_yes");
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_expo_bracketing");
+            editor.apply();
+
+            activity.getPreview().getCameraController().test_wait_capture_result = true;
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, false, false, true, true);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Test taking photo with DNG (RAW) only in Expo photo mode.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRawOnlyExpo() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRawOnlyExpo");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_only");
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_expo_bracketing");
+            editor.apply();
+        });
+        updateForSettings();
+
+        // test modes not supported in RAW only mode
+        assertFalse(getActivityValue(activity -> activity.supportsAutoStabilise()));
+        assertFalse(getActivityValue(activity -> activity.supportsDRO()));
+
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+    }
+
+    /** Test taking photo with continuous photo mode.
+     *  Touching to focus will mean the photo is taken whilst the camera controller is actually
+     *  in autofocus mode.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoContinuous() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoContinuous");
+        setToDefault();
+        switchToFocusValue("focus_mode_continuous_picture");
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+
+        int test_af_state_null_focus = getActivityValue(activity -> activity.getPreview().getCameraController().test_af_state_null_focus);
+        assertEquals(0, test_af_state_null_focus);
+    }
+
+    /** Test taking photo with continuous photo mode. Don't touch to focus first, so we take the
+     *  photo in continuous focus mode.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoContinuousNoTouch() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoContinuousNoTouch");
+        setToDefault();
+        switchToFocusValue("focus_mode_continuous_picture");
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+
+        int test_af_state_null_focus = getActivityValue(activity -> activity.getPreview().getCameraController().test_af_state_null_focus);
+        assertEquals(0, test_af_state_null_focus);
+    }
+
+    /**  May have precapture timeout if phone is face down and devices uses fake flash by default (e.g., OnePlus 3T) - see testTakePhotoFlashOnFakeMode.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFlashAuto() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFlashAuto");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFlash()) ) {
+            return;
+        }
+
+        switchToFlashValue("flash_auto");
+        Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+        });
+    }
+
+    /**  May have precapture timeout if phone is face down and devices uses fake flash by default (e.g., OnePlus 3T) - see testTakePhotoFlashOnFakeMode.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFlashOn() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFlashOn");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFlash()) ) {
+            return;
+        }
+
+        switchToFlashValue("flash_on");
+        Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+        });
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFlashTorch() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFlashTorch");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFlash()) ) {
+            return;
+        }
+
+        switchToFlashValue("flash_torch");
+        Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+    }
+
+    /** Tests the "fake" flash mode. Important to do this even for devices where standard Camera2 flash work fine, as we use
+     *  fake flash for modes like HDR (plus it's good to still test the fake flash mode on as many devices as possible).
+     *  We do more tests with flash on than flash auto (especially due to bug on OnePlus 3T where fake flash auto never fires the flash
+     *  anyway).
+     *  May have precapture timeout if phone is face down, see note for testTakePhotoFlashOnFakeMode.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoFlashAutoFakeMode() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFlashAutoFakeMode");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFlash()) ) {
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().usingCamera2API()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(PreferenceKeys.Camera2FakeFlashPreferenceKey, true);
+            editor.apply();
+        });
+        updateForSettings();
+
+        switchToFlashValue("flash_auto");
+        switchToFocusValue("focus_mode_auto");
+        Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+
+        // now test continuous focus mode
+        Thread.sleep(1000);
+        switchToFocusValue("focus_mode_continuous_picture");
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+    }
+
+    /** Tests the "fake" flash mode. Important to do this even for devices where standard Camera2 flash work fine, as we use
+     *  fake flash for modes like HDR (plus it's good to still test the fake flash mode on as many devices as possible).
+     *  We do more tests with flash on than flash auto (especially due to bug on OnePlus 3T where fake flash auto never fires the flash
+     *  anyway).
+     *  May have precapture timeout if phone is face down (at least on Nexus 6 and OnePlus 3T) - issue that we've already ae converged,
+     *  so we think fake-precapture never starts when firing the flash for taking photo. I think this is when being face down means that
+     *  although flash fires, it doesn't light up the picture.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoFlashOnFakeMode() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFlashOnFakeMode");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFlash()) ) {
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().usingCamera2API()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(PreferenceKeys.Camera2FakeFlashPreferenceKey, true);
+            editor.apply();
+        });
+        updateForSettings();
+
+        switchToFocusValue("focus_mode_auto");
+        switchToFlashValue("flash_on");
+        Thread.sleep(2000); // wait so we don't take the photo immediately, to be more realistic
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+            assertEquals(1, activity.getPreview().getCameraController().test_fake_flash_focus);
+            assertEquals(1, activity.getPreview().getCameraController().test_fake_flash_precapture);
+            assertEquals(1, activity.getPreview().getCameraController().test_fake_flash_photo);
+        });
+
+        // now test doing autofocus, waiting, then taking photo
+        Thread.sleep(1000);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+            assertEquals(2, activity.getPreview().getCameraController().test_fake_flash_focus);
+            assertEquals(2, activity.getPreview().getCameraController().test_fake_flash_precapture);
+            assertEquals(2, activity.getPreview().getCameraController().test_fake_flash_photo);
+        });
+
+        // now test doing autofocus, then taking photo immediately
+        Thread.sleep(1000);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, true, false, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+            assertEquals(3, activity.getPreview().getCameraController().test_fake_flash_focus);
+            assertEquals(3, activity.getPreview().getCameraController().test_fake_flash_precapture);
+            assertEquals(3, activity.getPreview().getCameraController().test_fake_flash_photo);
+        });
+
+        // this should match CameraController2.do_af_trigger_for_continuous
+        //final boolean do_af_for_continuous = true;
+        // actually for fake flash, we no longer do af trigger for continuous
+        final boolean do_af_for_continuous = false;
+
+        // now test it all again with continuous focus mode
+        switchToFocusValue("focus_mode_continuous_picture");
+        Thread.sleep(1000);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+            assertEquals(4, activity.getPreview().getCameraController().test_fake_flash_focus);
+            assertEquals(4, activity.getPreview().getCameraController().test_fake_flash_precapture);
+            assertEquals(4, activity.getPreview().getCameraController().test_fake_flash_photo);
+        });
+
+        // now test doing autofocus, waiting, then taking photo
+        Thread.sleep(1000);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+            assertEquals((do_af_for_continuous ? 5 : 4), activity.getPreview().getCameraController().test_fake_flash_focus);
+            assertEquals(5, activity.getPreview().getCameraController().test_fake_flash_precapture);
+            assertEquals(5, activity.getPreview().getCameraController().test_fake_flash_photo);
+        });
+
+        // now test doing autofocus, then taking photo immediately
+        Thread.sleep(1000);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController().getUseCamera2FakeFlash() ); // make sure we turned on the option in the camera controller
+        });
+        subTestTakePhoto(false, false, true, false, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
+            assertEquals((do_af_for_continuous ? 6 : 5), activity.getPreview().getCameraController().test_fake_flash_focus);
+            assertEquals(6, activity.getPreview().getCameraController().test_fake_flash_precapture);
+            assertEquals(6, activity.getPreview().getCameraController().test_fake_flash_photo);
+        });
+
+        //mPreview.getCameraController().count_precapture_timeout = 0; // hack - precapture timeouts are more common with fake flash precapture mode, especially when phone is face down during testing
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoSingleTap() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoSingleTap");
+        setToDefault();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.TouchCapturePreferenceKey, "single");
+            editor.apply();
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, true, false, false, false);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoDoubleTap() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoDoubleTap");
+        setToDefault();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.TouchCapturePreferenceKey, "double");
+            editor.apply();
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, false, true, false, false);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoNoAutofocus() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoNoAutofocus");
+        setToDefault();
+        subTestTakePhoto(false, false, false, false, false, false, false, false);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoNoThumbnail() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoNoThumbnail");
+        setToDefault();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(PreferenceKeys.ThumbnailAnimationPreferenceKey, false);
+            editor.apply();
+        });
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+    }
+
+    /* Tests manually focusing, then immediately taking a photo.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoAfterFocus() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoAfterFocus");
+        setToDefault();
+        subTestTakePhoto(false, false, true, false, false, false, false, false);
+    }
+
+    /* Tests bug fixed by take_photo_after_autofocus in Preview, where the app would hang due to taking a photo after touching to focus. */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFlashBug() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFlashBug");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFlash()) ) {
+            return;
+        }
+
+        switchToFlashValue("flash_on");
+        subTestTakePhoto(false, false, true, false, false, false, false, false);
+    }
+
+    /** Tests taking a photo with front camera and screen flash.
+     *  Note this test fails on Android emulator with old camera API, because on front camera when
+     *  we switch from continuous to auto focus from touch to focus, we're still in continuous focus
+     *  mode, despite both focus modes being supported for front camera - I confirmed that we do
+     *  switch to auto focus, and haven't reset to continuous! Could be a threading/synchronization
+     *  issue from trying to read the camera parameters from the test thread?
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFrontCameraScreenFlash() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFrontCameraScreenFlash");
+        setToDefault();
+
+        if( getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getNumberOfCameras() <= 1) ) {
+            return;
+        }
+
+        int cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            View switchCameraButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera);
+            clickView(switchCameraButton);
+        });
+        waitUntilCameraOpened();
+
+        int new_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+
+        Log.d(TAG, "cameraId: " + cameraId);
+        Log.d(TAG, "new_cameraId: " + new_cameraId);
+
+        assertTrue(cameraId != new_cameraId);
+
+        switchToFlashValue("flash_frontscreen_on");
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+    }
+
+    /** Take a photo in auto focus mode.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoAutoFocus() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoAutoFocus");
+        setToDefault();
+        switchToFocusValue("focus_mode_auto");
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertEquals(0, activity.getPreview().getCameraController().test_af_state_null_focus);
+        });
+    }
+
+    /** Take a photo for Camera2 API when camera is released on UI thread whilst photo is taken on background thread (via
+     *  autofocus callback).
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoAutoFocusReleaseDuringPhoto() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoAutoFocusReleaseDuringPhoto");
+
+        if( !getActivityValue(activity -> activity.getPreview().usingCamera2API()) ) {
+            Log.d(TAG, "test requires camera2 api");
+            return;
+        }
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFocus()) ) {
+            // if no focus, then the photo will be taken on the UI thread
+            Log.d(TAG, "test requires focus");
+            return;
+        }
+
+        switchToFocusValue("focus_mode_auto");
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            activity.getPreview().getCameraController().test_release_during_photo = true;
+            View takePhotoButton = activity.findViewById(net.sourceforge.opencamera.R.id.take_photo);
+            assertFalse( activity.hasThumbnailAnimation() );
+            Log.d(TAG, "about to click take photo");
+            clickView(takePhotoButton);
+            Log.d(TAG, "done clicking take photo");
+        });
+
+        Thread.sleep(5000);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoLockedFocus() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoLockedFocus");
+        setToDefault();
+        switchToFocusValue("focus_mode_locked");
+        subTestTakePhoto(true, false, true, true, false, false, false, false);
+    }
 
     /** Tests option to remove device exif info.
      */
