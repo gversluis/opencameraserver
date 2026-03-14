@@ -3377,6 +3377,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         Log.d(TAG, "### done click preview for autofocus");
         this.getInstrumentation().waitForIdleSync();
         Log.d(TAG, "done wait for idle sync");
+        if( double_tap_photo ) {
+            // double tap will do an autofocus, but only after a pause
+            Thread.sleep(500);
+        }
 
         TestUtils.touchToFocusChecks(mActivity, single_tap_photo, double_tap_photo, manual_can_auto_focus, can_focus_area, focus_value, focus_value_ui, saved_count);
 

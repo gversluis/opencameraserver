@@ -839,7 +839,7 @@ public class TestUtils {
         else if( touch_to_focus ) {
             Log.d(TAG, "can_focus_area?: " + can_focus_area);
             Log.d(TAG, "hasFocusArea?: " + preview.hasFocusArea());
-            if( single_tap_photo || double_tap_photo ) {
+            if( single_tap_photo /*|| double_tap_photo*/ ) {
                 assertFalse(preview.hasFocusArea());
                 assertNull(preview.getCameraController().getFocusAreas());
                 assertNull(preview.getCameraController().getMeteringAreas());
@@ -1352,8 +1352,9 @@ public class TestUtils {
         if( info.focus_value.equals("focus_mode_auto") || info.focus_value.equals("focus_mode_macro") ) {
             info.manual_can_auto_focus = true;
         }
-        else if( info.focus_value.equals("focus_mode_continuous_picture") && !single_tap_photo && !double_tap_photo ) {
-            // if single_tap_photo or double_tap_photo, and continuous mode, we go straight to taking a photo rather than doing a touch to focus
+        else if( info.focus_value.equals("focus_mode_continuous_picture") && !single_tap_photo ) {
+            // if single_tap_photo and continuous mode, we go straight to taking a photo rather than doing a touch to focus
+            // double_tap_photo does support auto focus, but note this will be after a short pause
             info.manual_can_auto_focus = true;
         }
 
@@ -1375,7 +1376,7 @@ public class TestUtils {
         Log.d(TAG, "1 count_cameraAutoFocus: " + preview.count_cameraAutoFocus);
         assertEquals((manual_can_auto_focus ? saved_count + 1 : saved_count), preview.count_cameraAutoFocus);
         Log.d(TAG, "has focus area?: " + preview.hasFocusArea());
-        if( single_tap_photo || double_tap_photo ) {
+        if( single_tap_photo /*|| double_tap_photo*/ ) {
             assertFalse(preview.hasFocusArea());
             assertNull(preview.getCameraController().getFocusAreas());
             assertNull(preview.getCameraController().getMeteringAreas());
@@ -1402,7 +1403,7 @@ public class TestUtils {
         String new_focus_value_ui = preview.getCurrentFocusValue();
         //noinspection StringEquality
         assertTrue(new_focus_value_ui == focus_value_ui || new_focus_value_ui.equals(focus_value_ui)); // also need to do == check, as strings may be null if focus not supported
-        if( focus_value.equals("focus_mode_continuous_picture") && !single_tap_photo && !double_tap_photo && preview.supportsFocus() && preview.getSupportedFocusValues().contains("focus_mode_auto") )
+        if( focus_value.equals("focus_mode_continuous_picture") && !single_tap_photo /*&& !double_tap_photo*/ && preview.supportsFocus() && preview.getSupportedFocusValues().contains("focus_mode_auto") )
             assertEquals("focus_mode_auto", preview.getCameraController().getFocusValue()); // continuous focus mode switches to auto focus on touch (unless single_tap_photo, or auto focus not supported)
         else
             assertEquals(preview.getCameraController().getFocusValue(), focus_value);
