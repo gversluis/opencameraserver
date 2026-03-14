@@ -55,6 +55,8 @@ interface PhotoTests {}
 
 interface VideoTests {}
 
+interface PhotoCamera2Tests {}
+
 interface HDRTests {}
 
 interface HDRNTests {}
@@ -6598,7 +6600,7 @@ public class InstrumentedTest {
         });
     }
 
-    @Category(PhotoTests.class)
+    @Category(PhotoCamera2Tests.class)
     @Test
     public void testTakePhotoVendorExtensions() throws InterruptedException {
         Log.d(TAG, "testTakePhotoVendorExtensions");
@@ -6708,7 +6710,7 @@ public class InstrumentedTest {
 
     /** Tests preshots.
      */
-    @Category(PhotoTests.class)
+    @Category(PhotoCamera2Tests.class)
     @Test
     public void testTakePhotoPreshots() throws InterruptedException {
         Log.d(TAG, "testTakePhotoPreshots");
@@ -6752,7 +6754,7 @@ public class InstrumentedTest {
 
     /** Tests manual exposure longer than preview exposure rate, with the RequestTagType.RUN_POST_CAPTURE flag for Camera2 API.
      */
-    @Category(PhotoTests.class)
+    @Category(PhotoCamera2Tests.class)
     @Test
     public void testTakePhotoManualISOExposurePostCapture() throws InterruptedException {
         Log.d(TAG, "testTakePhotoPreshots");
@@ -6825,7 +6827,7 @@ public class InstrumentedTest {
 
     }
 
-    @Category(PhotoTests.class)
+    @Category(PhotoCamera2Tests.class)
     @Test
     public void testTakePhotoJpegR() throws InterruptedException {
         Log.d(TAG, "testTakePhotoJpegR");
@@ -6851,7 +6853,7 @@ public class InstrumentedTest {
     /** Tests with flag set to force preview to take 6s to start (tests Camera2 behaviour for this happening on background thread, and
      *  not).
      */
-    @Category(PhotoTests.class)
+    @Category(PhotoCamera2Tests.class)
     @Test
     public void testTakePhotoSlowPreviewStart() throws InterruptedException {
         Log.d(TAG, "testTakePhotoSlowPreviewStart");
@@ -6890,7 +6892,7 @@ public class InstrumentedTest {
     /** Tests with flag set to force preview to take 6s to start (tests Camera2 behaviour for this happening on background thread, and
      *  not).
      */
-    @Category(PhotoTests.class)
+    @Category(PhotoCamera2Tests.class)
     @Test
     public void testSettingsSlowPreviewStart() throws InterruptedException {
         Log.d(TAG, "testSettingsSlowPreviewStart");
