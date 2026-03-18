@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.Surface;
@@ -3059,6 +3060,26 @@ public class MainUI {
 
     View getTopIcon() {
         return this.top_icon;
+    }
+
+    /** Performs haptic feedback, if allowed by settings.
+     */
+    public static long performHapticFeedback(SeekBar seekBar, long last_haptic_time) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(seekBar.getContext());
+        if( sharedPreferences.getBoolean(PreferenceKeys.AllowHapticFeedbackPreferenceKey, true) ) {
+            long time_ms = System.currentTimeMillis();
+            if( time_ms > last_haptic_time + 16 ) {
+                last_haptic_time = time_ms;
+                // SEGMENT_TICK or SEGMENT_TICK doesn't work on Galaxy S24+ at least, even though on Android 14!
+                /*if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ) {
+                    seekBar.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK);
+                }
+                else*/ {
+                    seekBar.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
+                }
+            }
+        }
+        return last_haptic_time;
     }
 
     // for testing

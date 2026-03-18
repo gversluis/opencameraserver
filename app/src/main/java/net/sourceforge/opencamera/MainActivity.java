@@ -89,7 +89,6 @@ import android.util.Size;
 import android.util.SizeF;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -5680,29 +5679,12 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         }
     }
 
-    /** Performs haptic feedback if safe to do so (i.e. not video recording).
+    /** Performs haptic feedback if safe to do so (i.e. not video recording), and allowed by
+     *  settings.
      */
-    public long performHapticFeedbackIfSafe(SeekBar seekBar, long last_haptic_time) {
+    private long performHapticFeedbackIfSafe(SeekBar seekBar, long last_haptic_time) {
         if( !preview.isVideoRecording() ) {
-            return performHapticFeedback(seekBar, last_haptic_time);
-        }
-        return last_haptic_time;
-    }
-
-    public static long performHapticFeedback(SeekBar seekBar, long last_haptic_time) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(seekBar.getContext());
-        if( sharedPreferences.getBoolean(PreferenceKeys.AllowHapticFeedbackPreferenceKey, true) ) {
-            long time_ms = System.currentTimeMillis();
-            if( time_ms > last_haptic_time + 16 ) {
-                last_haptic_time = time_ms;
-                // SEGMENT_TICK or SEGMENT_TICK doesn't work on Galaxy S24+ at least, even though on Android 14!
-                /*if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ) {
-                    seekBar.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK);
-                }
-                else*/ {
-                    seekBar.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
-                }
-            }
+            return MainUI.performHapticFeedback(seekBar, last_haptic_time);
         }
         return last_haptic_time;
     }

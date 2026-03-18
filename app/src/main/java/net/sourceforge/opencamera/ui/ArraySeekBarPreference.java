@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import net.sourceforge.opencamera.MainActivity;
 import net.sourceforge.opencamera.R;
 
 /** This contains a custom preference to display a seekbar in place of a ListPreference.
@@ -86,7 +85,7 @@ public class ArraySeekBarPreference extends DialogPreference {
                 String new_entry = entries[progress].toString();
                 textView.setText(new_entry);
                 if( fromUser ) {
-                    last_haptic_time = MainActivity.performHapticFeedback(seekBar, last_haptic_time);
+                    last_haptic_time = MainUI.performHapticFeedback(seekBar, last_haptic_time);
                 }
             }
 
