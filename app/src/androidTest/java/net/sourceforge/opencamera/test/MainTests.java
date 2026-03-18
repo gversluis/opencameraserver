@@ -35,7 +35,7 @@ public class MainTests {
         }
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testFlashStartup"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testFlashStartup2"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testHDRRestart"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testHDRRestart"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testPreviewSize"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testPreviewSizeWYSIWYG"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testResolutionMaxMP"));

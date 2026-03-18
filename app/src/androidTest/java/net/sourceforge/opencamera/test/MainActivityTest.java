@@ -4064,6 +4064,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         subTestTakePhoto(false, false, true, false, false, false, false, false);
     }*/
 
+    // moved to InstrumentedTest
     /** Tests cycling through cameras, simulating the multi-camera icon.
      */
     private void subTestCycleMultiCameras(Set<Integer> visited_camera_ids) throws InterruptedException {
@@ -4179,6 +4180,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         }
     }
 
+    // moved to InstrumentedTest
     /** Tests taking a photo with multiple cameras.
      *  Also tests the content descriptions for switch camera button.
      *  And tests that we save the current camera when pausing and resuming.
@@ -4188,7 +4190,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
      *                          camera icon. If true, then cycle_all_cameras must be false. Should
      *                          only be true on multi-camera devices.
      */
-    private void subTestTakePhotoMultiCameras(boolean cycle_all_cameras, boolean test_multi_cam) throws InterruptedException {
+    /*private void subTestTakePhotoMultiCameras(boolean cycle_all_cameras, boolean test_multi_cam) throws InterruptedException {
         Log.d(TAG, "subTestTakePhotoMultiCameras");
 
         int n_cameras = mPreview.getCameraControllerManager().getNumberOfCameras();
@@ -4349,8 +4351,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         int final_cameraId = mPreview.getCameraId();
         assertEquals(orig_cameraId, final_cameraId);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /* Tests taking a photo with all non-default cameras.
      * For multi-camera devices, this tests the behaviour with
      * PreferenceKeys.MultiCamButtonPreferenceKey devices, so the switch camera icon still cycles
@@ -4358,7 +4361,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
      * Can be unstable on Android emulator if the time taken to focus means we've already switched
      * back from auto to continuous focus (after touch to focus).
      */
-    public void testTakePhotoFrontCameraAll() throws InterruptedException {
+    /*public void testTakePhotoFrontCameraAll() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFrontCameraAll");
         setToDefault();
 
@@ -4371,11 +4374,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         }
 
         subTestTakePhotoMultiCameras(true, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /* Tests taking a photo on multi-camera devices with front and back cameras.
      */
-    public void testTakePhotoFrontCamera() throws InterruptedException {
+    /*public void testTakePhotoFrontCamera() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFrontCamera");
         setToDefault();
 
@@ -4384,20 +4388,21 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         }
 
         subTestTakePhotoMultiCameras(false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /* Tests taking a photo on multi-camera devices, using both icons to switch between cameras.
      */
-    public void testTakePhotoFrontCameraMulti() throws InterruptedException {
+    /*public void testTakePhotoFrontCameraMulti() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFrontCameraMulti");
         setToDefault();
 
-        /*if( !mActivity.isMultiCamEnabled() ) {
-            return;
-        }*/
+        //if( !mActivity.isMultiCamEnabled() ) {
+        //    return;
+        //}
 
         subTestTakePhotoMultiCameras(false, true);
-    }
+    }*/
 
     // moved to InstrumentedTest
     /** Tests taking a photo with front camera and screen flash.
@@ -4487,7 +4492,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         subTestTakePhoto(true, false, true, true, false, false, false, false);
     }*/
 
-    public void testTakePhotoManualFocus() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoManualFocus() throws InterruptedException {
         Log.d(TAG, "testTakePhotoManualFocus");
         setToDefault();
 
@@ -4500,9 +4506,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertEquals(seekBar.getVisibility(), View.VISIBLE);
         seekBar.setProgress( (int)(0.25*(seekBar.getMax()-1)) );
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
-    public void testTakePhotoLockedLandscape() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoLockedLandscape() throws InterruptedException {
         Log.d(TAG, "testTakePhotoLockedLandscape");
         setToDefault();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -4511,9 +4518,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         editor.apply();
         updateForSettings();
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
-    public void testTakePhotoLockedPortrait() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoLockedPortrait() throws InterruptedException {
         Log.d(TAG, "testTakePhotoLockedPortrait");
         setToDefault();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -4522,10 +4530,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         editor.apply();
         updateForSettings();
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     // If this test fails, make sure we've manually selected that folder (as permission can't be given through the test framework).
-    public void testTakePhotoSAF() throws InterruptedException {
+    /*public void testTakePhotoSAF() throws InterruptedException {
         Log.d(TAG, "testTakePhotoSAF");
 
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ) {
@@ -4542,9 +4551,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         updateForSettings();
 
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
-    public void testTakePhotoAudioButton() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoAudioButton() throws InterruptedException {
         Log.d(TAG, "testTakePhotoAudioButton");
         setToDefault();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -4554,7 +4564,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         updateForSettings();
 
         subTestTakePhoto(false, false, true, true, false, false, false, false);
-    }
+    }*/
 
     // If this fails with a SecurityException about needing INJECT_EVENTS permission, this seems to be due to the "help popup" that Android shows - can be fixed by clearing that manually, then rerunning the test.
     public void testImmersiveMode() throws InterruptedException {
@@ -10994,7 +11004,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         this.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_UP);
     }
 
-    public void testTakePhotoDRO() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoDRO() throws InterruptedException {
         Log.d(TAG, "testTakePhotoDRO");
 
         setToDefault();
@@ -11034,9 +11045,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertSame(mActivity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.Standard);
         assertEquals(90, mActivity.getApplicationInterface().getImageQualityPref());
-    }
+    }*/
 
-    public void testTakePhotoDROPhotoStamp() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoDROPhotoStamp() throws InterruptedException {
         Log.d(TAG, "testTakePhotoDROPhotoStamp");
 
         setToDefault();
@@ -11067,11 +11079,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         assertSame(mActivity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.Standard);
         assertEquals(90, mActivity.getApplicationInterface().getImageQualityPref());
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests restarting in HDR mode.
      */
-    public void testHDRRestart() {
+    /*public void testHDRRestart() {
         Log.d(TAG, "testHDRRestart");
         setToDefault();
         assertSame(mActivity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.Standard);
@@ -11088,9 +11101,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertSame(mActivity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
         restart();
         assertSame(mActivity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
-    }
+    }*/
 
-    public void testTakePhotoHDR() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoHDR() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDR");
 
         setToDefault();
@@ -11111,11 +11125,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking photo in HDR photo mode with fast expo/HDR burst disabled.
      */
-    public void testTakePhotoHDRSlowBurst() throws InterruptedException {
+    /*public void testTakePhotoHDRSlowBurst() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDRSlowBurst");
 
         setToDefault();
@@ -11141,11 +11156,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking photo in HDR photo mode with saving base expo images.
      */
-    public void testTakePhotoHDRSaveExpo() throws InterruptedException {
+    /*public void testTakePhotoHDRSaveExpo() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDRSaveExpo");
 
         setToDefault();
@@ -11167,11 +11183,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking photo in HDR photo mode with saving base expo images, with RAW.
      */
-    public void testTakePhotoHDRSaveExpoRaw() throws InterruptedException {
+    /*public void testTakePhotoHDRSaveExpoRaw() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDRSaveExpoRaw");
 
         setToDefault();
@@ -11197,11 +11214,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking photo in HDR photo mode with saving base expo images, with RAW only.
      */
-    public void testTakePhotoHDRSaveExpoRawOnly() throws InterruptedException {
+    /*public void testTakePhotoHDRSaveExpoRawOnly() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDRSaveExpoRawOnly");
 
         setToDefault();
@@ -11227,13 +11245,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Take photo in HDR mode with front camera.
      *  Note that this fails on OnePlus 3T with old camera API, due to bug where photo resolution changes when
      *  exposure compensation set for front camera.
      */
-    public void testTakePhotoHDRFrontCamera() throws InterruptedException {
+    /*public void testTakePhotoHDRFrontCamera() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDRFrontCamera");
 
         setToDefault();
@@ -11271,9 +11290,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
-    public void testTakePhotoHDRAutoStabilise() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoHDRAutoStabilise() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDRAutoStabilise");
 
         setToDefault();
@@ -11295,9 +11315,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
-    public void testTakePhotoHDRPhotoStamp() throws InterruptedException {
+    // moved to InstrumentedTest
+    /*public void testTakePhotoHDRPhotoStamp() throws InterruptedException {
         Log.d(TAG, "testTakePhotoHDRPhotoStamp");
 
         setToDefault();
@@ -11319,11 +11340,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests expo bracketing with default values.
      */
-    public void testTakePhotoExpo() throws InterruptedException {
+    /*public void testTakePhotoExpo() throws InterruptedException {
         Log.d(TAG, "testTakePhotoExpo");
 
         setToDefault();
@@ -11344,11 +11366,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests expo bracketing with 5 images, 1 stop.
      */
-    public void testTakePhotoExpo5() throws InterruptedException {
+    /*public void testTakePhotoExpo5() throws InterruptedException {
         Log.d(TAG, "testTakePhotoExpo5");
 
         setToDefault();
@@ -11371,11 +11394,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /* Sets focus bracketing seek bars to some test positions.
      */
-    private void setUpFocusBracketing() throws InterruptedException {
+    /*private void setUpFocusBracketing() throws InterruptedException {
         SeekBar focusSeekBar = mActivity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
         SeekBar focusTargetSeekBar = mActivity.findViewById(net.sourceforge.opencamera.R.id.focus_bracketing_target_seekbar);
 
@@ -11416,11 +11440,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
         Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
         assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking a photo in focus bracketing mode.
      */
-    public void testTakePhotoFocusBracketing() throws InterruptedException {
+    /*public void testTakePhotoFocusBracketing() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFocusBracketing");
 
         setToDefault();
@@ -11463,11 +11488,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
         Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
         assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking a photo in focus bracketing mode, with auto-level and 20 images.
      */
-    public void testTakePhotoFocusBracketingHeavy() throws InterruptedException {
+    /*public void testTakePhotoFocusBracketingHeavy() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFocusBracketingHeavy");
 
         setToDefault();
@@ -11516,11 +11542,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
         Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
         assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking a photo in focus bracketing mode, but with cancelling.
      */
-    public void testTakePhotoFocusBracketingCancel() throws InterruptedException {
+    /*public void testTakePhotoFocusBracketingCancel() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFocusBracketingCancel");
 
         setToDefault();
@@ -11589,11 +11616,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
             assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
         }
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking a photo with RAW and focus bracketing mode.
      */
-    public void testTakePhotoRawFocusBracketing() throws InterruptedException {
+    /*public void testTakePhotoRawFocusBracketing() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRawFocusBracketing");
 
         setToDefault();
@@ -11641,11 +11669,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
         Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
         assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests taking a photo with RAW only and focus bracketing mode.
      */
-    public void testTakePhotoRawOnlyFocusBracketing() throws InterruptedException {
+    /*public void testTakePhotoRawOnlyFocusBracketing() throws InterruptedException {
         Log.d(TAG, "testTakePhotoRawOnlyFocusBracketing");
 
         setToDefault();
@@ -11693,11 +11722,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
         Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
         assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests NR photo mode.
      */
-    public void testTakePhotoNR() throws InterruptedException {
+    /*public void testTakePhotoNR() throws InterruptedException {
         Log.d(TAG, "testTakePhotoNR");
 
         setToDefault();
@@ -11764,11 +11794,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
         assertEquals(1, mPreview.getCameraController().test_capture_results);
         assertTrue(mActivity.getPreview().getCameraController().getBurstTotal() < CameraController.N_IMAGES_NR_DARK_LOW_LIGHT);
-    }
+    }*/
 
+    // moved to InstrumentedTest
     /** Tests fast burst with 20 images.
      */
-    public void testTakePhotoFastBurst() throws InterruptedException {
+    /*public void testTakePhotoFastBurst() throws InterruptedException {
         Log.d(TAG, "testTakePhotoFastBurst");
 
         setToDefault();
@@ -11790,7 +11821,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             Log.d(TAG, "test_capture_results: " + mPreview.getCameraController().test_capture_results);
             assertEquals(1, mPreview.getCameraController().test_capture_results);
         }
-    }
+    }*/
 
     private void subTestTakePhotoContinuousBurst(boolean is_slow) throws InterruptedException {
         Log.d(TAG, "subTestTakePhotoContinuousBurst");

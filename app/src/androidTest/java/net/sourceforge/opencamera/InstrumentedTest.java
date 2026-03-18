@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Insets;
 import android.hardware.camera2.CameraExtensionCharacteristics;
+import android.hardware.camera2.CaptureRequest;
 import android.media.CamcorderProfile;
 import android.os.Build;
 import android.os.Looper;
@@ -31,22 +32,27 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import net.sourceforge.opencamera.cameracontroller.CameraController;
+import net.sourceforge.opencamera.cameracontroller.CameraController2;
 import net.sourceforge.opencamera.preview.Preview;
 import net.sourceforge.opencamera.ui.DrawPreview;
 import net.sourceforge.opencamera.ui.PopupView;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 interface MainTests {}
@@ -68,6 +74,7 @@ interface PanoramaTests {}
 // ignore warning about "Call to Thread.sleep in a loop", this is only test code
 /** @noinspection BusyWait*/
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING) // run tests in alphabetical order (means we can force tests to run first e.g. "aaa_")
 public class InstrumentedTest {
 
     private static final String TAG = "InstrumentedTest";
@@ -7043,6 +7050,353 @@ public class InstrumentedTest {
         subTestTakePhoto(false, false, true, false, false, false, false, false);
     }
 
+    /** Tests cycling through cameras, simulating the multi-camera icon.
+     */
+    private void subTestCycleMultiCameras(Set<Integer> visited_camera_ids) throws InterruptedException {
+        if( getActivityValue(activity -> activity.showSwitchMultiCamIcon()) ) {
+            final int cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+            CameraController.Facing facing = getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getFacing(cameraId));
+
+            List<Integer> logical_camera_ids = getActivityValue(activity -> activity.getSameFacingLogicalCameras(cameraId));
+            Set<String> physical_cameras = getActivityValue(activity -> activity.getPreview().getPhysicalCameras()); // physical cameras for logical cameraId
+            assertEquals(cameraId, (int)logical_camera_ids.get(0));
+
+            // test all logical cameras with same-facing
+            for(int id : logical_camera_ids) {
+                Log.d(TAG, "testing multi id: " + id);
+
+                mActivityRule.getScenario().onActivity(activity -> {
+                    activity.userSwitchToCamera(id, null);
+                });
+                waitUntilCameraOpened();
+
+                final int new_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+                Log.d(TAG, "multi cam button switched to " + new_cameraId);
+                Log.d(TAG, "cameraId: " + cameraId);
+                Log.d(TAG, "visited_camera_ids was: " + visited_camera_ids);
+                assertEquals(id, new_cameraId);
+                if( id != cameraId ) {
+                    assertFalse(visited_camera_ids.contains(new_cameraId));
+                    visited_camera_ids.add(new_cameraId);
+                }
+
+                CameraController.Facing new_facing = getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getFacing(new_cameraId));
+                assertEquals(facing, new_facing);
+
+                subTestTakePhoto(false, false, true, true, false, false, false, false);
+            }
+
+            if( physical_cameras != null ) {
+                // test all physical cameras for cameraId
+                for(String physical_id : physical_cameras) {
+                    Log.d(TAG, "testing physical id: " + physical_id);
+
+                    mActivityRule.getScenario().onActivity(activity -> {
+                        activity.userSwitchToCamera(cameraId, physical_id);
+                    });
+                    waitUntilCameraOpened();
+
+                    final int new_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+                    assertEquals(cameraId, new_cameraId);
+
+                    CameraController.Facing new_facing = getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getFacing(new_cameraId));
+                    assertEquals(facing, new_facing);
+
+                    subTestTakePhoto(false, false, true, true, false, false, false, false);
+                }
+            }
+
+            // old code for multi-cam button (from MainActivityTest):
+            /*do {
+                View switchMultiCameraButton = mActivity.findViewById(net.sourceforge.opencamera.R.id.switch_multi_camera);
+                clickView(switchMultiCameraButton);
+                waitUntilCameraOpened();
+
+                int new_cameraId = mPreview.getCameraId();
+                Log.d(TAG, "multi cam button switched to " + new_cameraId);
+                Log.d(TAG, "cameraId: " + cameraId);
+                Log.d(TAG, "visited_camera_ids was: " + visited_camera_ids);
+                assertTrue(new_cameraId != cameraId);
+                assertFalse(visited_camera_ids.contains(new_cameraId));
+                visited_camera_ids.add(new_cameraId);
+
+                CameraController.Facing new_facing = mPreview.getCameraControllerManager().getFacing(new_cameraId);
+                assertEquals(facing, new_facing);
+
+                subTestTakePhoto(false, false, true, true, false, false, false, false);
+            }
+            while( mActivity.testGetNextMultiCameraId() != cameraId );*/
+
+            /*do {
+                int next_multi_cameraId = mActivity.testGetNextMultiCameraId();
+                assertTrue(next_multi_cameraId != cameraId);
+                mActivity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        mActivity.userSwitchToCamera(next_multi_cameraId, null);
+                    }
+                });
+                // need to wait for UI code to finish
+                this.getInstrumentation().waitForIdleSync();
+                waitUntilCameraOpened();
+
+                int new_cameraId = mPreview.getCameraId();
+                Log.d(TAG, "multi cam button switched to " + new_cameraId);
+                Log.d(TAG, "cameraId: " + cameraId);
+                Log.d(TAG, "visited_camera_ids was: " + visited_camera_ids);
+                assertTrue(new_cameraId != cameraId);
+                assertTrue(new_cameraId == next_multi_cameraId);
+                assertFalse(visited_camera_ids.contains(new_cameraId));
+                visited_camera_ids.add(new_cameraId);
+
+                CameraController.Facing new_facing = mPreview.getCameraControllerManager().getFacing(new_cameraId);
+                assertEquals(facing, new_facing);
+
+                subTestTakePhoto(false, false, true, true, false, false, false, false);
+            }
+            while( mActivity.testGetNextMultiCameraId() != cameraId );*/
+        }
+    }
+
+    /** Tests taking a photo with multiple cameras.
+     *  Also tests the content descriptions for switch camera button.
+     *  And tests that we save the current camera when pausing and resuming.
+     * @param cycle_all_cameras If true, expect that the Switch Camera icon cycles through all
+     *                          cameras.
+     * @param test_multi_cam    If true, also test cycling through cameras using the switch multi
+     *                          camera icon. If true, then cycle_all_cameras must be false. Should
+     *                          only be true on multi-camera devices.
+     */
+    private void subTestTakePhotoMultiCameras(boolean cycle_all_cameras, boolean test_multi_cam) throws InterruptedException {
+        Log.d(TAG, "subTestTakePhotoMultiCameras");
+
+        int n_cameras = getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getNumberOfCameras());
+        if( n_cameras <= 1 ) {
+            return;
+        }
+
+        if( test_multi_cam ) {
+            assertFalse(cycle_all_cameras);
+        }
+
+        int orig_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+        Set<Integer> visited_camera_ids = new HashSet<>();
+        visited_camera_ids.add(orig_cameraId);
+
+        boolean done_front_test = false;
+        for(int i=0;i<(cycle_all_cameras ? n_cameras-1 : 1);i++) {
+            Log.d(TAG, "i: " + i);
+            int cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+
+            CameraController.Facing facing = getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getFacing(cameraId));
+            if( i == 0 ) {
+                assertEquals(CameraController.Facing.FACING_BACK, facing);
+            }
+
+            if( test_multi_cam ) {
+                // first test cycling through the cameras with this facing
+                subTestCycleMultiCameras(visited_camera_ids);
+            }
+
+            CharSequence contentDescription = getActivityValue(activity -> activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera).getContentDescription());
+            mActivityRule.getScenario().onActivity(activity -> {
+                View switchCameraButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera);
+                clickView(switchCameraButton);
+            });
+            waitUntilCameraOpened();
+
+            int new_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+            assertTrue(new_cameraId != cameraId);
+            if( cycle_all_cameras ) {
+                // in this mode, we should just be iterating over the camera IDs
+                assertEquals((cameraId + 1) % n_cameras, new_cameraId);
+            }
+            assertFalse(visited_camera_ids.contains(new_cameraId));
+            visited_camera_ids.add(new_cameraId);
+
+            CameraController.Facing new_facing = getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getFacing(new_cameraId));
+            CharSequence new_contentDescription = getActivityValue(activity -> activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera).getContentDescription());
+            if( n_cameras == 2 || !cycle_all_cameras ) {
+                assertEquals(facing==CameraController.Facing.FACING_BACK ? CameraController.Facing.FACING_FRONT : CameraController.Facing.FACING_BACK, new_facing);
+            }
+
+            //int next_cameraId = (new_cameraId+1) % n_cameras;
+            int next_cameraId = getActivityValue(activity -> activity.getNextCameraId());
+            assertTrue(next_cameraId != new_cameraId);
+            if( cycle_all_cameras ) {
+                // in this mode, we should just be iterating over the camera IDs
+                assertEquals((new_cameraId + 1) % n_cameras, next_cameraId);
+            }
+            if( i==n_cameras-1 || !cycle_all_cameras ) {
+                // should have returned to the start
+                assertEquals(cameraId, next_cameraId);
+            }
+            CameraController.Facing next_facing = getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getFacing(next_cameraId));
+            if( n_cameras == 2 || !cycle_all_cameras ) {
+                assertEquals(facing, next_facing);
+            }
+
+            Log.d(TAG, "cameraId: " + cameraId);
+            Log.d(TAG, "facing: " + facing);
+            Log.d(TAG, "contentDescription: " + contentDescription);
+            Log.d(TAG, "new_cameraId: " + new_cameraId);
+            Log.d(TAG, "new_facing: " + new_facing);
+            Log.d(TAG, "new_contentDescription: " + new_contentDescription);
+            Log.d(TAG, "next_cameraId: " + next_cameraId);
+            Log.d(TAG, "next_facing: " + next_facing);
+
+            mActivityRule.getScenario().onActivity(activity -> {
+                switch( new_facing ) {
+                    case FACING_FRONT:
+                        assertEquals(contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_front_camera));
+                        break;
+                    case FACING_BACK:
+                        assertEquals(contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_back_camera));
+                        break;
+                    case FACING_EXTERNAL:
+                        assertEquals(contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_external_camera));
+                        break;
+                    default:
+                        fail();
+                }
+                switch( next_facing ) {
+                    case FACING_FRONT:
+                        assertEquals(new_contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_front_camera));
+                        break;
+                    case FACING_BACK:
+                        assertEquals(new_contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_back_camera));
+                        break;
+                    case FACING_EXTERNAL:
+                        assertEquals(new_contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_external_camera));
+                        break;
+                    default:
+                        fail();
+                }
+            });
+
+            subTestTakePhoto(false, false, true, true, false, false, false, false);
+
+            if( !done_front_test && new_facing == CameraController.Facing.FACING_FRONT ) {
+                done_front_test = true;
+
+                // check still front camera after pause/resume
+                pauseAndResume();
+
+                int restart_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+                CharSequence restart_contentDescription = getActivityValue(activity -> activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera).getContentDescription());
+                Log.d(TAG, "restart_contentDescription: " + restart_contentDescription);
+                assertEquals(restart_cameraId, new_cameraId);
+                mActivityRule.getScenario().onActivity(activity -> {
+                    switch( next_facing ) {
+                        case FACING_FRONT:
+                            assertEquals(restart_contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_front_camera));
+                            break;
+                        case FACING_BACK:
+                            assertEquals(restart_contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_back_camera));
+                            break;
+                        case FACING_EXTERNAL:
+                            assertEquals(restart_contentDescription, activity.getResources().getString(net.sourceforge.opencamera.R.string.switch_to_external_camera));
+                            break;
+                        default:
+                            fail();
+                    }
+                });
+
+                // now test mirror mode
+                mActivityRule.getScenario().onActivity(activity -> {
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString(PreferenceKeys.FrontCameraMirrorKey, "preference_front_camera_mirror_photo");
+                    editor.apply();
+                });
+                updateForSettings();
+                subTestTakePhoto(false, false, true, true, false, false, false, false);
+                // disable mirror mode again
+                mActivityRule.getScenario().onActivity(activity -> {
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString(PreferenceKeys.FrontCameraMirrorKey, "preference_front_camera_mirror_no");
+                    editor.apply();
+                });
+                updateForSettings();
+            }
+        }
+
+        if( test_multi_cam ) {
+            subTestCycleMultiCameras(visited_camera_ids);
+        }
+
+        if( cycle_all_cameras || test_multi_cam ) {
+            // test we visited all cameras
+            assertEquals(n_cameras, visited_camera_ids.size());
+        }
+
+        // now check we really do return to the first camera
+        mActivityRule.getScenario().onActivity(activity -> {
+            View switchCameraButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera);
+            clickView(switchCameraButton);
+        });
+        waitUntilCameraOpened();
+
+        int final_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+        assertEquals(orig_cameraId, final_cameraId);
+    }
+
+    /* Tests taking a photo with all non-default cameras.
+     * For multi-camera devices, this tests the behaviour with
+     * PreferenceKeys.MultiCamButtonPreferenceKey devices, so the switch camera icon still cycles
+     * through all cameras.
+     * Can be unstable on Android emulator if the time taken to focus means we've already switched
+     * back from auto to continuous focus (after touch to focus).
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFrontCameraAll() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFrontCameraAll");
+        setToDefault();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.isMultiCamEnabled() ) {
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean(PreferenceKeys.MultiCamButtonPreferenceKey, false);
+                editor.apply();
+            }
+        });
+        updateForSettings();
+
+        subTestTakePhotoMultiCameras(true, false);
+    }
+
+    /* Tests taking a photo on multi-camera devices with front and back cameras.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFrontCamera() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFrontCamera");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.isMultiCamEnabled()) ) {
+            return; // no point running, as will be same as testTakePhotoFrontCameraAll
+        }
+
+        subTestTakePhotoMultiCameras(false, false);
+    }
+
+    /* Tests taking a photo on multi-camera devices, using both icons to switch between cameras.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoFrontCameraMulti() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFrontCameraMulti");
+        setToDefault();
+
+        /*if( !mActivity.isMultiCamEnabled() ) {
+            return;
+        }*/
+
+        subTestTakePhotoMultiCameras(false, true);
+    }
+
     /** Tests taking a photo with front camera and screen flash.
      *  Note this test fails on Android emulator with old camera API, because on front camera when
      *  we switch from continuous to auto focus from touch to focus, we're still in continuous focus
@@ -7056,7 +7410,7 @@ public class InstrumentedTest {
         Log.d(TAG, "testTakePhotoFrontCameraScreenFlash");
         setToDefault();
 
-        if( getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getNumberOfCameras() <= 1) ) {
+        if( getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getNumberOfCameras()) <= 1 ) {
             return;
         }
 
@@ -7137,6 +7491,1134 @@ public class InstrumentedTest {
         setToDefault();
         switchToFocusValue("focus_mode_locked");
         subTestTakePhoto(true, false, true, true, false, false, false, false);
+    }
+
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoManualFocus() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoManualFocus");
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.getPreview().supportsFocus()) ) {
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().getSupportedFocusValues().contains("focus_mode_manual2")) ) {
+            return;
+        }
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar seekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+            assertEquals(seekBar.getVisibility(), View.GONE);
+        });
+        switchToFocusValue("focus_mode_manual2");
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar seekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+            assertEquals(seekBar.getVisibility(), View.VISIBLE);
+            seekBar.setProgress( (int)(0.25*(seekBar.getMax()-1)) );
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoLockedLandscape() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoLockedLandscape");
+        setToDefault();
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.LockOrientationPreferenceKey, "landscape");
+            editor.apply();
+        });
+        updateForSettings();
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoLockedPortrait() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoLockedPortrait");
+        setToDefault();
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.LockOrientationPreferenceKey, "portrait");
+            editor.apply();
+        });
+        updateForSettings();
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+    }
+
+    // If this test fails, make sure we've manually selected that folder (as permission can't be given through the test framework).
+    // named "aaa_" to run test earlier as it requires various permissions be allowed, that can only be set by user action
+    @Category(PhotoTests.class)
+    @Test
+    public void aaa_testTakePhotoSAF() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoSAF");
+
+        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ) {
+            Log.d(TAG, "SAF requires Android Lollipop or better");
+            return;
+        }
+
+        setToDefault();
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(PreferenceKeys.UsingSAFPreferenceKey, true);
+            editor.putString(PreferenceKeys.SaveLocationSAFPreferenceKey, "content://com.android.externalstorage.documents/tree/primary%3ADCIM%2FOpenCamera");
+            editor.apply();
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoAudioButton() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoAudioButton");
+        if( TestUtils.test_camera2 ) {
+            // don't bother running for Camera2 testing
+        }
+        setToDefault();
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.AudioControlPreferenceKey, "noise");
+            editor.apply();
+        });
+        updateForSettings();
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoDRO() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoDRO");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsDRO()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertEquals(90, activity.getApplicationInterface().getImageQualityPref());
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_dro");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.DRO);
+            assertEquals(100, activity.getApplicationInterface().getImageQualityPref());
+        });
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertEquals(100, activity.getApplicationInterface().getImageQualityPref());
+
+            View switchVideoButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_video);
+            clickView(switchVideoButton);
+        });
+        waitUntilCameraOpened();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertEquals(90, activity.getApplicationInterface().getImageQualityPref());
+
+            View switchVideoButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_video);
+            clickView(switchVideoButton);
+        });
+        waitUntilCameraOpened();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertEquals(100, activity.getApplicationInterface().getImageQualityPref());
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_std");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.Standard);
+            assertEquals(90, activity.getApplicationInterface().getImageQualityPref());
+        });
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoDROPhotoStamp() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoDROPhotoStamp");
+        if( TestUtils.test_camera2 ) {
+            // don't bother running for Camera2 testing
+        }
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsDRO()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertEquals(90, activity.getApplicationInterface().getImageQualityPref());
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_dro");
+            editor.putString(PreferenceKeys.StampPreferenceKey, "preference_stamp_yes");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.DRO);
+            assertEquals(100, activity.getApplicationInterface().getImageQualityPref());
+        });
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertEquals(100, activity.getApplicationInterface().getImageQualityPref());
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_std");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.Standard);
+            assertEquals(90, activity.getApplicationInterface().getImageQualityPref());
+        });
+    }
+
+    /** Tests restarting in HDR mode.
+     */
+    @Category(MainTests.class)
+    @Test
+    public void testHDRRestart() {
+        Log.d(TAG, "testHDRRestart");
+        setToDefault();
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.Standard);
+        });
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.apply();
+
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        restart();
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoHDR() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDR");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Tests taking photo in HDR photo mode with fast expo/HDR burst disabled.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoHDRSlowBurst() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDRSlowBurst");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().usingCamera2API()) ) {
+            Log.d(TAG, "test requires camera2 api");
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.putBoolean(PreferenceKeys.Camera2FastBurstPreferenceKey, false);
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Tests taking photo in HDR photo mode with saving base expo images.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoHDRSaveExpo() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDRSaveExpo");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.putBoolean(PreferenceKeys.HDRSaveExpoPreferenceKey, true);
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Tests taking photo in HDR photo mode with saving base expo images, with RAW.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoHDRSaveExpoRaw() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDRSaveExpoRaw");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_yes");
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.putBoolean(PreferenceKeys.HDRSaveExpoPreferenceKey, true);
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Tests taking photo in HDR photo mode with saving base expo images, with RAW only.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoHDRSaveExpoRawOnly() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDRSaveExpoRawOnly");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_only");
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.putBoolean(PreferenceKeys.HDRSaveExpoPreferenceKey, true);
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Take photo in HDR mode with front camera.
+     *  Note that this fails on OnePlus 3T with old camera API, due to bug where photo resolution changes when
+     *  exposure compensation set for front camera.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoHDRFrontCamera() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDRFrontCamera");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+        if( getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getNumberOfCameras()) <= 1 ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+
+        int cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            View switchCameraButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera);
+            clickView(switchCameraButton);
+        });
+        waitUntilCameraOpened();
+
+        int new_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+
+        Log.d(TAG, "cameraId: " + cameraId);
+        Log.d(TAG, "new_cameraId: " + new_cameraId);
+
+        assertTrue(cameraId != new_cameraId);
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoHDRAutoStabilise() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDRAutoStabilise");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.putBoolean(PreferenceKeys.AutoStabilisePreferenceKey, true);
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoHDRPhotoStamp() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoHDRPhotoStamp");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsHDR()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_hdr");
+            editor.putString(PreferenceKeys.StampPreferenceKey, "preference_stamp_yes");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.HDR);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Tests expo bracketing with default values.
+     */
+    @Category(PhotoTests.class)
+    @Test
+    public void testTakePhotoExpo() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoExpo");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsExpoBracketing()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_expo_bracketing");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.ExpoBracketing);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /** Tests expo bracketing with 5 images, 1 stop.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoExpo5() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoExpo5");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsExpoBracketing()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_expo_bracketing");
+            editor.putString(PreferenceKeys.ExpoBracketingNImagesPreferenceKey, "5");
+            editor.putString(PreferenceKeys.ExpoBracketingStopsPreferenceKey, "1");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.ExpoBracketing);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            if( activity.getPreview().usingCamera2API() ) {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            }
+        });
+    }
+
+    /* Sets focus bracketing seek bars to some test positions.
+     */
+    private void setUpFocusBracketing() throws InterruptedException {
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar focusSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.FocusBracketing);
+            assertEquals(focusSeekBar.getVisibility(), View.VISIBLE);
+            focusSeekBar.setProgress( (int)(0.9*(focusSeekBar.getMax()-1)) );
+        });
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "source focus_distance: " + activity.getPreview().getCameraController().getFocusDistance());
+            activity.getPreview().stoppedSettingFocusDistance(false); // hack, since onStopTrackingTouch() isn't called programmatically!
+        });
+        Thread.sleep(500);
+
+        float initial_focus_distance = getActivityValue(activity -> activity.getPreview().getCameraController().getFocusDistance());
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar focusTargetSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_bracketing_target_seekbar);
+
+            Log.d(TAG, "initial_focus_distance: " + initial_focus_distance);
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            // need to use LENS_FOCUS_DISTANCE rather than mPreview.getCameraController().getFocusDistance(), as the latter
+            // will always return the source focus distance, even if the preview was set to something else
+            float actual_initial_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            assertEquals(initial_focus_distance, actual_initial_focus_distance, 1.0e-5f);
+
+            assertEquals(focusTargetSeekBar.getVisibility(), View.VISIBLE);
+            focusTargetSeekBar.setProgress( (int)(0.25*(focusTargetSeekBar.getMax()-1)) );
+        });
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            // test that we temporarily set the focus to the target distance
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            float target_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            Log.d(TAG, "target_actual_focus_distance: " + target_actual_focus_distance);
+            assertTrue(Math.abs(initial_focus_distance - target_actual_focus_distance) > 1.0e-5f); // no assertNotEquals!
+            activity.getPreview().stoppedSettingFocusDistance(true); // hack, since onStopTrackingTouch() isn't called programmatically!
+        });
+        Thread.sleep(500); // wait for initial focus to be set
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            // test that we've reset back to the source distance
+            float new_focus_distance = activity.getPreview().getCameraController().getFocusDistance();
+            Log.d(TAG, "new_focus_distance: " + new_focus_distance);
+            assertEquals(initial_focus_distance, new_focus_distance, 1.0e-5f);
+
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
+            assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
+        });
+    }
+
+    /** Tests taking a photo in focus bracketing mode.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoFocusBracketing() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFocusBracketing");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsFocusBracketing()) ) {
+            Log.d(TAG, "test requires focus bracketing");
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar focusSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+            assertEquals(focusSeekBar.getVisibility(), View.GONE);
+            SeekBar focusTargetSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_bracketing_target_seekbar);
+            assertEquals(focusTargetSeekBar.getVisibility(), View.GONE);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_focus_bracketing");
+            editor.apply();
+        });
+
+        updateForSettings();
+
+        setUpFocusBracketing();
+
+        float initial_focus_distance = getActivityValue(activity -> activity.getPreview().getCameraController().getFocusDistance());
+        Log.d(TAG, "initial_focus_distance: " + initial_focus_distance);
+        mActivityRule.getScenario().onActivity(activity -> {
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            // need to use LENS_FOCUS_DISTANCE rather than mPreview.getCameraController().getFocusDistance(), as the latter
+            // will always return the source focus distance, even if the preview was set to something else
+            float actual_initial_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            assertEquals(initial_focus_distance, actual_initial_focus_distance, 1.0e-5f);
+        });
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+
+            float new_focus_distance = activity.getPreview().getCameraController().getFocusDistance();
+            Log.d(TAG, "new_focus_distance: " + new_focus_distance);
+            assertEquals(initial_focus_distance, new_focus_distance, 1.0e-5f);
+
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
+            assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
+        });
+
+    }
+
+    /** Tests taking a photo in focus bracketing mode, with auto-level and 20 images.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoFocusBracketingHeavy() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFocusBracketingHeavy");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsFocusBracketing()) ) {
+            Log.d(TAG, "test requires focus bracketing");
+            return;
+        }
+
+        ImageSaver.test_small_queue_size = true;
+        mActivityRule.getScenario().onActivity(activity -> {
+            activity.getApplicationInterface().getImageSaver().test_slow_saving = true;
+        });
+        // need to restart for test_small_queue_size to take effect
+        restart();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar focusSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+            assertEquals(focusSeekBar.getVisibility(), View.GONE);
+            SeekBar focusTargetSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_bracketing_target_seekbar);
+            assertEquals(focusTargetSeekBar.getVisibility(), View.GONE);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_focus_bracketing");
+            editor.putString(PreferenceKeys.FocusBracketingNImagesPreferenceKey, "20");
+            editor.apply();
+        });
+        updateForSettings();
+
+        setUpFocusBracketing();
+
+        float initial_focus_distance = getActivityValue(activity -> activity.getPreview().getCameraController().getFocusDistance());
+        Log.d(TAG, "initial_focus_distance: " + initial_focus_distance);
+        mActivityRule.getScenario().onActivity(activity -> {
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            // need to use LENS_FOCUS_DISTANCE rather than mPreview.getCameraController().getFocusDistance(), as the latter
+            // will always return the source focus distance, even if the preview was set to something else
+            float actual_initial_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            assertEquals(initial_focus_distance, actual_initial_focus_distance, 1.0e-5f);
+        });
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+        });
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            float new_focus_distance = activity.getPreview().getCameraController().getFocusDistance();
+            Log.d(TAG, "new_focus_distance: " + new_focus_distance);
+            assertEquals(initial_focus_distance, new_focus_distance, 1.0e-5f);
+
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
+            assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
+        });
+    }
+
+    /** Tests taking a photo in focus bracketing mode, but with cancelling.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoFocusBracketingCancel() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFocusBracketingCancel");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsFocusBracketing()) ) {
+            Log.d(TAG, "test requires focus bracketing");
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar focusSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+            assertEquals(focusSeekBar.getVisibility(), View.GONE);
+            SeekBar focusTargetSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_bracketing_target_seekbar);
+            assertEquals(focusTargetSeekBar.getVisibility(), View.GONE);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_focus_bracketing");
+            editor.putString(PreferenceKeys.FocusBracketingNImagesPreferenceKey, "200");
+            editor.apply();
+        });
+        updateForSettings();
+
+        setUpFocusBracketing();
+
+        float initial_focus_distance = getActivityValue(activity -> activity.getPreview().getCameraController().getFocusDistance());
+        Log.d(TAG, "initial_focus_distance: " + initial_focus_distance);
+        mActivityRule.getScenario().onActivity(activity -> {
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            // need to use LENS_FOCUS_DISTANCE rather than mPreview.getCameraController().getFocusDistance(), as the latter
+            // will always return the source focus distance, even if the preview was set to something else
+            float actual_initial_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            assertEquals(initial_focus_distance, actual_initial_focus_distance, 1.0e-5f);
+
+            assertFalse( activity.getPreview().isTakingPhoto() );
+            assertTrue( activity.getApplicationInterface().canTakeNewPhoto() );
+        });
+
+        for(int i=0;i<2;i++) {
+            mActivityRule.getScenario().onActivity(activity -> {
+                View takePhotoButton = activity.findViewById(net.sourceforge.opencamera.R.id.take_photo);
+                Log.d(TAG, "about to click take photo");
+                clickView(takePhotoButton);
+            });
+            mActivityRule.getScenario().onActivity(activity -> {
+                Log.d(TAG, "done clicking take photo");
+                assertTrue( activity.getPreview().isTakingPhoto() );
+            });
+
+            Thread.sleep(i==0 ? 500 : 3000); // wait before cancelling
+            mActivityRule.getScenario().onActivity(activity -> {
+                assertTrue( activity.getPreview().isTakingPhoto() );
+            });
+
+            mActivityRule.getScenario().onActivity(activity -> {
+                View takePhotoButton = activity.findViewById(net.sourceforge.opencamera.R.id.take_photo);
+                Log.d(TAG, "about to click take photo to cancel");
+                clickView(takePhotoButton);
+                Log.d(TAG, "done clicking take photo cancel");
+            });
+
+            // need to wait until cancelled
+            Thread.sleep(3000);
+            final int f_i = i;
+            mActivityRule.getScenario().onActivity(activity -> {
+                assertFalse( activity.getPreview().isTakingPhoto() );
+                assertTrue( activity.getApplicationInterface().canTakeNewPhoto() );
+
+                assertTrue(activity.getPreview().isPreviewStarted()); // check preview restarted
+                Log.d(TAG, "count_cameraTakePicture: " + activity.getPreview().count_cameraTakePicture);
+                assertEquals(activity.getPreview().count_cameraTakePicture, f_i + 1);
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(activity.getPreview().getCameraController().test_capture_results, f_i + 1);
+
+                float new_focus_distance = activity.getPreview().getCameraController().getFocusDistance();
+                Log.d(TAG, "new_focus_distance: " + new_focus_distance);
+                assertEquals(initial_focus_distance, new_focus_distance, 1.0e-5f);
+
+                CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+                CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+                float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+                Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
+                assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
+            });
+        }
+    }
+
+    /** Tests taking a photo with RAW and focus bracketing mode.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRawFocusBracketing() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRawFocusBracketing");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsFocusBracketing()) ) {
+            Log.d(TAG, "test requires focus bracketing");
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar focusSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+            assertEquals(focusSeekBar.getVisibility(), View.GONE);
+            SeekBar focusTargetSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_bracketing_target_seekbar);
+            assertEquals(focusTargetSeekBar.getVisibility(), View.GONE);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_yes");
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_focus_bracketing");
+            editor.apply();
+        });
+        updateForSettings();
+
+        setUpFocusBracketing();
+
+        float initial_focus_distance = getActivityValue(activity -> activity.getPreview().getCameraController().getFocusDistance());
+        Log.d(TAG, "initial_focus_distance: " + initial_focus_distance);
+        mActivityRule.getScenario().onActivity(activity -> {
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            // need to use LENS_FOCUS_DISTANCE rather than mPreview.getCameraController().getFocusDistance(), as the latter
+            // will always return the source focus distance, even if the preview was set to something else
+            float actual_initial_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            assertEquals(initial_focus_distance, actual_initial_focus_distance, 1.0e-5f);
+        });
+
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+        });
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            float new_focus_distance = activity.getPreview().getCameraController().getFocusDistance();
+            Log.d(TAG, "new_focus_distance: " + new_focus_distance);
+            assertEquals(initial_focus_distance, new_focus_distance, 1.0e-5f);
+
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
+            assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
+        });
+    }
+
+    /** Tests taking a photo with RAW only and focus bracketing mode.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoRawOnlyFocusBracketing() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoRawOnlyFocusBracketing");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsFocusBracketing()) ) {
+            Log.d(TAG, "test requires focus bracketing");
+            return;
+        }
+        if( !getActivityValue(activity -> activity.getPreview().supportsRaw()) ) {
+            Log.d(TAG, "test requires RAW");
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SeekBar focusSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_seekbar);
+            assertEquals(focusSeekBar.getVisibility(), View.GONE);
+            SeekBar focusTargetSeekBar = activity.findViewById(net.sourceforge.opencamera.R.id.focus_bracketing_target_seekbar);
+            assertEquals(focusTargetSeekBar.getVisibility(), View.GONE);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RawPreferenceKey, "preference_raw_only");
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_focus_bracketing");
+            editor.apply();
+        });
+        updateForSettings();
+
+        setUpFocusBracketing();
+
+        float initial_focus_distance = getActivityValue(activity -> activity.getPreview().getCameraController().getFocusDistance());
+        Log.d(TAG, "initial_focus_distance: " + initial_focus_distance);
+        mActivityRule.getScenario().onActivity(activity -> {
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            // need to use LENS_FOCUS_DISTANCE rather than mPreview.getCameraController().getFocusDistance(), as the latter
+            // will always return the source focus distance, even if the preview was set to something else
+            float actual_initial_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            assertEquals(initial_focus_distance, actual_initial_focus_distance, 1.0e-5f);
+        });
+
+        subTestTakePhoto(false, false, true, true, false, false, true, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+        });
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            float new_focus_distance = activity.getPreview().getCameraController().getFocusDistance();
+            Log.d(TAG, "new_focus_distance: " + new_focus_distance);
+            assertEquals(initial_focus_distance, new_focus_distance, 1.0e-5f);
+
+            CameraController2 camera_controller2 = (CameraController2)activity.getPreview().getCameraController();
+            CaptureRequest.Builder previewBuilder = camera_controller2.testGetPreviewBuilder();
+            float new_actual_focus_distance = previewBuilder.get(CaptureRequest.LENS_FOCUS_DISTANCE);
+            Log.d(TAG, "new_actual_focus_distance: " + new_actual_focus_distance);
+            assertEquals(initial_focus_distance, new_actual_focus_distance, 1.0e-5f);
+        });
+    }
+
+    /** Tests NR photo mode.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoNR() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoNR");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsNoiseReduction()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_noise_reduction");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.NoiseReduction);
+        });
+
+        final int n_back_photos = 3;
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            assertTrue(activity.getPreview().getCameraController().getBurstTotal() < CameraController.N_IMAGES_NR_DARK_LOW_LIGHT);
+        });
+
+        // then try again without waiting
+        for(int i=1;i<n_back_photos;i++) {
+            subTestTakePhoto(false, false, true, false, false, false, false, false);
+            final int f_i = i;
+            mActivityRule.getScenario().onActivity(activity -> {
+                Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+                assertEquals(f_i + 1, activity.getPreview().getCameraController().test_capture_results);
+                assertTrue(activity.getPreview().getCameraController().getBurstTotal() < CameraController.N_IMAGES_NR_DARK_LOW_LIGHT);
+            });
+        }
+
+        // then try low light mode
+        Log.d(TAG, "test low light mode");
+        mActivityRule.getScenario().onActivity(activity -> {
+            activity.getApplicationInterface().setNRMode("preference_nr_mode_low_light");
+            activity.getPreview().setupBurstMode();
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(n_back_photos + 1, activity.getPreview().getCameraController().test_capture_results);
+            if( activity.getPreview().getCameraController().captureResultHasIso() && HDRProcessor.sceneIsLowLight( activity.getPreview().getCameraController().captureResultIso(), activity.getPreview().getCameraController().captureResultExposureTime() ) )
+                assertEquals(CameraController.N_IMAGES_NR_DARK_LOW_LIGHT, activity.getPreview().getCameraController().getBurstTotal());
+            // reset
+            activity.getApplicationInterface().setNRMode("preference_nr_mode_normal");
+            activity.getPreview().setupBurstMode();
+        });
+
+        // then try front camera
+
+        if( getActivityValue(activity -> activity.getPreview().getCameraControllerManager().getNumberOfCameras()) <= 1 ) {
+            return;
+        }
+
+        int cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            View switchCameraButton = activity.findViewById(net.sourceforge.opencamera.R.id.switch_camera);
+            clickView(switchCameraButton);
+        });
+        waitUntilCameraOpened();
+
+        int new_cameraId = getActivityValue(activity -> activity.getPreview().getCameraId());
+
+        Log.d(TAG, "cameraId: " + cameraId);
+        Log.d(TAG, "new_cameraId: " + new_cameraId);
+
+        assertTrue(cameraId != new_cameraId);
+
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+            assertTrue(activity.getPreview().getCameraController().getBurstTotal() < CameraController.N_IMAGES_NR_DARK_LOW_LIGHT);
+        });
+    }
+
+    /** Tests fast burst with 20 images.
+     */
+    @Category(PhotoCamera2Tests.class)
+    @Test
+    public void testTakePhotoFastBurst() throws InterruptedException {
+        Log.d(TAG, "testTakePhotoFastBurst");
+
+        setToDefault();
+
+        if( !getActivityValue(activity -> activity.supportsFastBurst()) ) {
+            return;
+        }
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_fast_burst");
+            editor.putString(PreferenceKeys.FastBurstNImagesPreferenceKey, "20");
+            editor.apply();
+        });
+        updateForSettings();
+
+        mActivityRule.getScenario().onActivity(activity -> {
+            assertSame(activity.getApplicationInterface().getPhotoMode(), MyApplicationInterface.PhotoMode.FastBurst);
+        });
+        subTestTakePhoto(false, false, true, true, false, false, false, false);
+        mActivityRule.getScenario().onActivity(activity -> {
+            Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
+            assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
+        });
     }
 
     /** Tests option to remove device exif info.
