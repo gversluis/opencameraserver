@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -26,11 +25,11 @@ import android.util.Log;
 public class PanoramaProcessor {
     private static final String TAG = "PanoramaProcessor";
 
-    private final Context context;
+    private final MainActivity main_activity;
     private final HDRProcessor hdrProcessor;
 
-    public PanoramaProcessor(Context context, HDRProcessor hdrProcessor) {
-        this.context = context;
+    public PanoramaProcessor(MainActivity main_activity, HDRProcessor hdrProcessor) {
+        this.main_activity = main_activity;
         this.hdrProcessor = hdrProcessor;
     }
 
@@ -592,8 +591,7 @@ public class PanoramaProcessor {
             else
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
             outputStream.close();
-            MainActivity mActivity = (MainActivity) context;
-            mActivity.getStorageUtils().broadcastFile(file, true, false, true, false, null);
+            main_activity.getStorageUtils().broadcastFile(file, true, false, true, false, null);
         }
         catch(IOException e) {
             MyDebug.logStackTrace(TAG, "failed to save file", e);
@@ -1841,8 +1839,7 @@ public class PanoramaProcessor {
                 OutputStream outputStream = new FileOutputStream(file);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
                 outputStream.close();
-                MainActivity mActivity = (MainActivity) context;
-                mActivity.getStorageUtils().broadcastFile(file, true, false, true, false, null);
+                main_activity.getStorageUtils().broadcastFile(file, true, false, true, false, null);
             }
             catch(IOException e) {
                 MyDebug.logStackTrace(TAG, "failed to save file", e);
