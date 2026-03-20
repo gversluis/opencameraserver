@@ -77,7 +77,7 @@ public class PreferenceSubCameraControlsMore extends PreferenceSubScreen {
                     else if( MainActivity.useScopedStorage() ) {
                         // we can't use an EditTextPreference (or MyEditTextPreference) due to having to support non-scoped-storage, or when SAF is enabled...
                         // anyhow, this means we can share code when called from gallery long-press anyway
-                        AlertDialog.Builder alertDialog = main_activity.createSaveFolderDialog();
+                        AlertDialog.Builder alertDialog = main_activity.getSaveLocationHandler().createSaveFolderDialog();
                         final AlertDialog alert = alertDialog.create();
                         // AlertDialog.Builder.setOnDismissListener() requires API level 17, so do it this way instead
                         alert.setOnDismissListener(new DialogInterface.OnDismissListener() {

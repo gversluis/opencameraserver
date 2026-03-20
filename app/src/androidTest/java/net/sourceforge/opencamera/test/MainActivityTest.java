@@ -10248,11 +10248,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             updateForSettings();
             if( use_saf ) {
                 // need to call this directly, as we don't call mActivity.onActivityResult
-                mActivity.updateFolderHistorySAF(save_folder);
+                mActivity.getSaveLocationHandler().updateFolderHistorySAF(save_folder);
+            }
+            else {
+                mActivity.getSaveLocationHandler().usedFolderPicker();
             }
         }
 
-        SaveLocationHistory save_location_history = use_saf ? mActivity.getSaveLocationHistorySAF() : mActivity.getSaveLocationHistory();
+        SaveLocationHistory save_location_history = use_saf ? mActivity.getSaveLocationHandler().getSaveLocationHistorySAF() : mActivity.getSaveLocationHandler().getSaveLocationHistory();
         assertTrue(save_location_history.size() > 0);
         assertTrue(save_location_history.contains(save_folder));
         assertEquals(save_location_history.get(save_location_history.size() - 1), save_folder);
@@ -10596,14 +10599,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             public void run() {
                 Log.d(TAG, "clearFolderHistory");
                 if( use_saf )
-                    mActivity.clearFolderHistorySAF();
+                    mActivity.getSaveLocationHandler().clearFolderHistorySAF();
                 else
-                    mActivity.clearFolderHistory();
+                    mActivity.getSaveLocationHandler().clearFolderHistory();
             }
         });
         // need to wait for UI code to finish before leaving
         this.getInstrumentation().waitForIdleSync();
-        SaveLocationHistory save_location_history = use_saf ? mActivity.getSaveLocationHistorySAF() : mActivity.getSaveLocationHistory();
+        SaveLocationHistory save_location_history = use_saf ? mActivity.getSaveLocationHandler().getSaveLocationHistorySAF() : mActivity.getSaveLocationHandler().getSaveLocationHistory();
         Log.d(TAG, "save_location_history size: " + save_location_history.size());
         assertEquals(1, save_location_history.size());
         String current_folder;
@@ -10623,10 +10626,13 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             updateForSettings();
             if( use_saf ) {
                 // need to call this directly, as we don't call mActivity.onActivityResult
-                mActivity.updateFolderHistorySAF("new_folder_history_entry");
+                mActivity.getSaveLocationHandler().updateFolderHistorySAF("new_folder_history_entry");
+            }
+            else {
+                mActivity.getSaveLocationHandler().usedFolderPicker();
             }
         }
-        save_location_history = use_saf ? mActivity.getSaveLocationHistorySAF() : mActivity.getSaveLocationHistory();
+        save_location_history = use_saf ? mActivity.getSaveLocationHandler().getSaveLocationHistorySAF() : mActivity.getSaveLocationHandler().getSaveLocationHistory();
         Log.d(TAG, "save_location_history size: " + save_location_history.size());
         for(int i=0;i<save_location_history.size();i++) {
             Log.d(TAG, save_location_history.get(i));
@@ -10637,7 +10643,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         restart();
 
-        save_location_history = use_saf ? mActivity.getSaveLocationHistorySAF() : mActivity.getSaveLocationHistory();
+        save_location_history = use_saf ? mActivity.getSaveLocationHandler().getSaveLocationHistorySAF() : mActivity.getSaveLocationHandler().getSaveLocationHistory();
         Log.d(TAG, "save_location_history size: " + save_location_history.size());
         for(int i=0;i<save_location_history.size();i++) {
             Log.d(TAG, save_location_history.get(i));
@@ -10659,17 +10665,17 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                 public void run() {
                     if( use_saf ) {
                         // need to call this directly, as we don't call mActivity.onActivityResult
-                        mActivity.updateFolderHistorySAF(current_folder_f);
+                        mActivity.getSaveLocationHandler().updateFolderHistorySAF(current_folder_f);
                     }
                     else {
-                        mActivity.usedFolderPicker();
+                        mActivity.getSaveLocationHandler().usedFolderPicker();
                     }
                 }
             });
             // need to wait for UI code to finish before leaving
             this.getInstrumentation().waitForIdleSync();
         }
-        save_location_history = use_saf ? mActivity.getSaveLocationHistorySAF() : mActivity.getSaveLocationHistory();
+        save_location_history = use_saf ? mActivity.getSaveLocationHandler().getSaveLocationHistorySAF() : mActivity.getSaveLocationHandler().getSaveLocationHistory();
         assertEquals(2, save_location_history.size());
         assertEquals("new_folder_history_entry", save_location_history.get(0));
         assertEquals(save_location_history.get(1), current_folder);
@@ -10678,14 +10684,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         mActivity.runOnUiThread(new Runnable() {
             public void run() {
                 if( use_saf )
-                    mActivity.clearFolderHistorySAF();
+                    mActivity.getSaveLocationHandler().clearFolderHistorySAF();
                 else
-                    mActivity.clearFolderHistory();
+                    mActivity.getSaveLocationHandler().clearFolderHistory();
             }
         });
         // need to wait for UI code to finish before leaving
         this.getInstrumentation().waitForIdleSync();
-        save_location_history = use_saf ? mActivity.getSaveLocationHistorySAF() : mActivity.getSaveLocationHistory();
+        save_location_history = use_saf ? mActivity.getSaveLocationHandler().getSaveLocationHistorySAF() : mActivity.getSaveLocationHandler().getSaveLocationHistory();
         assertEquals(1, save_location_history.size());
         assertEquals(save_location_history.get(0), current_folder);
     }
@@ -10715,7 +10721,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             editor.apply();
             updateForSettings();
             // need to call this directly, as we don't call mActivity.onActivityResult
-            mActivity.updateFolderHistorySAF(save_folder);
+            mActivity.getSaveLocationHandler().updateFolderHistorySAF(save_folder);
         }
 
         subTestSaveFolderHistory(true);

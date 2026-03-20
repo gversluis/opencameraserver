@@ -884,7 +884,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
             MainActivity main_activity = (MainActivity)this.getActivity();
             if( main_activity != null ) { // main_activity may be null if this is being closed via MainActivity.onNewIntent()
                 String new_save_location = this.getChosenFolder();
-                main_activity.updateSaveFolder(new_save_location);
+                main_activity.getSaveLocationHandler().updateSaveFolder(new_save_location);
             }
             super.onDismiss(dialog);
         }
@@ -1065,7 +1065,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
             else {
                 folder_name = main_activity.getStorageUtils().getSaveLocation();
             }
-            folder_name = main_activity.getHumanReadableSaveFolder(folder_name);
+            folder_name = main_activity.getSaveLocationHandler().getHumanReadableSaveFolder(folder_name);
             String summary = main_activity.getResources().getString(R.string.preference_save_location_summary);
             if( !folder_name.isEmpty() ) {
                 summary += "\n" + folder_name;
