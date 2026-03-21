@@ -2072,6 +2072,28 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         }
     }
 
+    private boolean useRemotePauseResumeForVideo() {
+        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.N ) {
+            return false;
+        }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String remote_video_mode = sharedPreferences.getString(PreferenceKeys.RemoteVideoMode, "preference_remote_video_mode_standard");
+        return "preference_remote_video_mode_pause".equals(remote_video_mode);
+    }
+
+    /** Triggered by remote control inputs (BLE remote, keyboard, camera key, selfie stick, etc).
+     *  Applies the remote video mode preference consistently across the supported remote input paths.
+     */
+    public void triggerRemoteControlAction() {
+        if( preview.isVideo() && preview.isVideoRecording() && useRemotePauseResumeForVideo() ) {
+            pauseVideo();
+            return;
+        }
+
+        takePicture(false);
+    }
+
     public void clickedCancelPanorama(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedCancelPanorama");
@@ -2995,6 +3017,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                     //case "preference_force_video_4k": // could probably whitelist, but safest to restart camera
                 case "preference_video_low_power_check":
                 case "preference_video_flash":
+                case PreferenceKeys.RemoteVideoMode:
                     //case "preference_location": // need to enable/disable gps listeners etc
                     //case "preference_gps_direction": // need to update listeners
                 case "preference_require_location":

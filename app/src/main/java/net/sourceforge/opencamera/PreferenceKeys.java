@@ -181,6 +181,8 @@ public class PreferenceKeys {
 
     public static final String RemoteType = "preference_remote_type";
 
+    public static final String RemoteVideoMode = "preference_remote_video_mode";
+
     public static final String WaterType = "preference_water_type";
 
     //public static final String BackgroundPhotoSavingPreferenceKey = "preference_background_photo_saving";

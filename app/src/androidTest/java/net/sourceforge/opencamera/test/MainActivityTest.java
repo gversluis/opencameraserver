@@ -26,6 +26,7 @@ import net.sourceforge.opencamera.MyApplicationInterface;
 import net.sourceforge.opencamera.PreferenceKeys;
 import net.sourceforge.opencamera.preview.ApplicationInterface;
 import net.sourceforge.opencamera.preview.VideoProfile;
+import net.sourceforge.opencamera.remotecontrol.BluetoothLeService;
 import net.sourceforge.opencamera.SaveLocationHistory;
 import net.sourceforge.opencamera.cameracontroller.CameraController;
 import net.sourceforge.opencamera.preview.Preview;
@@ -6312,6 +6313,244 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                 getInstrumentation().waitForIdleSync();
                 Log.d(TAG, "after idle sync");
 
+                return 1;
+            }
+        }, 5000, false, 0);
+    }
+
+    /** Test pausing and resuming video via the Bluetooth remote control command.
+     */
+    public void testTakeVideoPauseRemote() throws InterruptedException {
+        Log.d(TAG, "testTakeVideoPauseRemote");
+
+        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.N ) {
+            Log.d(TAG, "pause video requires Android N or better");
+            return;
+        }
+
+        setToDefault();
+        {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(PreferenceKeys.EnableRemote, true);
+            editor.putString(PreferenceKeys.RemoteType, "preference_remote_type_kraken");
+            editor.putString(PreferenceKeys.RemoteName, "00:11:22:33:44:55");
+            editor.putString(PreferenceKeys.RemoteVideoMode, "preference_remote_video_mode_pause");
+            editor.apply();
+            updateForSettings();
+        }
+
+        final View pauseVideoButton = mActivity.findViewById(net.sourceforge.opencamera.R.id.pause_video);
+        assertEquals(pauseVideoButton.getVisibility(), View.GONE);
+
+        subTestTakeVideo(false, false, false, false, new TestUtils.VideoTestCallback() {
+            @Override
+            public int doTest() {
+                final View takePhotoButton = mActivity.findViewById(net.sourceforge.opencamera.R.id.take_photo);
+                final long time_tol_ms = 1000;
+
+                Log.d(TAG, "wait before remote pause");
+                try {
+                    Thread.sleep(3000);
+                }
+                catch(InterruptedException e) {
+                    Log.e(TAG, "InterruptedException from sleep", e);
+                    fail();
+                }
+                assertEquals(takePhotoButton.getContentDescription(), mActivity.getResources().getString(net.sourceforge.opencamera.R.string.stop_video));
+                assertEquals(pauseVideoButton.getContentDescription(), mActivity.getResources().getString(net.sourceforge.opencamera.R.string.pause_video));
+                assertEquals(pauseVideoButton.getVisibility(), View.VISIBLE);
+                assertTrue( mPreview.isVideoRecording() );
+                assertFalse(mPreview.isVideoRecordingPaused());
+                long video_time = mPreview.getVideoTime(false);
+                Log.d(TAG, "video time: " + video_time);
+                assertTrue( video_time >= 3000 - time_tol_ms );
+                assertTrue( video_time <= 3000 + time_tol_ms );
+
+                Log.d(TAG, "about to remote pause video");
+                try {
+                    runTestOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
+                            intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
+                            mActivity.sendBroadcast(intent);
+                        }
+                    });
+                }
+                catch(Throwable throwable) {
+                    Log.e(TAG, "Throwable from runTestOnUiThread", throwable);
+                    fail();
+                }
+                getInstrumentation().waitForIdleSync();
+                Log.d(TAG, "after idle sync");
+
+                assertEquals(takePhotoButton.getContentDescription(), mActivity.getResources().getString(net.sourceforge.opencamera.R.string.stop_video));
+                assertEquals(pauseVideoButton.getContentDescription(), mActivity.getResources().getString(net.sourceforge.opencamera.R.string.resume_video));
+                assertEquals(pauseVideoButton.getVisibility(), View.VISIBLE);
+                assertTrue( mPreview.isVideoRecording() );
+                assertTrue( mPreview.isVideoRecordingPaused() );
+
+                Log.d(TAG, "wait while paused");
+                try {
+                    Thread.sleep(3000);
+                }
+                catch(InterruptedException e) {
+                    Log.e(TAG, "InterruptedException from sleep", e);
+                    fail();
+                }
+                assertTrue( mPreview.isVideoRecording() );
+                assertTrue( mPreview.isVideoRecordingPaused() );
+                video_time = mPreview.getVideoTime(false);
+                Log.d(TAG, "video time while paused: " + video_time);
+                assertTrue( video_time >= 3000 - time_tol_ms );
+                assertTrue( video_time <= 3000 + time_tol_ms );
+
+                Log.d(TAG, "about to remote resume video");
+                try {
+                    runTestOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
+                            intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
+                            mActivity.sendBroadcast(intent);
+                        }
+                    });
+                }
+                catch(Throwable throwable) {
+                    Log.e(TAG, "Throwable from runTestOnUiThread", throwable);
+                    fail();
+                }
+                getInstrumentation().waitForIdleSync();
+                Log.d(TAG, "after idle sync");
+
+                assertEquals(pauseVideoButton.getContentDescription(), mActivity.getResources().getString(net.sourceforge.opencamera.R.string.pause_video));
+                assertEquals(pauseVideoButton.getVisibility(), View.VISIBLE);
+                assertTrue( mPreview.isVideoRecording() );
+                assertFalse(mPreview.isVideoRecordingPaused());
+
+                Log.d(TAG, "wait after remote resume");
+                try {
+                    Thread.sleep(3000);
+                }
+                catch(InterruptedException e) {
+                    Log.e(TAG, "InterruptedException from sleep", e);
+                    fail();
+                }
+                assertTrue( mPreview.isVideoRecording() );
+                assertFalse(mPreview.isVideoRecordingPaused());
+                video_time = mPreview.getVideoTime(false);
+                Log.d(TAG, "video time after resuming: " + video_time);
+                assertTrue( video_time >= 6000 - time_tol_ms );
+                assertTrue( video_time <= 6000 + time_tol_ms );
+
+                Log.d(TAG, "about to remote pause video again");
+                try {
+                    runTestOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
+                            intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
+                            mActivity.sendBroadcast(intent);
+                        }
+                    });
+                }
+                catch(Throwable throwable) {
+                    Log.e(TAG, "Throwable from runTestOnUiThread", throwable);
+                    fail();
+                }
+                getInstrumentation().waitForIdleSync();
+                Log.d(TAG, "after idle sync");
+
+                assertTrue( mPreview.isVideoRecording() );
+                assertTrue( mPreview.isVideoRecordingPaused() );
+
+                Log.d(TAG, "about to manually stop paused video");
+                clickView(takePhotoButton);
+                Log.d(TAG, "done manually stopping paused video");
+                getInstrumentation().waitForIdleSync();
+                Log.d(TAG, "after idle sync");
+
+                return 1;
+            }
+        }, 5000, false, 0);
+    }
+
+    /** Test pausing/resuming video via generic remote-style key events.
+     */
+    public void testTakeVideoPauseRemoteKeyEvents() throws InterruptedException {
+        Log.d(TAG, "testTakeVideoPauseRemoteKeyEvents");
+
+        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.N ) {
+            Log.d(TAG, "pause video requires Android N or better");
+            return;
+        }
+
+        setToDefault();
+        {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PreferenceKeys.RemoteVideoMode, "preference_remote_video_mode_pause");
+            editor.putString(PreferenceKeys.VolumeKeysPreferenceKey, "volume_take_photo");
+            editor.apply();
+            updateForSettings();
+        }
+
+        final View pauseVideoButton = mActivity.findViewById(net.sourceforge.opencamera.R.id.pause_video);
+        assertEquals(pauseVideoButton.getVisibility(), View.GONE);
+
+        subTestTakeVideo(false, false, false, false, new TestUtils.VideoTestCallback() {
+            @Override
+            public int doTest() {
+                final View takePhotoButton = mActivity.findViewById(net.sourceforge.opencamera.R.id.take_photo);
+
+                try {
+                    Thread.sleep(3000);
+                }
+                catch(InterruptedException e) {
+                    Log.e(TAG, "InterruptedException from sleep", e);
+                    fail();
+                }
+
+                Log.d(TAG, "pause video with camera key");
+                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_CAMERA);
+                getInstrumentation().waitForIdleSync();
+                assertTrue( mPreview.isVideoRecording() );
+                assertTrue( mPreview.isVideoRecordingPaused() );
+                assertEquals(pauseVideoButton.getContentDescription(), mActivity.getResources().getString(net.sourceforge.opencamera.R.string.resume_video));
+
+                try {
+                    Thread.sleep(500);
+                }
+                catch(InterruptedException e) {
+                    Log.e(TAG, "InterruptedException from sleep", e);
+                    fail();
+                }
+
+                Log.d(TAG, "resume video with keyboard select key");
+                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_SPACE);
+                getInstrumentation().waitForIdleSync();
+                assertTrue( mPreview.isVideoRecording() );
+                assertFalse(mPreview.isVideoRecordingPaused());
+                assertEquals(pauseVideoButton.getContentDescription(), mActivity.getResources().getString(net.sourceforge.opencamera.R.string.pause_video));
+
+                try {
+                    Thread.sleep(500);
+                }
+                catch(InterruptedException e) {
+                    Log.e(TAG, "InterruptedException from sleep", e);
+                    fail();
+                }
+
+                Log.d(TAG, "pause video with volume key remote path");
+                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_UP);
+                getInstrumentation().waitForIdleSync();
+                assertTrue( mPreview.isVideoRecording() );
+                assertTrue( mPreview.isVideoRecordingPaused() );
+
+                Log.d(TAG, "manually stop paused video");
+                clickView(takePhotoButton);
+                getInstrumentation().waitForIdleSync();
                 return 1;
             }
         }, 5000, false, 0);
