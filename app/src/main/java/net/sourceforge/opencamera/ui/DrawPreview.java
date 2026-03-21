@@ -141,6 +141,7 @@ public class DrawPreview {
     private final String ybounds_text;
     private final int [] temp_histogram_channel = new int[256];
     private final LocationSupplier.LocationInfo locationInfo = new LocationSupplier.LocationInfo();
+    private boolean has_auto_stabilise_crop;
     private final int [] auto_stabilise_crop = new int [2];
     //private final DecimalFormat decimal_format_1dp_force0 = new DecimalFormat("0.0");
     // cached Rects for drawTextWithBackground() calls
@@ -917,40 +918,84 @@ public class DrawPreview {
         if( camera_controller == null ) {
             return;
         }
+        if( preference_grid_pref.equals("preference_grid_none") ) {
+            return;
+        }
+        if( preview.isPreviewPaused() ) {
+            // in practice the grid would be covered up by the last image being shown anyway, but more explicitly
+            // to return here (and saves drawing something that won't be seen)
+            return;
+        }
+
+        boolean canvas_rotated = false;
+        int w2 = canvas.getWidth();
+        int h2 = canvas.getHeight();
+        if( has_auto_stabilise_crop ) {
+            // rotate the grid
+            w2 = auto_stabilise_crop[0];
+            h2 = auto_stabilise_crop[1];
+            //double level_angle = preview.getLevelAngle();
+            double level_angle = preview.getOrigLevelAngle();
+            // needed to get rotation right for golden spiral grids
+            // see http://android-developers.blogspot.co.uk/2010/09/one-screen-turn-deserves-another.html
+            int rotation = main_activity.getDisplayRotation(false);
+            switch (rotation) {
+                case Surface.ROTATION_90:
+                    level_angle += 90.0;
+                    w2 = auto_stabilise_crop[1];
+                    h2 = auto_stabilise_crop[0];
+                    break;
+                case Surface.ROTATION_270:
+                    level_angle -= 90.0;
+                    w2 = auto_stabilise_crop[1];
+                    h2 = auto_stabilise_crop[0];
+                    break;
+                case Surface.ROTATION_180:
+                    level_angle += 180.0;
+                    break;
+                case Surface.ROTATION_0:
+                default:
+                    break;
+            }
+            canvas.save();
+            canvas.rotate((float)-level_angle, canvas.getWidth()/2.0f, canvas.getHeight()/2.0f);
+            canvas.translate((canvas.getWidth()-w2)/2.0f, (canvas.getHeight()-h2)/2.0f);
+            canvas_rotated = true;
+        }
 
         p.setStrokeWidth(stroke_width);
 
         switch( preference_grid_pref ) {
             case "preference_grid_3x3":
                 p.setColor(Color.WHITE);
-                canvas.drawLine(canvas.getWidth() / 3.0f, 0.0f, canvas.getWidth() / 3.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(2.0f * canvas.getWidth() / 3.0f, 0.0f, 2.0f * canvas.getWidth() / 3.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(0.0f, canvas.getHeight() / 3.0f, canvas.getWidth() - 1.0f, canvas.getHeight() / 3.0f, p);
-                canvas.drawLine(0.0f, 2.0f * canvas.getHeight() / 3.0f, canvas.getWidth() - 1.0f, 2.0f * canvas.getHeight() / 3.0f, p);
+                canvas.drawLine(w2 / 3.0f, 0.0f, w2 / 3.0f, h2 - 1.0f, p);
+                canvas.drawLine(2.0f * w2 / 3.0f, 0.0f, 2.0f * w2 / 3.0f, h2 - 1.0f, p);
+                canvas.drawLine(0.0f, h2 / 3.0f, w2 - 1.0f, h2 / 3.0f, p);
+                canvas.drawLine(0.0f, 2.0f * h2 / 3.0f, w2 - 1.0f, 2.0f * h2 / 3.0f, p);
                 break;
             case "preference_grid_phi_3x3":
                 p.setColor(Color.WHITE);
-                canvas.drawLine(canvas.getWidth() / 2.618f, 0.0f, canvas.getWidth() / 2.618f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(1.618f * canvas.getWidth() / 2.618f, 0.0f, 1.618f * canvas.getWidth() / 2.618f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(0.0f, canvas.getHeight() / 2.618f, canvas.getWidth() - 1.0f, canvas.getHeight() / 2.618f, p);
-                canvas.drawLine(0.0f, 1.618f * canvas.getHeight() / 2.618f, canvas.getWidth() - 1.0f, 1.618f * canvas.getHeight() / 2.618f, p);
+                canvas.drawLine(w2 / 2.618f, 0.0f, w2 / 2.618f, h2 - 1.0f, p);
+                canvas.drawLine(1.618f * w2 / 2.618f, 0.0f, 1.618f * w2 / 2.618f, h2 - 1.0f, p);
+                canvas.drawLine(0.0f, h2 / 2.618f, w2 - 1.0f, h2 / 2.618f, p);
+                canvas.drawLine(0.0f, 1.618f * h2 / 2.618f, w2 - 1.0f, 1.618f * h2 / 2.618f, p);
                 break;
             case "preference_grid_4x2":
                 p.setColor(Color.GRAY);
-                canvas.drawLine(canvas.getWidth() / 4.0f, 0.0f, canvas.getWidth() / 4.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(canvas.getWidth() / 2.0f, 0.0f, canvas.getWidth() / 2.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(3.0f * canvas.getWidth() / 4.0f, 0.0f, 3.0f * canvas.getWidth() / 4.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(0.0f, canvas.getHeight() / 2.0f, canvas.getWidth() - 1.0f, canvas.getHeight() / 2.0f, p);
+                canvas.drawLine(w2 / 4.0f, 0.0f, w2 / 4.0f, h2 - 1.0f, p);
+                canvas.drawLine(w2 / 2.0f, 0.0f, w2 / 2.0f, h2 - 1.0f, p);
+                canvas.drawLine(3.0f * w2 / 4.0f, 0.0f, 3.0f * w2 / 4.0f, h2 - 1.0f, p);
+                canvas.drawLine(0.0f, h2 / 2.0f, w2 - 1.0f, h2 / 2.0f, p);
                 p.setColor(Color.WHITE);
                 int crosshairs_radius = (int) (20 * scale_dp + 0.5f); // convert dps to pixels
 
-                canvas.drawLine(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f - crosshairs_radius, canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f + crosshairs_radius, p);
-                canvas.drawLine(canvas.getWidth() / 2.0f - crosshairs_radius, canvas.getHeight() / 2.0f, canvas.getWidth() / 2.0f + crosshairs_radius, canvas.getHeight() / 2.0f, p);
+                canvas.drawLine(w2 / 2.0f, h2 / 2.0f - crosshairs_radius, w2 / 2.0f, h2 / 2.0f + crosshairs_radius, p);
+                canvas.drawLine(w2 / 2.0f - crosshairs_radius, h2 / 2.0f, w2 / 2.0f + crosshairs_radius, h2 / 2.0f, p);
                 break;
             case "preference_grid_crosshair":
                 p.setColor(Color.WHITE);
-                canvas.drawLine(canvas.getWidth() / 2.0f, 0.0f, canvas.getWidth() / 2.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(0.0f, canvas.getHeight() / 2.0f, canvas.getWidth() - 1.0f, canvas.getHeight() / 2.0f, p);
+                canvas.drawLine(w2 / 2.0f, 0.0f, w2 / 2.0f, h2 - 1.0f, p);
+                canvas.drawLine(0.0f, h2 / 2.0f, w2 - 1.0f, h2 / 2.0f, p);
                 break;
             case "preference_grid_golden_spiral_right":
             case "preference_grid_golden_spiral_left":
@@ -959,16 +1004,16 @@ public class DrawPreview {
                 canvas.save();
                 switch( preference_grid_pref ) {
                     case "preference_grid_golden_spiral_left":
-                        canvas.scale(-1.0f, 1.0f, canvas.getWidth() * 0.5f, canvas.getHeight() * 0.5f);
+                        canvas.scale(-1.0f, 1.0f, w2 * 0.5f, h2 * 0.5f);
                         break;
                     case "preference_grid_golden_spiral_right":
                         // no transformation needed
                         break;
                     case "preference_grid_golden_spiral_upside_down_left":
-                        canvas.rotate(180.0f, canvas.getWidth() * 0.5f, canvas.getHeight() * 0.5f);
+                        canvas.rotate(180.0f, w2 * 0.5f, h2 * 0.5f);
                         break;
                     case "preference_grid_golden_spiral_upside_down_right":
-                        canvas.scale(1.0f, -1.0f, canvas.getWidth() * 0.5f, canvas.getHeight() * 0.5f);
+                        canvas.scale(1.0f, -1.0f, w2 * 0.5f, h2 * 0.5f);
                         break;
                 }
                 p.setColor(Color.WHITE);
@@ -977,8 +1022,8 @@ public class DrawPreview {
                 int fibb = 34;
                 int fibb_n = 21;
                 int left = 0, top = 0;
-                int full_width = canvas.getWidth();
-                int full_height = canvas.getHeight();
+                int full_width = w2;
+                int full_height = h2;
                 int width = (int) (full_width * ((double) fibb_n) / (double) (fibb));
                 int height = full_height;
 
@@ -1061,30 +1106,34 @@ public class DrawPreview {
             case "preference_grid_golden_triangle_1":
             case "preference_grid_golden_triangle_2":
                 p.setColor(Color.WHITE);
-                double theta = Math.atan2(canvas.getWidth(), canvas.getHeight());
-                double dist = canvas.getHeight() * Math.cos(theta);
+                double theta = Math.atan2(w2, h2);
+                double dist = h2 * Math.cos(theta);
                 float dist_x = (float) (dist * Math.sin(theta));
                 float dist_y = (float) (dist * Math.cos(theta));
                 if( preference_grid_pref.equals("preference_grid_golden_triangle_1") ) {
-                    canvas.drawLine(0.0f, canvas.getHeight() - 1.0f, canvas.getWidth() - 1.0f, 0.0f, p);
-                    canvas.drawLine(0.0f, 0.0f, dist_x, canvas.getHeight() - dist_y, p);
-                    canvas.drawLine(canvas.getWidth() - 1.0f - dist_x, dist_y - 1.0f, canvas.getWidth() - 1.0f, canvas.getHeight() - 1.0f, p);
+                    canvas.drawLine(0.0f, h2 - 1.0f, w2 - 1.0f, 0.0f, p);
+                    canvas.drawLine(0.0f, 0.0f, dist_x, h2 - dist_y, p);
+                    canvas.drawLine(w2 - 1.0f - dist_x, dist_y - 1.0f, w2 - 1.0f, h2 - 1.0f, p);
                 }
                 else {
-                    canvas.drawLine(0.0f, 0.0f, canvas.getWidth() - 1.0f, canvas.getHeight() - 1.0f, p);
-                    canvas.drawLine(canvas.getWidth() - 1.0f, 0.0f, canvas.getWidth() - 1.0f - dist_x, canvas.getHeight() - dist_y, p);
-                    canvas.drawLine(dist_x, dist_y - 1.0f, 0.0f, canvas.getHeight() - 1.0f, p);
+                    canvas.drawLine(0.0f, 0.0f, w2 - 1.0f, h2 - 1.0f, p);
+                    canvas.drawLine(w2 - 1.0f, 0.0f, w2 - 1.0f - dist_x, h2 - dist_y, p);
+                    canvas.drawLine(dist_x, dist_y - 1.0f, 0.0f, h2 - 1.0f, p);
                 }
                 break;
             case "preference_grid_diagonals":
                 p.setColor(Color.WHITE);
-                canvas.drawLine(0.0f, 0.0f, canvas.getHeight() - 1.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(canvas.getHeight() - 1.0f, 0.0f, 0.0f, canvas.getHeight() - 1.0f, p);
-                int diff = canvas.getWidth() - canvas.getHeight();
+                canvas.drawLine(0.0f, 0.0f, h2 - 1.0f, h2 - 1.0f, p);
+                canvas.drawLine(h2 - 1.0f, 0.0f, 0.0f, h2 - 1.0f, p);
+                int diff = w2 - h2;
                 // n.b., diff is -ve in portrait orientation
-                canvas.drawLine(diff, 0.0f, diff + canvas.getHeight() - 1.0f, canvas.getHeight() - 1.0f, p);
-                canvas.drawLine(diff + canvas.getHeight() - 1.0f, 0.0f, diff, canvas.getHeight() - 1.0f, p);
+                canvas.drawLine(diff, 0.0f, diff + h2 - 1.0f, h2 - 1.0f, p);
+                canvas.drawLine(diff + h2 - 1.0f, 0.0f, diff, h2 - 1.0f, p);
                 break;
+        }
+
+        if( canvas_rotated ) {
+            canvas.restore();
         }
     }
 
@@ -2572,24 +2621,11 @@ public class DrawPreview {
             canvas.restore();
         }
 
-        if( allow_angle_lines && auto_stabilise_pref && preview.hasLevelAngleStable() && !preview.isVideo() ) {
-            // although auto-level is supported for photos taken in video mode, there's the risk that it's misleading to display
-            // the guide when in video mode!
-            double level_angle = preview.getLevelAngle();
-            double auto_stabilise_level_angle = level_angle;
-            //double auto_stabilise_level_angle = angle;
-            while( auto_stabilise_level_angle < -90 )
-                auto_stabilise_level_angle += 180;
-            while( auto_stabilise_level_angle > 90 )
-                auto_stabilise_level_angle -= 180;
-            double level_angle_rad_abs = Math.abs( Math.toRadians(auto_stabilise_level_angle) );
-
-            int w1 = canvas.getWidth();
-            int h1 = canvas.getHeight();
-            double w0 = (w1 * Math.cos(level_angle_rad_abs) + h1 * Math.sin(level_angle_rad_abs));
-            double h0 = (w1 * Math.sin(level_angle_rad_abs) + h1 * Math.cos(level_angle_rad_abs));
-
-            if( PostProcessing.autoStabiliseCrop(auto_stabilise_crop, level_angle_rad_abs, w0, h0, w1, h1, canvas.getWidth(), canvas.getHeight()) ) {
+        //if( allow_angle_lines && auto_stabilise_pref && preview.hasLevelAngleStable() && !preview.isVideo() )
+        {
+            //if( PostProcessing.autoStabiliseCrop(auto_stabilise_crop, level_angle_rad_abs, w0, h0, w1, h1, canvas.getWidth(), canvas.getHeight()) )
+            if( has_auto_stabilise_crop )
+            {
                 int w2 = auto_stabilise_crop[0];
                 int h2 = auto_stabilise_crop[1];
                 int cx = canvas.getWidth()/2;
@@ -2599,6 +2635,8 @@ public class DrawPreview {
                 float top = (canvas.getHeight() - h2)/2.0f;
                 float right = (canvas.getWidth() + w2)/2.0f;
                 float bottom = (canvas.getHeight() + h2)/2.0f;
+
+                double level_angle = preview.getOrigLevelAngle();
 
                 canvas.save();
                 canvas.rotate((float)-level_angle, cx, cy);
@@ -2948,6 +2986,31 @@ public class DrawPreview {
             p.setStyle(Paint.Style.FILL); // reset
             p.setStrokeWidth(stroke_width); // reset
         }
+
+        has_auto_stabilise_crop = false;
+        if( camera_controller != null && !preview.isPreviewPaused() && auto_stabilise_pref && preview.hasLevelAngleStable() && !preview.isVideo() ) {
+            // although auto-level is supported for photos taken in video mode, there's the risk that it's misleading to display
+            // the guide when in video mode!
+            double auto_stabilise_level_angle = preview.getOrigLevelAngle();
+			/*if( MyDebug.LOG )
+				Log.d(TAG, "auto_stabilise_level_angle: " + auto_stabilise_level_angle);*/
+            //double auto_stabilise_level_angle = angle;
+            while( auto_stabilise_level_angle < -90 )
+                auto_stabilise_level_angle += 180;
+            while( auto_stabilise_level_angle > 90 )
+                auto_stabilise_level_angle -= 180;
+            double level_angle_rad_abs = Math.abs( Math.toRadians(auto_stabilise_level_angle) );
+
+            int w1 = canvas.getWidth();
+            int h1 = canvas.getHeight();
+            double w0 = (w1 * Math.cos(level_angle_rad_abs) + h1 * Math.sin(level_angle_rad_abs));
+            double h0 = (w1 * Math.sin(level_angle_rad_abs) + h1 * Math.cos(level_angle_rad_abs));
+
+            if( PostProcessing.autoStabiliseCrop(auto_stabilise_crop, level_angle_rad_abs, w0, h0, w1, h1, canvas.getWidth(), canvas.getHeight()) ) {
+                has_auto_stabilise_crop = true;
+            }
+        }
+
         drawGrids(canvas);
 
         drawCropGuides(canvas);
