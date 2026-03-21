@@ -507,8 +507,9 @@ public class PopupView extends LinearLayout {
                         editor.apply();
 
                         // make it easier to scroll through the list of resolutions without a pause each time
+                        final long delay_time = 400;
                         handler.removeCallbacks(update_runnable);
-                        handler.postDelayed(update_runnable, 400);
+                        handler.postDelayed(update_runnable, delay_time);
                     }
 
                     @Override
@@ -834,8 +835,9 @@ public class PopupView extends LinearLayout {
 
                             if( keep_popup ) {
                                 // make it easier to scroll through the list of capture rates without a pause each time
+                                final long delay_time = 400;
                                 handler.removeCallbacks(update_runnable);
-                                handler.postDelayed(update_runnable, 400);
+                                handler.postDelayed(update_runnable, delay_time);
                             }
                             else {
                                 main_activity.updateForSettings(true, toast_message, keep_popup, false);

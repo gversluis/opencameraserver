@@ -5229,8 +5229,7 @@ public class CameraController2 extends CameraController {
         if( wait_until_started ) {
             if( test_force_slow_preview_start ) {
                 try {
-                    Thread.sleep(6000); // test slow to start preview
-                    //Thread.sleep(25000); // test slow to start preview
+                    Thread.sleep(test_force_slow_preview_start_ms); // test slow to start preview
                 }
                 catch(InterruptedException e) {
                     throw new RuntimeException(e);
@@ -5245,8 +5244,7 @@ public class CameraController2 extends CameraController {
                     try {
                         if( test_force_slow_preview_start ) {
                             try {
-                                Thread.sleep(6000); // test slow to start preview
-                                //Thread.sleep(25000); // test slow to start preview
+                                Thread.sleep(test_force_slow_preview_start_ms); // test slow to start preview
                             }
                             catch(InterruptedException e) {
                                 throw new RuntimeException(e);

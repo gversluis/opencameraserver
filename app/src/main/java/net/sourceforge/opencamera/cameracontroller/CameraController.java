@@ -60,7 +60,8 @@ public abstract class CameraController {
     public volatile int test_texture_view_buffer_w; // for TextureView, keep track of buffer size
     public volatile int test_texture_view_buffer_h;
     public volatile boolean test_force_run_post_capture; // for Camera2 API, test using adjustPreview() / RequestTagType.RUN_POST_CAPTURE
-    public static volatile boolean test_force_slow_preview_start; // for Camera2 API, test waiting for 6s when starting preview
+    public static volatile boolean test_force_slow_preview_start; // for Camera2 API, test waiting for test_force_slow_preview_start_ms when starting preview
+    protected static final long test_force_slow_preview_start_ms = 6000;
 
     /** Class for caching a subset of CameraFeatures, that are slow to read.
      *  For now only used for vendor extensions which are slow to read.

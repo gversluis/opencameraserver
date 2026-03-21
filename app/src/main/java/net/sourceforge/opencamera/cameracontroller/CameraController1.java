@@ -43,6 +43,7 @@ public class CameraController1 extends CameraController {
     private int expo_bracketing_n_images = 3;
     private double expo_bracketing_stops = 2.0;
 
+    private static final long autofocus_timeout_c = 2000;
     private Handler autofocus_timeout_handler; // handler for tracking autofocus timeout
     private Runnable autofocus_timeout_runnable; // runnable set for tracking autofocus timeout
 
@@ -1658,7 +1659,7 @@ public class CameraController1 extends CameraController {
             };
 
             private void setTimeout() {
-                handler.postDelayed(runnable, 2000); // set autofocus timeout
+                handler.postDelayed(runnable, autofocus_timeout_c); // set autofocus timeout
             }
 
             @Override
