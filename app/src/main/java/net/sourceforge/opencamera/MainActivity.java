@@ -1463,6 +1463,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                 talkback_string += " " + getResources().getString(R.string.camera_id) + " " + cameraId;
             else
                 talkback_string += " " + getResources().getString(R.string.lens) + " " + cameraIdSPhysical;
+
             if( MyDebug.LOG )
                 Log.d(TAG, "talkback_string: " + talkback_string);
 
@@ -1471,7 +1472,9 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             /*if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA )
                 this.preview.getView().setStateDescription(talkback_string);
             else*/
+            {
                 this.preview.getView().announceForAccessibility(talkback_string);
+            }
         }
     }
 
