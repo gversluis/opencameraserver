@@ -2,9 +2,9 @@ package net.sourceforge.opencamera.test;
 
 import android.media.CamcorderProfile;
 
-import net.sourceforge.opencamera.MainActivity;
 import net.sourceforge.opencamera.MyApplicationInterface;
 import net.sourceforge.opencamera.Preshots;
+import net.sourceforge.opencamera.SaveLocationHandler;
 import net.sourceforge.opencamera.cameracontroller.CameraController;
 import net.sourceforge.opencamera.cameracontroller.CameraController2;
 import net.sourceforge.opencamera.HDRProcessor;
@@ -892,31 +892,31 @@ public class UnitTest {
      */
     @Test
     public void testprocessUserSaveLocation() {
-        assertEquals("OpenCamera", MainActivity.processUserSaveLocation("OpenCamera"));
+        assertEquals("OpenCamera", SaveLocationHandler.processUserSaveLocation("OpenCamera"));
 
-        assertEquals("OpenCamera", MainActivity.processUserSaveLocation("OpenCamera/"));
+        assertEquals("OpenCamera", SaveLocationHandler.processUserSaveLocation("OpenCamera/"));
 
-        assertEquals("", MainActivity.processUserSaveLocation(""));
+        assertEquals("", SaveLocationHandler.processUserSaveLocation(""));
 
-        assertEquals("", MainActivity.processUserSaveLocation("/"));
+        assertEquals("", SaveLocationHandler.processUserSaveLocation("/"));
 
-        assertEquals("blah_a/blah_b", MainActivity.processUserSaveLocation("blah_a/blah_b"));
+        assertEquals("blah_a/blah_b", SaveLocationHandler.processUserSaveLocation("blah_a/blah_b"));
 
-        assertEquals("blah_a/blah_b", MainActivity.processUserSaveLocation("blah_a/blah_b/"));
+        assertEquals("blah_a/blah_b", SaveLocationHandler.processUserSaveLocation("blah_a/blah_b/"));
 
-        assertEquals("blah_a/blah_b", MainActivity.processUserSaveLocation("blah_a//blah_b"));
+        assertEquals("blah_a/blah_b", SaveLocationHandler.processUserSaveLocation("blah_a//blah_b"));
 
-        assertEquals("blah_a/blah_b", MainActivity.processUserSaveLocation("blah_a///blah_b"));
+        assertEquals("blah_a/blah_b", SaveLocationHandler.processUserSaveLocation("blah_a///blah_b"));
 
-        assertEquals("blah_a/blah_b/blah_c", MainActivity.processUserSaveLocation("blah_a///blah_b/blah_c//"));
+        assertEquals("blah_a/blah_b/blah_c", SaveLocationHandler.processUserSaveLocation("blah_a///blah_b/blah_c//"));
 
-        assertEquals("OpenCamera", MainActivity.processUserSaveLocation("/OpenCamera"));
+        assertEquals("OpenCamera", SaveLocationHandler.processUserSaveLocation("/OpenCamera"));
 
-        assertEquals("OpenCamera", MainActivity.processUserSaveLocation("//OpenCamera"));
+        assertEquals("OpenCamera", SaveLocationHandler.processUserSaveLocation("//OpenCamera"));
 
-        assertEquals("OpenCamera", MainActivity.processUserSaveLocation("///OpenCamera"));
+        assertEquals("OpenCamera", SaveLocationHandler.processUserSaveLocation("///OpenCamera"));
 
-        assertEquals("blah_a/blah_b/blah_c", MainActivity.processUserSaveLocation("/blah_a///blah_b/blah_c//"));
+        assertEquals("blah_a/blah_b/blah_c", SaveLocationHandler.processUserSaveLocation("/blah_a///blah_b/blah_c//"));
 
     }
 
@@ -930,46 +930,46 @@ public class UnitTest {
         // - needed as Environment is not mocked.
         final String dcim_path = "/storage/emulated/0/DCIM";
 
-        MainActivity.CheckSaveLocationResult res;
+        SaveLocationHandler.CheckSaveLocationResult res;
 
-        res = MainActivity.checkSaveLocation("");
-        assertEquals(new MainActivity.CheckSaveLocationResult(true, null), res);
+        res = SaveLocationHandler.checkSaveLocation("");
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(true, null), res);
 
-        res = MainActivity.checkSaveLocation("OpenCamera");
-        assertEquals(new MainActivity.CheckSaveLocationResult(true, null), res);
+        res = SaveLocationHandler.checkSaveLocation("OpenCamera");
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(true, null), res);
 
-        res = MainActivity.checkSaveLocation("blah_a/blah_b");
-        assertEquals(new MainActivity.CheckSaveLocationResult(true, null), res);
+        res = SaveLocationHandler.checkSaveLocation("blah_a/blah_b");
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(true, null), res);
 
-        res = MainActivity.checkSaveLocation("OpenCamera/");
-        assertEquals(new MainActivity.CheckSaveLocationResult(true, null), res);
+        res = SaveLocationHandler.checkSaveLocation("OpenCamera/");
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(true, null), res);
 
-        res = MainActivity.checkSaveLocation("blah_a/blah_b/");
-        assertEquals(new MainActivity.CheckSaveLocationResult(true, null), res);
+        res = SaveLocationHandler.checkSaveLocation("blah_a/blah_b/");
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(true, null), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera/subfolder/", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, "OpenCamera/subfolder/"), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera/subfolder/", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, "OpenCamera/subfolder/"), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera/subfolder", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, "OpenCamera/subfolder"), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera/subfolder", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, "OpenCamera/subfolder"), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera/", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, "OpenCamera/"), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera/", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, "OpenCamera/"), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, "OpenCamera"), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0/DCIM/OpenCamera", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, "OpenCamera"), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0/DCIM/", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, ""), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0/DCIM/", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, ""), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0/DCIM", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, ""), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0/DCIM", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, ""), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0/Pictures", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, null), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0/Pictures", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, null), res);
 
-        res = MainActivity.checkSaveLocation("/storage/emulated/0", dcim_path);
-        assertEquals(new MainActivity.CheckSaveLocationResult(false, null), res);
+        res = SaveLocationHandler.checkSaveLocation("/storage/emulated/0", dcim_path);
+        assertEquals(new SaveLocationHandler.CheckSaveLocationResult(false, null), res);
     }
 
     @Test
