@@ -4245,9 +4245,20 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         //}.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         };
 
+        // suppressing the warning "AutoCloseable used without try-with-resources" - problem that
+        // executor.close() would wait until submitted tasks are complete, which defeats the point
+        // of wanting to run on the background thread! Instead we call shutdown(), which prevents
+        // new tasks being submitted but doesn't block.
+        //noinspection resource
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        //executor.execute(runnable);
-        update_gallery_future = executor.submit(runnable);
+        try {
+            //executor.execute(runnable);
+            update_gallery_future = executor.submit(runnable);
+        }
+        finally {
+            if( executor != null )
+                executor.shutdown();
+        }
 
         if( MyDebug.LOG )
             Log.d(TAG, "updateGalleryIcon: total time to update gallery icon: " + (System.currentTimeMillis() - debug_time));
