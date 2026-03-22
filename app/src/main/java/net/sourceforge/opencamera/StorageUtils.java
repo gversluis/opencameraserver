@@ -911,8 +911,9 @@ public class StorageUtils {
         final long date;
         //final int orientation; // for mediastore==true, video==false only
         final String filename; // this should correspond to DISPLAY_NAME (so available with scoped storage) - so this includes file extension, but not full path
+        final String bucket_id; // for mediastore==true only
 
-        Media(boolean mediastore, long id, boolean video, Uri uri, long date/*, int orientation*/, String filename) {
+        Media(boolean mediastore, long id, boolean video, Uri uri, long date/*, int orientation*/, String filename, String bucket_id) {
             this.mediastore = mediastore;
             this.id = id;
             this.video = video;
@@ -920,6 +921,7 @@ public class StorageUtils {
             this.date = date;
             //this.orientation = orientation;
             this.filename = filename;
+            this.bucket_id = bucket_id;
         }
 
         /** Returns a mediastore uri. If this Media object was not created by a mediastore uri, then
@@ -1256,7 +1258,7 @@ public class StorageUtils {
                 if( MyDebug.LOG )
                     Log.d(TAG, "video: " + video);
 
-                media = new Media(true, id, video, uri, date/*, orientation*/, filename);
+                media = new Media(true, id, video, uri, date/*, orientation*/, filename, bucket_id);
 
                 if( MyDebug.LOG ) {
                     // debug
@@ -1444,7 +1446,7 @@ public class StorageUtils {
                         }
                     }
 
-                    media = new Media(false,0, latest_is_video, latest_uri, latest_date/*, 0*/, latest_filename);
+                    media = new Media(false,0, latest_is_video, latest_uri, latest_date/*, 0*/, latest_filename, null);
                 }
 
                 /*if( MyDebug.LOG ) {
@@ -1554,7 +1556,20 @@ public class StorageUtils {
                 Log.d(TAG, "latest image date: " + image_media.date + " : " + new Date(image_media.date));
                 Log.d(TAG, "latest video date: " + video_media.date + " : " + new Date(video_media.date));
             }
-            if( image_media.date >= video_media.date ) {
+            // getLatestMedia() will fall back to looking in other folders if none present in the save location -
+            // but we still want to prefer an image/video in the save location, even if there was a new video/image
+            // elsewhere
+            if( image_media.bucket_id != null && video_media.bucket_id == null ) {
+                if( MyDebug.LOG )
+                    Log.d(TAG, "only the image is in the save location");
+                media = image_media;
+            }
+            else if( image_media.bucket_id == null && video_media.bucket_id != null ) {
+                if( MyDebug.LOG )
+                    Log.d(TAG, "only the video is in the save location");
+                media = video_media;
+            }
+            else if( image_media.date >= video_media.date ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "latest image is newer");
                 media = image_media;
