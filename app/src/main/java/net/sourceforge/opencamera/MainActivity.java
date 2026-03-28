@@ -4415,23 +4415,43 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             // don't do if testing, as unclear how to exit activity to finish test (for testGallery())
             if( MyDebug.LOG )
                 Log.d(TAG, "launch uri:" + uri);
-            final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
             boolean done = false;
             if( !is_raw ) {
-                // REVIEW_ACTION means we can view video files without autoplaying.
-                // However, Google Photos at least has problems with going to a RAW photo (in RAW only mode),
+                // com.android.camera.action.REVIEW is an unofficial intent that effectively became a
+                // standard for gallery apps. The advantage over Intent.ACTION_VIEW is that
+                // (a) video files are viewed without autoplaying, (b) it's restricted to gallery apps
+                // (Intent.ACTION_VIEW tends to also include image editors and general video players).
+                // MediaStore.ACTION_REVIEW is a newer intent that has the same two benefits of
+                // com.android.camera.action.REVIEW - however some older gallery apps support
+                // com.android.camera.action.REVIEW but not MediaStore.ACTION_REVIEW!
+                // So we try com.android.camera.action.REVIEW first.
+                // Also note Google Photos at least has problems with going to a RAW photo (in RAW only mode),
                 // unless we first pause and resume Open Camera.
-                // Update: on Galaxy S10e with Android 11 at least, no longer seem to have problems, but leave
+                // Update: on Galaxy S10e with Android 11 at least, no longer seem to have problems with RAW, but leave
                 // the check for is_raw just in case for older devices.
                 if( MyDebug.LOG )
                     Log.d(TAG, "try REVIEW_ACTION");
                 try {
+                    final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
                     Intent intent = new Intent(REVIEW_ACTION, uri);
                     this.startActivity(intent);
                     done = true;
                 }
                 catch(ActivityNotFoundException e) {
                     MyDebug.logStackTrace(TAG, "failed to start REVIEW_ACTION intent", e);
+                }
+
+                if( !done && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ) {
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "try MediaStore.ACTION_REVIEW");
+                    try {
+                        Intent intent = new Intent(MediaStore.ACTION_REVIEW, uri);
+                        this.startActivity(intent);
+                        done = true;
+                    }
+                    catch(ActivityNotFoundException e) {
+                        MyDebug.logStackTrace(TAG, "failed to start REVIEW_ACTION intent", e);
+                    }
                 }
             }
             if( !done ) {
