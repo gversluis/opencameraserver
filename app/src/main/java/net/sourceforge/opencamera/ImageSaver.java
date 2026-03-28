@@ -2044,7 +2044,8 @@ public class ImageSaver extends Thread {
                         if( MyDebug.LOG )
                             Log.d(TAG, "compress bitmap, quality " + request.image_quality);
                         Bitmap.CompressFormat compress_format = getBitmapCompressFormat(request.image_format);
-                        if( request.process_type == Request.ProcessType.PANORAMA ) {
+                        if( request.process_type == Request.ProcessType.PANORAMA && compress_format == Bitmap.CompressFormat.JPEG ) {
+                            // panorama xmp only supported for JPEG format
                             savePanoramaBitmap(bitmap, compress_format, request.image_quality, request.jpeg_images.size(), outputStream);
                         }
                         else {
