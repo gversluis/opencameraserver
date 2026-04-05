@@ -416,6 +416,36 @@
         android:visibility="gone"
         />
 
+    <ImageButton
+        android:id="@+id/cycle_lock_orientation"
+        android:layout_width="@dimen/onscreen_button_size"
+        android:layout_height="@dimen/onscreen_button_size"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/cycle_lock_orientation"
+        app:srcCompat="@drawable/mobile_unlock_48px"
+        android:background="@color/icons_background"
+        android:backgroundTint="@color/icons_background_tint"
+        android:backgroundTintMode="src_in"
+        android:onClick="clickedCycleLockOrientation"
+        android:visibility="gone"
+        />
+
+    <ImageButton
+        android:id="@+id/preview_shots"
+        android:layout_width="@dimen/onscreen_button_size"
+        android:layout_height="@dimen/onscreen_button_size"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/preview_shots_enable"
+        app:srcCompat="@drawable/motion_photos_on_48px"
+        android:background="@color/icons_background"
+        android:backgroundTint="@color/icons_background_tint"
+        android:backgroundTintMode="src_in"
+        android:onClick="clickedPreviewShots"
+        android:visibility="gone"
+        />
+
     <ImageView
         android:id="@+id/kraken_icon"
         android:layout_width="@dimen/onscreen_button_size"

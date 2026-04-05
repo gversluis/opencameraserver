@@ -53,6 +53,10 @@ public class PreferenceSubGUI extends PreferenceSubScreen {
         if( MyDebug.LOG )
             Log.d(TAG, "supports_exposure_lock: " + supports_exposure_lock);
 
+        final boolean supports_preshots = bundle.getBoolean("supports_preshots");
+        if( MyDebug.LOG )
+            Log.d(TAG, "supports_preshots: " + supports_preshots);
+
         final boolean is_multi_cam = bundle.getBoolean("is_multi_cam");
         if( MyDebug.LOG )
             Log.d(TAG, "is_multi_cam: " + is_multi_cam);
@@ -111,6 +115,12 @@ public class PreferenceSubGUI extends PreferenceSubScreen {
             Preference pref = findPreference("preference_show_exposure_lock");
             //PreferenceGroup pg = (PreferenceGroup)this.findPreference("preference_screen_gui");
             PreferenceGroup pg = (PreferenceGroup)this.findPreference("preferences_root");
+            pg.removePreference(pref);
+        }
+
+        if( !supports_preshots ) {
+            PreferenceGroup pg = (PreferenceGroup)this.findPreference("preferences_root");
+            Preference pref = findPreference("preference_show_preview_shots");
             pg.removePreference(pref);
         }
 

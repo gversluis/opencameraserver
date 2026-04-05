@@ -1034,6 +1034,17 @@
     <string name="preference_allow_haptic_feedback">Allow vibration feedback</string>
     <string name="preference_allow_haptic_feedback_summary">Whether to allow haptic vibration feedback, for example when adjusting some controls. Note this also requires touch interactions to be enabled in your device\'s settings.</string>
 
+    <string name="cycle_lock_orientation">Cycle lock orientation</string>
+    <string name="preference_show_cycle_lock_orientation">Show lock orientation icon</string>
+    <string name="preference_show_cycle_lock_orientation_summary">Whether to show an on-screen icon for cycling through locking the photo/video orientation to portrait or landscape.</string>
+
+    <string name="preference_show_preview_shots">Show preview shots icon</string>
+    <string name="preference_show_preview_shots_summary">Whether to show an on-screen icon for enabling or disabling preview shots</string>
+    <string name="preview_shots_enable">Enable preview shots</string> <!-- for "ContentDescription" (used for accessibility, e.g., Google Talkback) -->
+    <string name="preview_shots_disable">Disable preview shots</string> <!-- for "ContentDescription" (used for accessibility, e.g., Google Talkback) -->
+    <string name="preview_shots_enabled">Preview shots enabled</string>
+    <string name="preview_shots_disabled">Preview shots disabled</string>
+
     <!-- The following strings should not be translated (and shouldn't be included in language-specific strings.xml), in case they need updating -->
 
     <string name="preference_privacy_policy" translatable="false">Privacy policy</string>
@@ -1067,7 +1078,7 @@
 
     <string name="preference_screen_licences" translatable="false">Open Source licences</string>
     <string name="preference_licence_open_camera" translatable="false">Open Camera</string>
-    <string name="preference_licence_open_camera_text" translatable="false">Open Camera is © 2013–2025 Mark Harman, released under the GPL v3 or later. Tap here for full licence text and terms of service.</string>
+    <string name="preference_licence_open_camera_text" translatable="false">Open Camera is © 2013–2026 Mark Harman, released under the GPL v3 or later. Tap here for full licence text and terms of service.</string>
     <string name="preference_licence_androidx" translatable="false">AndroidX libraries</string>
     <string name="preference_licence_androidx_text" translatable="false">Open Camera uses the AndroidX/Jetpack libraries
         under the Apache license version 2.0. Tap here for full licence text.</string>

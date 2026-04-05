@@ -1924,6 +1924,18 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         this.mainUI.getOnScreenIcons().clickedAudioControl();
     }
 
+    public void clickedCycleLockOrientation(View view) {
+        if( MyDebug.LOG )
+            Log.d(TAG, "clickedCycleLockOrientation");
+        this.mainUI.getOnScreenIcons().clickedCycleLockOrientation();
+    }
+
+    public void clickedPreviewShots(View view) {
+        if( MyDebug.LOG )
+            Log.d(TAG, "clickedPreviewShots");
+        this.mainUI.getOnScreenIcons().clickedPreviewShots();
+    }
+
     /* Returns the cameraId that the "Switch camera" button will switch to.
      * Note that this may not necessarily be the next camera ID, on multi camera devices (if
      * isMultiCamEnabled() returns true).

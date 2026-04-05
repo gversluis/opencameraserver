@@ -1124,7 +1124,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
     @Override
     public String getLockOrientationPref() {
         if( getPhotoMode() == PhotoMode.Panorama )
-            return "portrait"; // for now panorama only supports portrait
+            return "portrait"; // for now panorama only supports portrait; update OnScreenIcons.showCycleLockOrientationIcon() if we ever change this
         return sharedPreferences.getString(PreferenceKeys.LockOrientationPreferenceKey, "none");
     }
 
@@ -1269,6 +1269,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
     public boolean getPreShotsPref(PhotoMode photo_mode) {
         if( main_activity.getPreview().isVideo() || photo_mode == PhotoMode.ExpoBracketing || photo_mode == PhotoMode.FocusBracketing || photo_mode == PhotoMode.Panorama ) {
             // pre-shots not supported for these modes
+            // update OnScreenIcons.showPreviewShotsIcon() if we ever change this
             return false;
         }
         String pre_shots_pref = sharedPreferences.getString(PreferenceKeys.PreShotsPreferenceKey, "preference_save_preshots_off");

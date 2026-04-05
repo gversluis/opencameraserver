@@ -11,12 +11,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import net.sourceforge.opencamera.MainActivity;
+import net.sourceforge.opencamera.MyApplicationInterface;
 import net.sourceforge.opencamera.MyDebug;
 import net.sourceforge.opencamera.PreferenceKeys;
 import net.sourceforge.opencamera.R;
 import net.sourceforge.opencamera.ToastBoxer;
 import net.sourceforge.opencamera.preview.ApplicationInterface;
 
+import java.util.Arrays;
 import java.util.List;
 
 /** This contains functionality related to the (mainly customisable) on-screen icons.
@@ -27,6 +29,8 @@ import java.util.List;
  *  - Add to setVisibility() (with a corresponding new show*Icon() method).
  *  - Add to checkDisableGUIIcons().
  *  - Add a new clicked*() method, and call this from a corresponding onClick method in MainActivity.
+ *  - Adding the corresponding preference for whether to show the on-screen icon or not (in
+ *    preferences_sub_gui.xml).
  */
 public class OnScreenIcons {
     private static final String TAG = "OnScreenIcons";
@@ -38,6 +42,8 @@ public class OnScreenIcons {
     private final ToastBoxer store_location_toast = new ToastBoxer();
     private final ToastBoxer stamp_toast = new ToastBoxer();
     private final ToastBoxer face_detection_toast = new ToastBoxer();
+    private final ToastBoxer cycle_lock_orientation_toast = new ToastBoxer();
+    private final ToastBoxer preview_shots_toast = new ToastBoxer();
 
     public OnScreenIcons(MainActivity main_activity) {
         if( MyDebug.LOG )
@@ -59,6 +65,8 @@ public class OnScreenIcons {
         buttons.add(main_activity.findViewById(R.id.cycle_flash));
         buttons.add(main_activity.findViewById(R.id.face_detection));
         buttons.add(main_activity.findViewById(R.id.audio_control));
+        buttons.add(main_activity.findViewById(R.id.cycle_lock_orientation));
+        buttons.add(main_activity.findViewById(R.id.preview_shots));
     }
 
     public void updateOnScreenIcons() {
@@ -74,6 +82,8 @@ public class OnScreenIcons {
         this.updateAutoLevelIcon();
         this.updateCycleFlashIcon();
         this.updateFaceDetectionIcon();
+        this.updateCycleLockOrientationIcon();
+        this.updatePreviewShotsIcon();
     }
 
     private void updateExposureLockIcon() {
@@ -186,6 +196,36 @@ public class OnScreenIcons {
         view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.face_detection_disable : R.string.face_detection_enable) );
     }
 
+    private void updateCycleLockOrientationIcon() {
+        ImageButton view = main_activity.findViewById(R.id.cycle_lock_orientation);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+        String pref = sharedPreferences.getString(PreferenceKeys.LockOrientationPreferenceKey, "none");
+
+        switch( pref ) {
+            case "portrait":
+                view.setImageResource(R.drawable.mobile_lock_portrait_48px_red);
+                break;
+            case "landscape":
+                view.setImageResource(R.drawable.mobile_lock_landscape_48px_red);
+                break;
+            case "none":
+                view.setImageResource(R.drawable.mobile_unlock_48px);
+                break;
+            default:
+                // just in case??
+                Log.e(TAG, "unknown lock orientation " + pref);
+                view.setImageResource(R.drawable.mobile_unlock_48px);
+                break;
+        }
+    }
+
+    private void updatePreviewShotsIcon() {
+        ImageButton view = main_activity.findViewById(R.id.preview_shots);
+        boolean enabled = main_activity.getApplicationInterface().getPreShotsPref(main_activity.getApplicationInterface().getPhotoMode());
+        view.setImageResource(enabled ? R.drawable.motion_photos_on_48px_red : R.drawable.motion_photos_on_48px);
+        view.setContentDescription( main_activity.getResources().getString(enabled ? R.string.preview_shots_disable : R.string.preview_shots_enable) );
+    }
+
     /** Sets the visibility flag for on-screen icons.
      * @param visibility Visibility flag.
      * @param visibility_video Visibility flag to use for icons that are still allowed when recording video
@@ -202,6 +242,8 @@ public class OnScreenIcons {
         View cycleFlashButton = main_activity.findViewById(R.id.cycle_flash);
         View faceDetectionButton = main_activity.findViewById(R.id.face_detection);
         View audioControlButton = main_activity.findViewById(R.id.audio_control);
+        View cycleLockOrientationButton = main_activity.findViewById(R.id.cycle_lock_orientation);
+        View previewShotsButton = main_activity.findViewById(R.id.preview_shots);
 
         if( showExposureLockIcon() )
             exposureLockButton.setVisibility(visibility_video); // still allow exposure lock when recording video
@@ -225,6 +267,10 @@ public class OnScreenIcons {
             faceDetectionButton.setVisibility(visibility);
         if( showAudioControlIcon() )
             audioControlButton.setVisibility(visibility);
+        if( showCycleLockOrientationIcon() )
+            cycleLockOrientationButton.setVisibility(visibility);
+        if( showPreviewShotsIcon() )
+            previewShotsButton.setVisibility(visibility);
     }
 
     /** Disables the optional on-screen icons if either user doesn't want to enable them, or not
@@ -292,6 +338,16 @@ public class OnScreenIcons {
         }
         if( !showAudioControlIcon() ) {
             View button = main_activity.findViewById(R.id.audio_control);
+            changed = changed || (button.getVisibility() != View.GONE);
+            button.setVisibility(View.GONE);
+        }
+        if( !showCycleLockOrientationIcon() ) {
+            View button = main_activity.findViewById(R.id.cycle_lock_orientation);
+            changed = changed || (button.getVisibility() != View.GONE);
+            button.setVisibility(View.GONE);
+        }
+        if( !showPreviewShotsIcon() ) {
+            View button = main_activity.findViewById(R.id.preview_shots);
             changed = changed || (button.getVisibility() != View.GONE);
             button.setVisibility(View.GONE);
         }
@@ -397,6 +453,25 @@ public class OnScreenIcons {
             return true;
         }
         return false;
+    }
+
+    private boolean showCycleLockOrientationIcon() {
+        if( main_activity.getApplicationInterface().getPhotoMode() == MyApplicationInterface.PhotoMode.Panorama )
+            return false; // see MyApplicationInterface.getLockOrientationPref(): for now panorama only supports portrait
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+        return sharedPreferences.getBoolean(PreferenceKeys.ShowCycleLockOrientationPreferenceKey, false);
+    }
+
+    private boolean showPreviewShotsIcon() {
+        if( !main_activity.supportsPreShots() )
+            return false;
+        MyApplicationInterface.PhotoMode photo_mode = main_activity.getApplicationInterface().getPhotoMode();
+        if( main_activity.getPreview().isVideo() || photo_mode == MyApplicationInterface.PhotoMode.ExpoBracketing || photo_mode == MyApplicationInterface.PhotoMode.FocusBracketing || photo_mode == MyApplicationInterface.PhotoMode.Panorama ) {
+            // see MyApplicationInterface.getLockOrientationPref()
+            return false;
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+        return sharedPreferences.getBoolean(PreferenceKeys.ShowPreviewShotsPreferenceKey, false);
     }
 
     public void clickedExposureLock() {
@@ -646,5 +721,60 @@ public class OnScreenIcons {
                 main_activity.startAudioListener();
             }
         }
+    }
+
+    public void clickedCycleLockOrientation() {
+        if( MyDebug.LOG )
+            Log.d(TAG, "clickedCycleLockOrientation");
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+        String new_value = null;
+
+        switch( sharedPreferences.getString(PreferenceKeys.LockOrientationPreferenceKey, "none") ) {
+            case "none":
+                new_value = "portrait";
+                break;
+            case "portrait":
+                new_value = "landscape";
+                break;
+            case "landscape":
+                new_value = "none";
+                break;
+            default:
+                Log.e(TAG, "unrecognised lock orientation preference");
+                break;
+        }
+
+        if( new_value != null ) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(PreferenceKeys.LockOrientationPreferenceKey, new_value);
+            editor.apply();
+
+            updateCycleLockOrientationIcon();
+            {
+                String [] entries_array = main_activity.getResources().getStringArray(R.array.preference_lock_orientation_entries);
+                String [] values_array = main_activity.getResources().getStringArray(R.array.preference_lock_orientation_values);
+                int index = Arrays.asList(values_array).indexOf(new_value);
+                if( index != -1 ) { // just in case!
+                    main_activity.getPreview().showToast(cycle_lock_orientation_toast, entries_array[index], true);
+                }
+            }
+        }
+    }
+
+    public void clickedPreviewShots() {
+        if( MyDebug.LOG )
+            Log.d(TAG, "clickedPreviewShots");
+
+        boolean value = main_activity.getApplicationInterface().getPreShotsPref(main_activity.getApplicationInterface().getPhotoMode());
+        value = !value;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PreferenceKeys.PreShotsPreferenceKey, value ? "preference_save_preshots_on" : "preference_save_preshots_off");
+        editor.apply();
+
+        updatePreviewShotsIcon();
+        main_activity.getApplicationInterface().getDrawPreview().updateSettings(); // needed to update preview shots
+        main_activity.getPreview().showToast(preview_shots_toast, value ? R.string.preview_shots_enabled : R.string.preview_shots_disabled, true);
     }
 }

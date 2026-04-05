@@ -245,6 +245,10 @@ public class PreferenceKeys {
 
     public static final String ShowFaceDetectionPreferenceKey = "preference_show_face_detection";
 
+    public static final String ShowCycleLockOrientationPreferenceKey = "preference_show_cycle_lock_orientation";
+
+    public static final String ShowPreviewShotsPreferenceKey = "preference_show_preview_shots";
+
     public static final String ShowCycleFlashPreferenceKey = "preference_show_cycle_flash";
 
     public static final String ShowFocusPeakingPreferenceKey = "preference_show_focus_peaking";

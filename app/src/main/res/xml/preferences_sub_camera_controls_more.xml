@@ -82,6 +82,7 @@
         android:key="preference_lock_orientation"
         android:title="@string/preference_lock_orientation"
         android:summary="@string/preference_lock_orientation_summary"
+        android:icon="@drawable/mobile_unlock_48px"
         android:entries="@array/preference_lock_orientation_entries"
         android:entryValues="@array/preference_lock_orientation_values"
         android:defaultValue="none"

@@ -23,6 +23,7 @@
         android:key="preference_save_preshots"
         android:title="@string/preference_save_preshots"
         android:summary="@string/preference_save_preshots_summary"
+        android:icon="@drawable/motion_photos_on_48px"
         android:entries="@array/preference_save_preshots_entries"
         android:entryValues="@array/preference_save_preshots_values"
         android:defaultValue="preference_save_preshots_off"
