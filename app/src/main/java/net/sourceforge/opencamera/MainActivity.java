@@ -4540,6 +4540,9 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                     try {
 					/*if( true )
 						throw new SecurityException(); // test*/
+                        // WrongConstant seems to be spurious, possibly due to not knowing what resultData.getFlags() might contain -
+                        // this code matches Google's documentation!
+                        //noinspection WrongConstant
                         getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
 
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -4608,6 +4611,9 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 					/*if( true )
 						throw new SecurityException(); // test*/
                         // Check for the freshest data.
+                        // WrongConstant seems to be spurious, possibly due to not knowing what resultData.getFlags() might contain -
+                        // this code matches Google's documentation!
+                        //noinspection WrongConstant
                         getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -4662,6 +4668,9 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
 					/*if( true )
 						throw new SecurityException(); // test*/
                         // Check for the freshest data.
+                        // WrongConstant seems to be spurious, possibly due to not knowing what resultData.getFlags() might contain -
+                        // this code matches Google's documentation!
+                        //noinspection WrongConstant
                         getContentResolver().takePersistableUriPermission(fileUri, takeFlags);
 
                         settingsManager.loadSettings(fileUri);
