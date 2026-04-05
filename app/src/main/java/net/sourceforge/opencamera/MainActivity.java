@@ -61,7 +61,6 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -873,7 +872,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         else if( ACTION_SHORTCUT_GALLERY.equals(action) ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "launching from application shortcut for Open Camera: gallery");
-            openGallery();
+            applicationInterface.getStorageUtils().openGallery();
         }
         else if( ACTION_SHORTCUT_SETTINGS.equals(action) ) {
             if( MyDebug.LOG )
@@ -4358,125 +4357,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     public void clickedGallery(View view) {
         if( MyDebug.LOG )
             Log.d(TAG, "clickedGallery");
-        openGallery();
-    }
-
-    private void openGallery() {
-        if( MyDebug.LOG )
-            Log.d(TAG, "openGallery");
-        //Intent intent = new Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        Uri uri = applicationInterface.getStorageUtils().getLastMediaScanned();
-        boolean is_raw = uri != null && applicationInterface.getStorageUtils().getLastMediaScannedIsRaw();
-        if( MyDebug.LOG && uri != null ) {
-            Log.d(TAG, "found cached most recent uri: " + uri);
-            Log.d(TAG, "    is_raw: " + is_raw);
-        }
-        if( uri == null ) {
-            if( MyDebug.LOG )
-                Log.d(TAG, "go to latest media");
-            StorageUtils.Media media = applicationInterface.getStorageUtils().getLatestMedia();
-            if( media != null ) {
-                if( MyDebug.LOG ) {
-                    Log.d(TAG, "latest uri:" + media.uri);
-                    Log.d(TAG, "filename: " + media.filename);
-                }
-                uri = media.getMediaStoreUri(this);
-                if( MyDebug.LOG )
-                    Log.d(TAG, "media uri:" + uri);
-                is_raw = media.filename != null && StorageUtils.filenameIsRaw(media.filename);
-                if( MyDebug.LOG )
-                    Log.d(TAG, "is_raw:" + is_raw);
-            }
-        }
-
-        if( uri != null && !MainActivity.useScopedStorage() ) {
-            // check uri exists
-            // note, with scoped storage this isn't reliable when using SAF - since we don't actually have permission to access mediastore URIs that
-            // were created via Storage Access Framework, even though Open Camera was the application that saved them(!)
-            try {
-                ContentResolver cr = getContentResolver();
-                ParcelFileDescriptor pfd = cr.openFileDescriptor(uri, "r");
-                if( pfd == null ) {
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "uri no longer exists (1): " + uri);
-                    uri = null;
-                    is_raw = false;
-                }
-                else {
-                    pfd.close();
-                }
-            }
-            catch(IOException e) {
-                if( MyDebug.LOG )
-                    Log.d(TAG, "uri no longer exists (2): " + uri);
-                uri = null;
-                is_raw = false;
-            }
-        }
-        if( uri == null ) {
-            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            is_raw = false;
-        }
-        if( !is_test ) {
-            // don't do if testing, as unclear how to exit activity to finish test (for testGallery())
-            if( MyDebug.LOG )
-                Log.d(TAG, "launch uri:" + uri);
-            boolean done = false;
-            if( !is_raw ) {
-                // com.android.camera.action.REVIEW is an unofficial intent that effectively became a
-                // standard for gallery apps. The advantage over Intent.ACTION_VIEW is that
-                // (a) video files are viewed without autoplaying, (b) it's restricted to gallery apps
-                // (Intent.ACTION_VIEW tends to also include image editors and general video players).
-                // MediaStore.ACTION_REVIEW is a newer intent that has the same two benefits of
-                // com.android.camera.action.REVIEW - however some older gallery apps support
-                // com.android.camera.action.REVIEW but not MediaStore.ACTION_REVIEW!
-                // So we try com.android.camera.action.REVIEW first.
-                // Also note Google Photos at least has problems with going to a RAW photo (in RAW only mode),
-                // unless we first pause and resume Open Camera.
-                // Update: on Galaxy S10e with Android 11 at least, no longer seem to have problems with RAW, but leave
-                // the check for is_raw just in case for older devices.
-                if( MyDebug.LOG )
-                    Log.d(TAG, "try REVIEW_ACTION");
-                try {
-                    final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
-                    Intent intent = new Intent(REVIEW_ACTION, uri);
-                    this.startActivity(intent);
-                    done = true;
-                }
-                catch(ActivityNotFoundException e) {
-                    MyDebug.logStackTrace(TAG, "failed to start REVIEW_ACTION intent", e);
-                }
-
-                if( !done && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ) {
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "try MediaStore.ACTION_REVIEW");
-                    try {
-                        Intent intent = new Intent(MediaStore.ACTION_REVIEW, uri);
-                        this.startActivity(intent);
-                        done = true;
-                    }
-                    catch(ActivityNotFoundException e) {
-                        MyDebug.logStackTrace(TAG, "failed to start REVIEW_ACTION intent", e);
-                    }
-                }
-            }
-            if( !done ) {
-                if( MyDebug.LOG )
-                    Log.d(TAG, "try ACTION_VIEW");
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    this.startActivity(intent);
-                }
-                catch(ActivityNotFoundException e) {
-                    MyDebug.logStackTrace(TAG, "failed to start ACTION_VIEW intent", e);
-                    preview.showToast(null, R.string.no_gallery_app);
-                }
-                catch(SecurityException e) {
-                    // have received this crash from Google Play - don't display a toast, simply do nothing
-                    MyDebug.logStackTrace(TAG, "SecurityException from ACTION_VIEW startActivity", e);
-                }
-            }
-        }
+        applicationInterface.getStorageUtils().openGallery();
     }
 
     /** Opens the Storage Access Framework dialog to select a folder for save location.
