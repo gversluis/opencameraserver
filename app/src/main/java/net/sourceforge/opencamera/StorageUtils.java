@@ -1485,7 +1485,7 @@ public class StorageUtils {
     private Media getLatestMedia(UriType uri_type) {
         if( MyDebug.LOG )
             Log.d(TAG, "getLatestMedia: " + uri_type);
-        if( !MainActivity.useScopedStorage() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+        if( !MainActivity.useScopedStorage() /*&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M*/ && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
             // needed for Android 6, in case users deny storage permission, otherwise we get java.lang.SecurityException from ContentResolver.query()
             // see https://developer.android.com/training/permissions/requesting.html
             // we now request storage permission before opening the camera, but keep this here just in case

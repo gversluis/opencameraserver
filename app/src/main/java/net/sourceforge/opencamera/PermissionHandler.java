@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -53,11 +52,11 @@ public class PermissionHandler {
     private void showRequestPermissionRationale(final int permission_code) {
         if( MyDebug.LOG )
             Log.d(TAG, "showRequestPermissionRational: " + permission_code);
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
             return;
-        }
+        }*/
 
         boolean ok = true;
         String [] permissions = null;
@@ -114,12 +113,12 @@ public class PermissionHandler {
     void requestCameraPermission() {
         if( MyDebug.LOG )
             Log.d(TAG, "requestCameraPermission");
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
             return;
         }
-        else if( camera_denied && System.currentTimeMillis() < camera_denied_time_ms + deny_delay_ms ) {
+        else*/ if( camera_denied && System.currentTimeMillis() < camera_denied_time_ms + deny_delay_ms ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "too soon since user last denied permission");
             return;
@@ -142,12 +141,12 @@ public class PermissionHandler {
     void requestStoragePermission() {
         if( MyDebug.LOG )
             Log.d(TAG, "requestStoragePermission");
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
             return;
         }
-        else if( MainActivity.useScopedStorage() ) {
+        else*/ if( MainActivity.useScopedStorage() ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for scoped storage!");
             return;
@@ -175,12 +174,12 @@ public class PermissionHandler {
     void requestRecordAudioPermission() {
         if( MyDebug.LOG )
             Log.d(TAG, "requestRecordAudioPermission");
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
             return;
         }
-        else if( audio_denied && System.currentTimeMillis() < audio_denied_time_ms + deny_delay_ms ) {
+        else*/ if( audio_denied && System.currentTimeMillis() < audio_denied_time_ms + deny_delay_ms ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "too soon since user last denied permission");
             return;
@@ -203,12 +202,12 @@ public class PermissionHandler {
     void requestLocationPermission() {
         if( MyDebug.LOG )
             Log.d(TAG, "requestLocationPermission");
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
             return;
         }
-        else if( location_denied && System.currentTimeMillis() < location_denied_time_ms + deny_delay_ms ) {
+        else*/ if( location_denied && System.currentTimeMillis() < location_denied_time_ms + deny_delay_ms ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "too soon since user last denied permission");
             return;
@@ -232,11 +231,11 @@ public class PermissionHandler {
     public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
         if( MyDebug.LOG )
             Log.d(TAG, "onRequestPermissionsResult: requestCode " + requestCode);
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
             return;
-        }
+        }*/
 
         switch( requestCode ) {
             case MY_PERMISSIONS_REQUEST_CAMERA:

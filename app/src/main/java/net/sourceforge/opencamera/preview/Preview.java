@@ -1735,7 +1735,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             return;
         }
 
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+        //if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+        {
             // we restrict the checks to Android 6 or later just in case, see note in LocationSupplier.setupLocationListener()
             if( MyDebug.LOG )
                 Log.d(TAG, "check for permissions");
@@ -1789,8 +1790,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
         }
 
         //final boolean use_background_thread = false;
-        //final boolean use_background_thread = true;
-        final boolean use_background_thread = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+        final boolean use_background_thread = true;
+        //final boolean use_background_thread = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
 		/* Opening camera on background thread is important so that we don't block the UI thread:
 		 *   - For old Camera API, this is recommended behaviour by Google for Camera.open().
 		     - For Camera2, the manager.openCamera() call is asynchronous, but CameraController2
@@ -3759,8 +3760,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 
         // Done with video
 
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && record_audio
+        if( /*Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                &&*/ record_audio
                 && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
             // needed for Android 6, in case users deny storage permission, otherwise we'll crash
             // see https://developer.android.com/training/permissions/requesting.html
@@ -5067,7 +5068,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 				setFocusPref(false);
 			}*/
             if( is_video ) {
-                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && applicationInterface.getRecordAudioPref() ) {
+                if( /*Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&*/ applicationInterface.getRecordAudioPref() ) {
                     // check for audio permission now, rather than when user starts video recording
                     // we restrict the checks to Android 6 or later just in case, see note in LocationSupplier.setupLocationListener()
                     // only request permission if record audio preference is enabled

@@ -784,13 +784,13 @@ public class Camera2Settings {
 
             final boolean use_preset_curve = camera_controller.supportsTonemapPresetCurve();
             //final boolean use_preset_curve = false; // test
-            if( use_preset_curve && tonemap_profile == CameraController.TonemapProfile.TONEMAPPROFILE_REC709 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            if( use_preset_curve && tonemap_profile == CameraController.TonemapProfile.TONEMAPPROFILE_REC709 /*&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M */) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "set TONEMAP_PRESET_CURVE_REC709");
                 builder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_PRESET_CURVE);
                 builder.set(CaptureRequest.TONEMAP_PRESET_CURVE, CaptureRequest.TONEMAP_PRESET_CURVE_REC709);
             }
-            else if( use_preset_curve && tonemap_profile == CameraController.TonemapProfile.TONEMAPPROFILE_SRGB && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            else if( use_preset_curve && tonemap_profile == CameraController.TonemapProfile.TONEMAPPROFILE_SRGB /*&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M*/ ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "set TONEMAP_PRESET_CURVE_SRGB");
                 builder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_PRESET_CURVE);

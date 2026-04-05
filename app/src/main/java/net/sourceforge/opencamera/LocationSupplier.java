@@ -8,7 +8,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -190,7 +189,8 @@ public class LocationSupplier {
             // checking behaviour for earlier devices.
             boolean has_coarse_location_permission;
             boolean has_fine_location_permission;
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            //if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+            {
                 if( MyDebug.LOG )
                     Log.d(TAG, "check for location permissions");
                 has_coarse_location_permission = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -211,11 +211,11 @@ public class LocationSupplier {
                     return false;
                 }
             }
-            else {
+            /*else {
                 // permissions always available pre-Android 6
                 has_coarse_location_permission = true;
                 has_fine_location_permission = true;
-            }
+            }*/
 
             locationListeners = new MyLocationListener[2];
             locationListeners[0] = new MyLocationListener();
@@ -256,7 +256,8 @@ public class LocationSupplier {
         if( MyDebug.LOG )
             Log.d(TAG, "freeLocationListeners");
         if( locationListeners != null ) {
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            //if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+            {
                 // Android Lint claims we need location permission for LocationManager.removeUpdates().
                 // also see http://stackoverflow.com/questions/32715189/location-manager-remove-updates-permission
                 if( MyDebug.LOG )

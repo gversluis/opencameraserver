@@ -6105,8 +6105,8 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     public void startAudioListener() {
         if( MyDebug.LOG )
             Log.d(TAG, "startAudioListener");
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            // we restrict the checks to Android 6 or later just in case, see note in LocationSupplier.setupLocationListener()
+        //if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+        {
             if( MyDebug.LOG )
                 Log.d(TAG, "check for record audio permission");
             if( ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {

@@ -156,10 +156,12 @@ public class DeviceScanner extends AppCompatActivity {
         else {
             String permission_needed = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? Manifest.permission.ACCESS_FINE_LOCATION : Manifest.permission.ACCESS_COARSE_LOCATION;
 
-            int permissionCoarse = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+            /*int permissionCoarse = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
                     ContextCompat
                             .checkSelfPermission(this, permission_needed) :
-                    PackageManager.PERMISSION_GRANTED;
+                    PackageManager.PERMISSION_GRANTED;*/
+            int permissionCoarse = ContextCompat
+                    .checkSelfPermission(this, permission_needed);
 
             if( permissionCoarse == PackageManager.PERMISSION_GRANTED ) {
                 has_permission = true;
@@ -265,11 +267,11 @@ public class DeviceScanner extends AppCompatActivity {
     private void showRequestLocationPermissionRationale() {
         if( MyDebug.LOG )
             Log.d(TAG, "showRequestLocationPermissionRationale");
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
             if( MyDebug.LOG )
                 Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
             return;
-        }
+        }*/
 
         String [] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         int message_id = R.string.permission_rationale_location;

@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -29,7 +28,7 @@ public class MyWidgetProviderTakePhoto extends AppWidgetProvider {
             Intent intent = new Intent(context, TakePhoto.class);
 
             int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+            //if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
                 flags = flags | PendingIntent.FLAG_IMMUTABLE; // needed for targetting Android 12+, but fine to set it all versions from Android 6 onwards
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, flags);
 

@@ -1956,7 +1956,7 @@ public class CameraController2 extends CameraController {
                 // see note below
                 camera_features.supports_burst = true;
             }*/
-            else if( capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            else if( capability == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO /*&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M*/ ) {
                 // we test for at least Android M just to be safe (this is needed for createConstrainedHighSpeedCaptureSession())
                 capabilities_high_speed_video = true;
             }
@@ -2085,7 +2085,8 @@ public class CameraController2 extends CameraController {
         }
 
         camera_features.picture_sizes = new ArrayList<>();
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+        //if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )
+        {
             android.util.Size [] camera_picture_sizes_hires = configs.getHighResolutionOutputSizes(ImageFormat.JPEG);
             if( camera_picture_sizes_hires != null ) {
                 for(android.util.Size camera_size : camera_picture_sizes_hires) {
@@ -3554,17 +3555,17 @@ public class CameraController2 extends CameraController {
                             selected_value2 = CameraMetadata.NOISE_REDUCTION_MODE_HIGH_QUALITY;
                             break;
                         case "minimal":
-                            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+                            /*if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M )*/ {
                                 has_noise_reduction_mode = true;
                                 selected_value2 = CameraMetadata.NOISE_REDUCTION_MODE_MINIMAL;
                             }
-                            else {
+                            /*else {
                                 // shouldn't ever be here, as NOISE_REDUCTION_MODE_MINIMAL shouldn't be a supported value!
                                 // treat as fast instead
                                 Log.e(TAG, "noise reduction minimal, but pre-Android M!");
                                 has_noise_reduction_mode = true;
                                 selected_value2 = CameraMetadata.NOISE_REDUCTION_MODE_FAST;
-                            }
+                            }*/
                             break;
                         case "off":
                             has_noise_reduction_mode = true;
@@ -5114,7 +5115,7 @@ public class CameraController2 extends CameraController {
                         extensionSession.setRepeatingRequest(request, executor, previewExtensionCaptureCallback);
                     }
                 }
-                else if( is_video_high_speed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+                else if( is_video_high_speed /*&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M*/ ) {
                     CameraConstrainedHighSpeedCaptureSession captureSessionHighSpeed = (CameraConstrainedHighSpeedCaptureSession) captureSession;
                     List<CaptureRequest> mPreviewBuilderBurst = captureSessionHighSpeed.createHighSpeedRequestList(request);
                     captureSessionHighSpeed.setRepeatingBurst(mPreviewBuilderBurst, previewCaptureCallback, handler);
@@ -5656,7 +5657,7 @@ public class CameraController2 extends CameraController {
                 }
                 is_video_high_speed = false;
             }
-            else if( video_recorder != null && want_video_high_speed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            else if( video_recorder != null && want_video_high_speed /*&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.M*/ ) {
             //if( want_video_high_speed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
                 if( MyDebug.LOG )
                     Log.d(TAG, "create high speed capture session");
