@@ -1766,6 +1766,8 @@ public class StorageUtils {
                 Log.d(TAG, "launch uri:" + uri);
             boolean done = false;
             if( !is_raw ) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                String preference_gallery = sharedPreferences.getString(PreferenceKeys.GalleryPreferenceKey, "preference_gallery_include_legacy");
                 // com.android.camera.action.REVIEW is an unofficial intent that effectively became a
                 // standard for gallery apps. The advantage over Intent.ACTION_VIEW is that
                 // (a) video files are viewed without autoplaying, (b) it's restricted to gallery apps
@@ -1774,23 +1776,31 @@ public class StorageUtils {
                 // com.android.camera.action.REVIEW - however some older gallery apps support
                 // com.android.camera.action.REVIEW but not MediaStore.ACTION_REVIEW!
                 // So we try com.android.camera.action.REVIEW first.
+                // But this behaviour can be changed via preference_gallery:
+                // - preference_gallery_include_legacy: com.android.camera.action.REVIEW, MediaStore.ACTION_REVIEW, Intent.ACTION_VIEW
+                // - preference_gallery_exclude_legacy: MediaStore.ACTION_REVIEW, Intent.ACTION_VIEW
+                // - preference_gallery_all_editors: Intent.ACTION_VIEW
+
                 // Also note Google Photos at least has problems with going to a RAW photo (in RAW only mode),
                 // unless we first pause and resume Open Camera.
                 // Update: on Galaxy S10e with Android 11 at least, no longer seem to have problems with RAW, but leave
                 // the check for is_raw just in case for older devices.
-                if( MyDebug.LOG )
-                    Log.d(TAG, "try REVIEW_ACTION");
-                try {
-                    final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
-                    Intent intent = new Intent(REVIEW_ACTION, uri);
-                    context.startActivity(intent);
-                    done = true;
-                }
-                catch(ActivityNotFoundException e) {
-                    MyDebug.logStackTrace(TAG, "failed to start REVIEW_ACTION intent", e);
+
+                if( preference_gallery.equals("preference_gallery_include_legacy") ) {
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "try REVIEW_ACTION");
+                    try {
+                        final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
+                        Intent intent = new Intent(REVIEW_ACTION, uri);
+                        context.startActivity(intent);
+                        done = true;
+                    }
+                    catch(ActivityNotFoundException e) {
+                        MyDebug.logStackTrace(TAG, "failed to start REVIEW_ACTION intent", e);
+                    }
                 }
 
-                if( !done && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ) {
+                if( !done && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && ( preference_gallery.equals("preference_gallery_include_legacy") || preference_gallery.equals("preference_gallery_exclude_legacy") ) ) {
                     if( MyDebug.LOG )
                         Log.d(TAG, "try MediaStore.ACTION_REVIEW");
                     try {

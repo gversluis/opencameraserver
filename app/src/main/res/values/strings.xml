@@ -1045,6 +1045,12 @@
     <string name="preview_shots_enabled">Preview shots enabled</string>
     <string name="preview_shots_disabled">Preview shots disabled</string>
 
+    <string name="preference_gallery">Gallery</string>
+    <string name="preference_gallery_summary">The thumbnail icon opens a gallery app installed on your device. If your preferred gallery app does not show as an option, try changing this option.\n%s</string>
+    <string name="preference_gallery_include_legacy">Default</string>
+    <string name="preference_gallery_exclude_legacy">Exclude legacy</string>
+    <string name="preference_gallery_all_editors">Include editors</string>
+
     <!-- The following strings should not be translated (and shouldn't be included in language-specific strings.xml), in case they need updating -->
 
     <string name="preference_privacy_policy" translatable="false">Privacy policy</string>

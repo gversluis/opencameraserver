@@ -1042,4 +1042,14 @@
         <item>preference_save_preshots_off</item>
         <item>preference_save_preshots_on</item>
     </string-array>
+    <string-array name="preference_gallery_entries">
+        <item>@string/preference_gallery_include_legacy</item>
+        <item>@string/preference_gallery_exclude_legacy</item>
+        <item>@string/preference_gallery_all_editors</item>
+    </string-array>
+    <string-array name="preference_gallery_values">
+        <item>preference_gallery_include_legacy</item>
+        <item>preference_gallery_exclude_legacy</item>
+        <item>preference_gallery_all_editors</item>
+    </string-array>
 </resources>

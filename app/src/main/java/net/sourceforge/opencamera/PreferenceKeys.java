@@ -387,4 +387,6 @@ public class PreferenceKeys {
 
     public static final String ImmersiveModePreferenceKey = "preference_immersive_mode";
     public static final String AddYPRToComments="preference_comment_ypr";
+
+    public static final String GalleryPreferenceKey = "preference_gallery";
 }
