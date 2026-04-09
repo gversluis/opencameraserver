@@ -18,6 +18,7 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -1320,229 +1321,231 @@ public class PopupView extends LinearLayout {
             ll2.setOrientation(LinearLayout.HORIZONTAL);
             if( MyDebug.LOG )
                 Log.d(TAG, "addButtonOptionsToPopup time 1: " + (System.nanoTime() - debug_time));
-            String [] icons = icons_id != -1 ? context.getResources().getStringArray(icons_id) : null;
-            String [] values = values_id != -1 ? context.getResources().getStringArray(values_id) : null;
-            if( MyDebug.LOG )
-                Log.d(TAG, "addButtonOptionsToPopup time 2: " + (System.nanoTime() - debug_time));
-
-            final float scale = context.getResources().getDisplayMetrics().density;
-            final float scale_font = context.getResources().getDisplayMetrics().scaledDensity;
-            if( MyDebug.LOG )
-                Log.d(TAG, "addButtonOptionsToPopup time 2.04: " + (System.nanoTime() - debug_time));
-            int actual_max_per_row = supported_options.size();
-            if( max_buttons_per_row > 0 )
-                actual_max_per_row = Math.min(actual_max_per_row, max_buttons_per_row);
-            int button_width_dp = total_width_dp/actual_max_per_row;
-            boolean use_scrollview = false;
-            final int min_button_width_dp = 48; // needs to be at least 48dp to avoid Google Play pre-launch accessibility report warnings
-            if( button_width_dp < min_button_width_dp && max_buttons_per_row == 0 ) {
-                button_width_dp = min_button_width_dp;
-                use_scrollview = true;
-            }
-            int button_width = (int)(button_width_dp * scale + 0.5f); // convert dps to pixels
-            if( MyDebug.LOG ) {
-                Log.d(TAG, "actual_max_per_row: " + actual_max_per_row);
-                Log.d(TAG, "button_width_dp: " + button_width_dp);
-                Log.d(TAG, "button_width: " + button_width);
-                Log.d(TAG, "use_scrollview: " + use_scrollview);
-            }
-
-            View.OnClickListener on_click_listener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String supported_option = (String)v.getTag();
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "clicked: " + supported_option);
-                    listener.onClick(supported_option);
-                }
-            };
-            View current_view = null;
-            if( MyDebug.LOG )
-                Log.d(TAG, "addButtonOptionsToPopup time 2.05: " + (System.nanoTime() - debug_time));
-
-            for(int button_indx=0;button_indx<supported_options.size();button_indx++) {
-                final String supported_option = supported_options.get(button_indx);
+            try(TypedArray icons = icons_id != -1 ? context.getResources().obtainTypedArray(icons_id) : null) {
+                String [] values = values_id != -1 ? context.getResources().getStringArray(values_id) : null;
                 if( MyDebug.LOG )
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.06: " + (System.nanoTime() - debug_time));
-                if( MyDebug.LOG )
-                    Log.d(TAG, "button_indx = " + button_indx);
+                    Log.d(TAG, "addButtonOptionsToPopup time 2: " + (System.nanoTime() - debug_time));
 
-                if( max_buttons_per_row > 0 && button_indx > 0 && button_indx % max_buttons_per_row == 0 ) {
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "start a new row");
-                    // add the previous row
-                    // no need to handle use_scrollview, as we don't support scrollviews with multiple rows
-                    parent.addView(ll2);
-                    ll2 = new LinearLayout(context);
-                    ll2.setOrientation(LinearLayout.HORIZONTAL);
-
-                    int n_remaining = supported_options.size() - button_indx;
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "n_remaining: " + n_remaining);
-                    if( n_remaining <= max_buttons_per_row ) {
-                        if( MyDebug.LOG )
-                            Log.d(TAG, "final row");
-                        button_width_dp = total_width_dp/n_remaining;
-                        button_width = (int)(button_width_dp * scale + 0.5f); // convert dps to pixels
-                    }
-                }
-
+                final float scale = context.getResources().getDisplayMetrics().density;
+                final float scale_font = context.getResources().getDisplayMetrics().scaledDensity;
                 if( MyDebug.LOG )
-                    Log.d(TAG, "supported_option: " + supported_option);
-                int resource = -1;
-                if( MyDebug.LOG )
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.08: " + (System.nanoTime() - debug_time));
-                if( icons != null && values != null ) {
-                    int index = -1;
-                    for(int i=0;i<values.length && index==-1;i++) {
-                        if( values[i].equals(supported_option) )
-                            index = i;
-                    }
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "index: " + index);
-                    if( index != -1 ) {
-                        resource = context.getResources().getIdentifier(icons[index], null, context.getApplicationContext().getPackageName());
-                    }
+                    Log.d(TAG, "addButtonOptionsToPopup time 2.04: " + (System.nanoTime() - debug_time));
+                int actual_max_per_row = supported_options.size();
+                if( max_buttons_per_row > 0 )
+                    actual_max_per_row = Math.min(actual_max_per_row, max_buttons_per_row);
+                int button_width_dp = total_width_dp/actual_max_per_row;
+                boolean use_scrollview = false;
+                final int min_button_width_dp = 48; // needs to be at least 48dp to avoid Google Play pre-launch accessibility report warnings
+                if( button_width_dp < min_button_width_dp && max_buttons_per_row == 0 ) {
+                    button_width_dp = min_button_width_dp;
+                    use_scrollview = true;
                 }
-                if( MyDebug.LOG )
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.1: " + (System.nanoTime() - debug_time));
-
-                String button_string;
-                // hacks for ISO mode ISO_HJR (e.g., on Samsung S5)
-                // also some devices report e.g. "ISO100" etc
-                if( prefix_string.isEmpty() ) {
-                    button_string = supported_option;
-                }
-                else if( prefix_string.equalsIgnoreCase("ISO") && supported_option.length() >= 4 && supported_option.substring(0, 4).equalsIgnoreCase("ISO_") ) {
-                    button_string = getButtonOptionString(include_prefix, prefix_string, supported_option.substring(4));
-                }
-                else if( prefix_string.equalsIgnoreCase("ISO") && supported_option.length() >= 3 && supported_option.substring(0, 3).equalsIgnoreCase("ISO") ) {
-                    button_string = getButtonOptionString(include_prefix, prefix_string, supported_option.substring(3));
-                }
-                else {
-                    button_string = getButtonOptionString(include_prefix, prefix_string, supported_option);
-                }
-                if( MyDebug.LOG )
-                    Log.d(TAG, "button_string: " + button_string);
-                if( MyDebug.LOG )
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.105: " + (System.nanoTime() - debug_time));
-                View view;
-                if( resource != -1 ) {
-                    ImageButton image_button = new ImageButton(context);
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "addButtonOptionsToPopup time 2.11: " + (System.nanoTime() - debug_time));
-                    view = image_button;
-                    buttons.add(view);
-                    ll2.addView(view);
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "addButtonOptionsToPopup time 2.12: " + (System.nanoTime() - debug_time));
-
-                    //image_button.setImageResource(resource);
-                    final MainActivity main_activity = (MainActivity)context;
-                    Bitmap bm = main_activity.getPreloadedBitmap(resource);
-                    if( bm != null )
-                        image_button.setImageBitmap(bm);
-                    else {
-                        if( MyDebug.LOG )
-                            Log.d(TAG, "failed to find bitmap for resource " + resource + "!");
-                    }
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "addButtonOptionsToPopup time 2.13: " + (System.nanoTime() - debug_time));
-                    image_button.setScaleType(ScaleType.FIT_CENTER);
-                    image_button.setBackgroundColor(Color.TRANSPARENT);
-                    final int padding = (int) (10 * scale + 0.5f); // convert dps to pixels
-                    view.setPadding(padding, padding, padding, padding);
-                }
-                else {
-                    @SuppressLint("InflateParams")
-                    final View button_view = LayoutInflater.from(context).inflate(R.layout.popupview_button, null);
-                    final Button button = button_view.findViewById(R.id.button);
-
-                    button.setBackgroundColor(Color.TRANSPARENT); // workaround for Android 6 crash! Also looks nicer anyway...
-                    view = button;
-                    buttons.add(view);
-                    ll2.addView(view);
-
-                    button.setText(button_string);
-                    button.setTextSize(TypedValue.COMPLEX_UNIT_SP, button_text_size_dip);
-                    button.setTextColor(Color.WHITE);
-                    // need 0 padding so we have enough room to display text for ISO buttons, when there are 6 ISO settings
-                    final int padding = (int) (0 * scale + 0.5f); // convert dps to pixels
-                    view.setPadding(padding, padding, padding, padding);
-                }
-                if( MyDebug.LOG )
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.2: " + (System.nanoTime() - debug_time));
-
-                ViewGroup.LayoutParams params = view.getLayoutParams();
-                params.width = button_width;
-                // be careful of making the height too smaller, as harder to touch buttons; remember that this also affects the
-                // ISO buttons on exposure panel, and not just the main popup!
-                params.height = (int) (55 * ((resource != -1) ? scale : scale_font) + 0.5f); // convert dps to pixels
-                view.setLayoutParams(params);
-
-                view.setContentDescription(button_string);
-                if( supported_option.equals(current_value) ) {
-                    setButtonSelected(view, true);
-                    current_view = view;
-                }
-                else {
-                    setButtonSelected(view, false);
-                }
-                if( MyDebug.LOG )
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.3: " + (System.nanoTime() - debug_time));
-                view.setTag(supported_option);
-                view.setOnClickListener(on_click_listener);
-                if( MyDebug.LOG )
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.35: " + (System.nanoTime() - debug_time));
-                if( test_ui_buttons != null )
-                    test_ui_buttons.put(test_key + "_" + supported_option, view);
+                int button_width = (int)(button_width_dp * scale + 0.5f); // convert dps to pixels
                 if( MyDebug.LOG ) {
-                    Log.d(TAG, "addButtonOptionsToPopup time 2.4: " + (System.nanoTime() - debug_time));
-                    Log.d(TAG, "added to popup_buttons: " + test_key + "_" + supported_option + " view: " + view);
-                    if( test_ui_buttons != null )
-                        Log.d(TAG, "test_ui_buttons is now: " + test_ui_buttons);
+                    Log.d(TAG, "actual_max_per_row: " + actual_max_per_row);
+                    Log.d(TAG, "button_width_dp: " + button_width_dp);
+                    Log.d(TAG, "button_width: " + button_width);
+                    Log.d(TAG, "use_scrollview: " + use_scrollview);
                 }
-            }
-            if( MyDebug.LOG )
-                Log.d(TAG, "addButtonOptionsToPopup time 3: " + (System.nanoTime() - debug_time));
-            if( use_scrollview ) {
+
+                View.OnClickListener on_click_listener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String supported_option = (String)v.getTag();
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "clicked: " + supported_option);
+                        listener.onClick(supported_option);
+                    }
+                };
+                View current_view = null;
                 if( MyDebug.LOG )
-                    Log.d(TAG, "using scrollview");
-                final int total_width = (int) (total_width_dp * scale + 0.5f); // convert dps to pixels;
-                final HorizontalScrollView scroll = new HorizontalScrollView(context);
-                scroll.addView(ll2);
-                {
-                    ViewGroup.LayoutParams params = new LayoutParams(
-                            total_width,
-                            LayoutParams.WRAP_CONTENT);
-                    scroll.setLayoutParams(params);
+                    Log.d(TAG, "addButtonOptionsToPopup time 2.05: " + (System.nanoTime() - debug_time));
+
+                for(int button_indx=0;button_indx<supported_options.size();button_indx++) {
+                    final String supported_option = supported_options.get(button_indx);
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.06: " + (System.nanoTime() - debug_time));
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "button_indx = " + button_indx);
+
+                    if( max_buttons_per_row > 0 && button_indx > 0 && button_indx % max_buttons_per_row == 0 ) {
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "start a new row");
+                        // add the previous row
+                        // no need to handle use_scrollview, as we don't support scrollviews with multiple rows
+                        parent.addView(ll2);
+                        ll2 = new LinearLayout(context);
+                        ll2.setOrientation(LinearLayout.HORIZONTAL);
+
+                        int n_remaining = supported_options.size() - button_indx;
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "n_remaining: " + n_remaining);
+                        if( n_remaining <= max_buttons_per_row ) {
+                            if( MyDebug.LOG )
+                                Log.d(TAG, "final row");
+                            button_width_dp = total_width_dp/n_remaining;
+                            button_width = (int)(button_width_dp * scale + 0.5f); // convert dps to pixels
+                        }
+                    }
+
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "supported_option: " + supported_option);
+                    int resource = -1;
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.08: " + (System.nanoTime() - debug_time));
+                    if( icons != null && values != null ) {
+                        int index = -1;
+                        for(int i=0;i<values.length && index==-1;i++) {
+                            if( values[i].equals(supported_option) )
+                                index = i;
+                        }
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "index: " + index);
+                        if( index != -1 ) {
+                            resource = icons.getResourceId(index, 0);
+                        }
+                    }
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.1: " + (System.nanoTime() - debug_time));
+
+                    String button_string;
+                    // hacks for ISO mode ISO_HJR (e.g., on Samsung S5)
+                    // also some devices report e.g. "ISO100" etc
+                    if( prefix_string.isEmpty() ) {
+                        button_string = supported_option;
+                    }
+                    else if( prefix_string.equalsIgnoreCase("ISO") && supported_option.length() >= 4 && supported_option.substring(0, 4).equalsIgnoreCase("ISO_") ) {
+                        button_string = getButtonOptionString(include_prefix, prefix_string, supported_option.substring(4));
+                    }
+                    else if( prefix_string.equalsIgnoreCase("ISO") && supported_option.length() >= 3 && supported_option.substring(0, 3).equalsIgnoreCase("ISO") ) {
+                        button_string = getButtonOptionString(include_prefix, prefix_string, supported_option.substring(3));
+                    }
+                    else {
+                        button_string = getButtonOptionString(include_prefix, prefix_string, supported_option);
+                    }
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "button_string: " + button_string);
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.105: " + (System.nanoTime() - debug_time));
+                    View view;
+                    if( resource != -1 ) {
+                        ImageButton image_button = new ImageButton(context);
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "addButtonOptionsToPopup time 2.11: " + (System.nanoTime() - debug_time));
+                        view = image_button;
+                        buttons.add(view);
+                        ll2.addView(view);
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "addButtonOptionsToPopup time 2.12: " + (System.nanoTime() - debug_time));
+
+                        //image_button.setImageResource(resource);
+                        final MainActivity main_activity = (MainActivity)context;
+                        Bitmap bm = main_activity.getPreloadedBitmap(resource);
+                        if( bm != null )
+                            image_button.setImageBitmap(bm);
+                        else {
+                            if( MyDebug.LOG )
+                                Log.d(TAG, "failed to find bitmap for resource " + resource + "!");
+                        }
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "addButtonOptionsToPopup time 2.13: " + (System.nanoTime() - debug_time));
+                        image_button.setScaleType(ScaleType.FIT_CENTER);
+                        image_button.setBackgroundColor(Color.TRANSPARENT);
+                        final int padding = (int) (10 * scale + 0.5f); // convert dps to pixels
+                        view.setPadding(padding, padding, padding, padding);
+                    }
+                    else {
+                        @SuppressLint("InflateParams")
+                        final View button_view = LayoutInflater.from(context).inflate(R.layout.popupview_button, null);
+                        final Button button = button_view.findViewById(R.id.button);
+
+                        button.setBackgroundColor(Color.TRANSPARENT); // workaround for Android 6 crash! Also looks nicer anyway...
+                        view = button;
+                        buttons.add(view);
+                        ll2.addView(view);
+
+                        button.setText(button_string);
+                        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, button_text_size_dip);
+                        button.setTextColor(Color.WHITE);
+                        // need 0 padding so we have enough room to display text for ISO buttons, when there are 6 ISO settings
+                        final int padding = (int) (0 * scale + 0.5f); // convert dps to pixels
+                        view.setPadding(padding, padding, padding, padding);
+                    }
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.2: " + (System.nanoTime() - debug_time));
+
+                    ViewGroup.LayoutParams params = view.getLayoutParams();
+                    params.width = button_width;
+                    // be careful of making the height too smaller, as harder to touch buttons; remember that this also affects the
+                    // ISO buttons on exposure panel, and not just the main popup!
+                    params.height = (int) (55 * ((resource != -1) ? scale : scale_font) + 0.5f); // convert dps to pixels
+                    view.setLayoutParams(params);
+
+                    view.setContentDescription(button_string);
+                    if( supported_option.equals(current_value) ) {
+                        setButtonSelected(view, true);
+                        current_view = view;
+                    }
+                    else {
+                        setButtonSelected(view, false);
+                    }
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.3: " + (System.nanoTime() - debug_time));
+                    view.setTag(supported_option);
+                    view.setOnClickListener(on_click_listener);
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.35: " + (System.nanoTime() - debug_time));
+                    if( test_ui_buttons != null )
+                        test_ui_buttons.put(test_key + "_" + supported_option, view);
+                    if( MyDebug.LOG ) {
+                        Log.d(TAG, "addButtonOptionsToPopup time 2.4: " + (System.nanoTime() - debug_time));
+                        Log.d(TAG, "added to popup_buttons: " + test_key + "_" + supported_option + " view: " + view);
+                        if( test_ui_buttons != null )
+                            Log.d(TAG, "test_ui_buttons is now: " + test_ui_buttons);
+                    }
                 }
-                parent.addView(scroll);
-                if( current_view != null ) {
-                    // scroll to the selected button
-                    final View final_current_view = current_view;
-                    final int final_button_width = button_width;
-                    parent.getViewTreeObserver().addOnGlobalLayoutListener(
-                            new OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    // scroll so selected button is centred
-                                    int jump_x = final_current_view.getLeft() - (total_width-final_button_width)/2;
-                                    // scrollTo should automatically clamp to the bounds of the view, but just in case
-                                    jump_x = Math.min(jump_x, total_width-1);
-                                    if( jump_x > 0 ) {
-                                        scroll.scrollTo(jump_x, 0);
+                if( MyDebug.LOG )
+                    Log.d(TAG, "addButtonOptionsToPopup time 3: " + (System.nanoTime() - debug_time));
+                if( use_scrollview ) {
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "using scrollview");
+                    final int total_width = (int) (total_width_dp * scale + 0.5f); // convert dps to pixels;
+                    final HorizontalScrollView scroll = new HorizontalScrollView(context);
+                    scroll.addView(ll2);
+                    {
+                        ViewGroup.LayoutParams params = new LayoutParams(
+                                total_width,
+                                LayoutParams.WRAP_CONTENT);
+                        scroll.setLayoutParams(params);
+                    }
+                    parent.addView(scroll);
+                    if( current_view != null ) {
+                        // scroll to the selected button
+                        final View final_current_view = current_view;
+                        final int final_button_width = button_width;
+                        parent.getViewTreeObserver().addOnGlobalLayoutListener(
+                                new OnGlobalLayoutListener() {
+                                    @Override
+                                    public void onGlobalLayout() {
+                                        // scroll so selected button is centred
+                                        int jump_x = final_current_view.getLeft() - (total_width-final_button_width)/2;
+                                        // scrollTo should automatically clamp to the bounds of the view, but just in case
+                                        jump_x = Math.min(jump_x, total_width-1);
+                                        if( jump_x > 0 ) {
+                                            scroll.scrollTo(jump_x, 0);
+                                        }
                                     }
                                 }
-                            }
-                    );
+                        );
+                    }
+                }
+                else {
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "not using scrollview");
+                    parent.addView(ll2);
                 }
             }
-            else {
-                if( MyDebug.LOG )
-                    Log.d(TAG, "not using scrollview");
-                parent.addView(ll2);
-            }
+
             if( MyDebug.LOG )
                 Log.d(TAG, "addButtonOptionsToPopup time 4: " + (System.nanoTime() - debug_time));
         }

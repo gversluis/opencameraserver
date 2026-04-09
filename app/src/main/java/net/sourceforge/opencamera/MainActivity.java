@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 import android.Manifest;
 import android.app.Fragment;
 import android.content.pm.PackageInfo;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -992,13 +993,14 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             Log.d(TAG, "preloadIcons: " + icons_id);
             debug_time = System.currentTimeMillis();
         }
-        String [] icons = getResources().getStringArray(icons_id);
-        for(String icon : icons) {
-            int resource = getResources().getIdentifier(icon, null, this.getApplicationContext().getPackageName());
-            if( MyDebug.LOG )
-                Log.d(TAG, "load resource: " + resource);
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), resource);
-            this.preloaded_bitmap_resources.put(resource, bm);
+        try(TypedArray icons = getResources().obtainTypedArray(icons_id)) {
+            for(int i=0;i<icons.length();i++) {
+                int resource = icons.getResourceId(i, 0);
+                if( MyDebug.LOG )
+                    Log.d(TAG, "load resource: " + resource);
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), resource);
+                this.preloaded_bitmap_resources.put(resource, bm);
+            }
         }
         if( MyDebug.LOG ) {
             Log.d(TAG, "preloadIcons: total time for preloadIcons: " + (System.currentTimeMillis() - debug_time));
