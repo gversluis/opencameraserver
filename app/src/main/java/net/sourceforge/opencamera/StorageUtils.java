@@ -1614,7 +1614,7 @@ public class StorageUtils {
 
     // only valid if isUsingSAF()
     private long freeMemorySAF() {
-        Uri treeUri = applicationInterface.getStorageUtils().getTreeUriSAF();
+        Uri treeUri = getTreeUriSAF();
         ParcelFileDescriptor pfd = null;
         if( MyDebug.LOG )
             Log.d(TAG, "treeUri: " + treeUri);
@@ -1666,7 +1666,7 @@ public class StorageUtils {
     public long freeMemory() { // return free memory in MB
         if( MyDebug.LOG )
             Log.d(TAG, "freeMemory");
-        if( applicationInterface.getStorageUtils().isUsingSAF() ) {
+        if( isUsingSAF() ) {
             // if we fail for SAF, don't fall back to the methods below, as this may be incorrect (especially for external SD card)
             return freeMemorySAF();
         }
