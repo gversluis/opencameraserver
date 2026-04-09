@@ -298,8 +298,7 @@
 
 
 
-    <string name="preference_category_photo_debugging">Налаштування відлагодження</string>
-    <string name="preference_category_video_debugging">Налаштування відлагодження</string>
+    <string name="preference_category_debugging">Налаштування відлагодження</string>
 
 
 

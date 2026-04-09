@@ -344,8 +344,7 @@
     <string name="gb_abbreviation">GB</string>
 
 
-    <string name="preference_category_photo_debugging">调试选项</string>
-    <string name="preference_category_video_debugging">调试选项</string>
+    <string name="preference_category_debugging">调试选项</string>
     <string name="preference_camera2_fake_flash">使用替代闪光灯的方法</string>
     <string name="preference_camera2_fake_flash_summary">如果您的设备使用Camera2 API时闪光灯有异常，请启用此功能</string>
     <string name="preference_expo_bracketing_n_images">包围曝光</string>

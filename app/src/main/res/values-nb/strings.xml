@@ -296,8 +296,7 @@
     <string name="permission_rationale_title">Tillatelse er påkrevd</string>
     <string name="permission_rationale_camera">Kameratillatelse er påkrevd for å kunne bruke kameraet.</string>
 
-    <string name="preference_category_photo_debugging">Avlusingsinnstillinger</string>
-    <string name="preference_category_video_debugging">Avlusingsinnstillinger</string>
+    <string name="preference_category_debugging">Avlusingsinnstillinger</string>
     <string name="preference_camera2_fake_flash">Bruk alternativ blitsmetode</string>
     <string name="preference_camera2_fake_flash_summary">Aktiver dette dersom enheten har trøbbel med blitsen i Camera2-APIen. this if your device has buggy flash behaviour with Camera2 API</string>
 

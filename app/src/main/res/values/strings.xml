@@ -307,8 +307,7 @@
     <string name="permission_rationale_location">Location permission is required for geotagging (storing location data in
         photos and videos, including stamp and subtitles options). Location permission is also required (at least for Android 11 and earlier) for connecting to Bluetooth LE remote control devices.</string>
 
-    <string name="preference_category_photo_debugging">Debugging options</string>
-    <string name="preference_category_video_debugging">Debugging options</string>
+    <string name="preference_category_debugging">Debugging options</string>
     <string name="preference_camera2_fake_flash">Use alternative flash method</string>
     <string name="preference_camera2_fake_flash_summary">Enable this if your device has buggy flash behaviour with Camera2 API</string>
 

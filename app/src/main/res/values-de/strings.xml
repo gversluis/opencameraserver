@@ -301,8 +301,7 @@
     <string name="permission_rationale_location">Location-Berechtigung für das Geotagging benötigt (Speicherung der Standortdaten in
         Fotos und Videos). Location-Berechtigung wird auch benötigt, um eine Verbindung zu Bluetooth LE Fernbedienungen herzustellen (Android 11 or earlier).</string>
 
-    <string name="preference_category_photo_debugging">Debug-Optionen</string>
-    <string name="preference_category_video_debugging">Debug-Optionen</string>
+    <string name="preference_category_debugging">Debug-Optionen</string>
     <string name="preference_camera2_fake_flash">Benutze alternative Blitz Methode</string>
     <string name="preference_camera2_fake_flash_summary">Aktiviere dies, wenn dein Gerät Probleme mit der Camera2-API hat</string>
 

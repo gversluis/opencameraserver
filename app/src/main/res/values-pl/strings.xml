@@ -303,8 +303,7 @@
     <string name="permission_rationale_record_audio">Zezwolenie na korzystanie z mikrofonu jest wymagane do nagrywania wideo z dźwiękiem, a także do korzystania z opcji \"Aktywacja za pomocą dźwięków\"</string>
     <string name="permission_rationale_location">Zezwolenie na lokalizację jest wymagane do geotagowania (przechowywania danych o lokalizacji na zdjęciach i filmach, w tym opcji znaczników i napisów). Zezwolenie na lokalizację jest również wymagane (przynajmniej w systemie Android 11 i wcześniejszych) do łączenia się z urządzeniami zdalnego sterowania Bluetooth LE</string>
 
-    <string name="preference_category_photo_debugging">Opcje debugowania</string>
-    <string name="preference_category_video_debugging">Opcje debugowania</string>
+    <string name="preference_category_debugging">Opcje debugowania</string>
     <string name="preference_camera2_fake_flash">Użyj alternatywnej lampy błyskowej</string>
     <string name="preference_camera2_fake_flash_summary">Włącz jeśli w twoim urządzeniu lampa błyskowa przejawia dziwne zachowanie z Camera2 API</string>
     

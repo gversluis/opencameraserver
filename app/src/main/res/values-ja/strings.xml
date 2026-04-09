@@ -298,8 +298,7 @@
     <string name="permission_rationale_location">ジオタギング(位置情報を写真やビデオに付加する)には位置情報の権限が必要です。
         位置情報の権限はBluetooth LE リモートコントロールデバイスの接続にも必要です (Android 11 or earlier)。</string>
 
-    <string name="preference_category_photo_debugging">デバッグ用オプション</string>
-    <string name="preference_category_video_debugging">デバッグ用オプション</string>
+    <string name="preference_category_debugging">デバッグ用オプション</string>
     <string name="preference_camera2_fake_flash">代替のフラッシュ方式を使用</string>
     <string name="preference_camera2_fake_flash_summary">Camera2 API 使用中に端末のフラッシュの挙動が不安定な場合は有効にしてください。</string>
 

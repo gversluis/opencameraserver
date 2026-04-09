@@ -300,8 +300,7 @@
     <string name="permission_rationale_camera">Quyền máy ảnh cần được cấp phép để kích hoạt máy ảnh</string>
     <string name="permission_rationale_record_audio">Quyền micrô cần được cấp phép để quay video với âm thanh, cũng như sử dụng các tùy chọn Điều khiển âm thanh</string>
 
-    <string name="preference_category_photo_debugging">Tùy chọn gỡ lỗi</string>
-    <string name="preference_category_video_debugging">Tùy chọn gỡ lỗi</string>
+    <string name="preference_category_debugging">Tùy chọn gỡ lỗi</string>
     <string name="preference_camera2_fake_flash">Sử dụng phương thức thay thế flash</string>
     <string name="preference_camera2_fake_flash_summary">Kích hoạt tính năng này nếu thiết bị của bạn gặp sự cố flash với Camera2 API</string>
 

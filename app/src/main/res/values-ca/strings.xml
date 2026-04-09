@@ -305,8 +305,7 @@
     <string name="permission_rationale_location">Cal el permís d\'ubicació per geoetiquetar (emmagatzemar les dades d\'ubicació a
         fotos i vídeos, com també les opcions d\'annexació d\'informació i subtítols). També cal el permís d\'ubicació, almenys en Android 11 i anteriors, per connectar dispositius de control remot Bluetooth LE.</string>
         
-    <string name="preference_category_photo_debugging">Opcions de depuració</string>
-    <string name="preference_category_video_debugging">Opcions de depuració</string>
+    <string name="preference_category_debugging">Opcions de depuració</string>
     <string name="preference_camera2_fake_flash">Usa un mètode de flaix alternatiu</string>
     <string name="preference_camera2_fake_flash_summary">Habilita-ho si el flaix del teu dispositiu no funciona bé amb l\'API Camera2</string>
 

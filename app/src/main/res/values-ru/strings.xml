@@ -301,8 +301,7 @@
     <string name="permission_rationale_location">Требуется разрешение на определение местоположения для геотеггинга (хранение информации о местоположении
         внутри фото и видео). Разрешение на определение местоположения также требуется для подключения к устройствам удаленного управления по Bluetooth LE (Android 11 or earlier).</string>
 
-    <string name="preference_category_photo_debugging">Настройки отладки</string>
-    <string name="preference_category_video_debugging">Настройки отладки</string>
+    <string name="preference_category_debugging">Настройки отладки</string>
     <string name="preference_camera2_fake_flash">Использовать альтернативный способ вспышки</string>
     <string name="preference_camera2_fake_flash_summary">Включите, если у вашего устройства проблемы со вспышкой в Camera2 API</string>
 
