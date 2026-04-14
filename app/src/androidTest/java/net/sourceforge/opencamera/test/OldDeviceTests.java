@@ -27,7 +27,7 @@ public class OldDeviceTests {
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testSettingsPrivacyPolicy"));
 
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testLocationOn"));
-        suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhoto"));
+        //suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhoto"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAutoLevel"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAutoLevelLowMemory"));
         suite.addTest(TestSuite.createTest(MainActivityTest.class, "testTakePhotoAutoLevelAngles"));

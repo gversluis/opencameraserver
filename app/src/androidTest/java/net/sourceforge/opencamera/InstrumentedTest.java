@@ -63,6 +63,7 @@ interface VideoTests {}
 
 interface PhotoCamera2Tests {}
 
+interface OldDeviceTests {}
 interface HDRTests {}
 
 interface HDRNTests {}
@@ -6510,7 +6511,7 @@ public class InstrumentedTest {
 
     }
 
-    @Category(PhotoTests.class)
+    @Category({PhotoTests.class, OldDeviceTests.class})
     @Test
     public void testTakePhoto() throws InterruptedException {
         Log.d(TAG, "testTakePhoto");
