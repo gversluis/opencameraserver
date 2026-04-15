@@ -176,9 +176,9 @@
     <string name="preference_quality_summary">設定儲存的 JPEG 或 WebP 照片的圖片品質（預設值是 90%%）。對於 PNG 圖片格式沒有作用。\n%s</string> <!-- '%' is encoded as '%%' - a single % can crash devices, and this isn't picked up by Android Lint! -->
     <string name="preference_raw">RAW</string>
     <string name="preference_location">儲存位置資料 (地理標記)</string>
-    <string name="preference_location_summary">在照片/影片中儲存 GPS 位置資料（對於照片，位置資料只能儲存在 JPEG 和 DNG 格式）</string>
+    <string name="preference_location_summary">在照片/影片中儲存 GPS 位置資料</string>
     <string name="preference_gps_direction">儲存羅盤方向</string>
-    <string name="preference_gps_direction_summary">在照片中儲存 GPS 羅盤方向（只有在 JPEG 格式）</string>
+    <string name="preference_gps_direction_summary">在照片中儲存 GPS 羅盤方向（只有在 JPEG 等等格式）</string>
     <string name="preference_require_location">需要位置資料</string>
     <string name="preference_require_location_summary">如果啟用位置資料，只在位置資料可用時拍照/錄影</string>
     <string name="preference_stamp">標記照片</string>
@@ -453,9 +453,9 @@
 
     <string name="preference_category_exif_tags">自訂 Exif 標籤</string>
     <string name="preference_exif_artist">藝術家</string>
-    <string name="preference_exif_artist_summary">儲存在圖片詮釋資料「藝術家」標籤的文字（只有在 JPEG 格式）。（留空代表不儲存）</string>
+    <string name="preference_exif_artist_summary">儲存在圖片詮釋資料「藝術家」標籤的文字（只有在 JPEG 等等格式）。（留空代表不儲存）</string>
     <string name="preference_exif_copyright">版權</string>
-    <string name="preference_exif_copyright_summary">儲存在圖片詮釋資料「版權」標籤的文字（只有在 JPEG 格式）。（留空代表不儲存）</string>
+    <string name="preference_exif_copyright_summary">儲存在圖片詮釋資料「版權」標籤的文字（只有在 JPEG 等等格式）。（留空代表不儲存）</string>
 
     <string name="processing">處理中…</string>
 
@@ -887,7 +887,7 @@
 
     <string name="exposure_compensation_seekbar">變更曝光補償的滑桿</string>
 
-    <string name="preference_image_format_summary">選擇儲存照片的檔案格式。這會影響「標準」（非 RAW）的照片。只有 JPEG 格式支援儲存 Exif 詮釋資料。雜訊抑制、HDR、全景、X- 模式不支援 Ultra HDR。注意 PNG 格式不是真的無損，而是以 100%% 品質從 JPEG 轉換過來。\n%s</string>
+    <string name="preference_image_format_summary">選擇儲存照片的檔案格式。這會影響「標準」（非 RAW）的照片。雜訊抑制、HDR、全景、X- 模式不支援 Ultra HDR。注意 PNG 格式不是真的無損，而是以 100%% 品質從 JPEG 轉換過來。\n%s</string>
 
     <string name="preference_camera_api">Camera API</string>
     <string name="preference_camera_api_summary">選擇 Camera2 API 來啟用額外的功能，例如手動曝光模式、對焦、白平衡和 RAW（如果裝置支援）。變更 API 會造成重新啟動\n%s</string>
@@ -963,7 +963,7 @@
     <string name="error_features_slow_motion">慢動作</string>
 
     <string name="preference_comment_ypr">儲存偏擺 (yaw)、俯仰 (pitch) 及翻滾 (roll)</string>
-    <string name="preference_comment_ypr_summary">在照片的 Exif user comment 中儲存裝置的偏擺 (yaw)、俯仰 (pitch) 及翻滾 (roll)（只有在 JPEG 格式）</string>
+    <string name="preference_comment_ypr_summary">在照片的 Exif user comment 中儲存裝置的偏擺 (yaw)、俯仰 (pitch) 及翻滾 (roll)（只有在 JPEG 等等格式）</string>
 
     <string name="array_seekbar_preference_seekbar">變更目前偏好值的滑桿</string>
 
@@ -995,7 +995,7 @@
     <string name="preference_hdr_tonemapping_default">預設</string>
 
     <string name="preference_remove_device_exif">移除裝置 EXIF 資料</string>
-    <string name="preference_remove_device_exif_summary">是否從 JPEG 照片移除裝置 EXIF 詮釋資料。這不會移除其他套用 EXIF 詮釋資料的設定套用的 exif 標籤（例如位置/地理標記）。這些其他選項是獨立的，會覆蓋這個設定。RAW/DNG 和影片不受影響。\n%s</string>
+    <string name="preference_remove_device_exif_summary">是否從 JPEG 等等照片移除裝置 EXIF 詮釋資料。這不會移除其他套用 EXIF 詮釋資料的設定套用的 exif 標籤（例如位置/地理標記）。這些其他選項是獨立的，會覆蓋這個設定。RAW/DNG 和影片不受影響。\n%s</string>
     <string name="preference_remove_device_exif_off">不要移除裝置 EXIF 資料</string>
     <string name="preference_remove_device_exif_on">移除裝置 EXIF 資料</string>
     <string name="preference_remove_device_exif_keep_datetime">除了日期/時間之外移除</string>
