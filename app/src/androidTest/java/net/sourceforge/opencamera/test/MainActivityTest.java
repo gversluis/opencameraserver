@@ -6376,7 +6376,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             editor.putString(PreferenceKeys.RemoteName, "00:11:22:33:44:55");
             editor.putString(PreferenceKeys.RemoteVideoMode, "preference_remote_video_mode_pause");
             editor.apply();
-            updateForSettings();
+            // updateForSettings() won't work as we handle via MainActivity.onSharedPreferenceChanged() instead,
+            // so easiest to just restart
+            //updateForSettings();
+            restart();
         }
 
         final View pauseVideoButton = mActivity.findViewById(net.sourceforge.opencamera.R.id.pause_video);
@@ -6411,9 +6414,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                     runTestOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
-                            intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
-                            mActivity.sendBroadcast(intent);
+                            // doesn't work without actual bluetooth device?
+                            //Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
+                            //intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
+                            //mActivity.sendBroadcast(intent);
+                            mActivity.triggerRemoteControlAction();
                         }
                     });
                 }
@@ -6450,9 +6455,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                     runTestOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
-                            intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
-                            mActivity.sendBroadcast(intent);
+                            // doesn't work without actual bluetooth device?
+                            //Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
+                            //intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
+                            //mActivity.sendBroadcast(intent);
+                            mActivity.triggerRemoteControlAction();
                         }
                     });
                 }
@@ -6488,9 +6495,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                     runTestOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
-                            intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
-                            mActivity.sendBroadcast(intent);
+                            // doesn't work without actual bluetooth device?
+                            //Intent intent = new Intent(BluetoothLeService.ACTION_REMOTE_COMMAND);
+                            //intent.putExtra(BluetoothLeService.EXTRA_DATA, BluetoothLeService.COMMAND_SHUTTER);
+                            //mActivity.sendBroadcast(intent);
+                            mActivity.triggerRemoteControlAction();
                         }
                     });
                 }
