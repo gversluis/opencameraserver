@@ -1863,10 +1863,11 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         return "preference_remote_video_mode_pause".equals(remote_video_mode);
     }
 
-    /** Triggered by remote control inputs (BLE remote, keyboard, camera key, selfie stick, etc).
-     *  Applies the remote video mode preference consistently across the supported remote input paths.
+    /** Action for Bluetooth remote control input (BluetoothRemoteControl).
      */
     public void triggerRemoteControlAction() {
+        if( MyDebug.LOG )
+            Log.d(TAG, "triggerRemoteControlAction");
         if( preview.isVideo() && preview.isVideoRecording() && useRemotePauseResumeForVideo() ) {
             pauseVideo();
             return;

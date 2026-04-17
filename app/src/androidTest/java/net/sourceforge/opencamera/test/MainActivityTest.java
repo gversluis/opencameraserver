@@ -6515,10 +6515,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         }, 5000, false, 0);
     }
 
-    /** Test pausing/resuming video via generic remote-style key events.
+    /** Test pausing/resuming video via generic key events.
      */
-    public void testTakeVideoPauseRemoteKeyEvents() throws InterruptedException {
-        Log.d(TAG, "testTakeVideoPauseRemoteKeyEvents");
+    public void testTakeVideoPauseKeyEvents() throws InterruptedException {
+        Log.d(TAG, "testTakeVideoPauseKeyEvents");
 
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.N ) {
             Log.d(TAG, "pause video requires Android N or better");
@@ -6529,7 +6529,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mActivity);
             SharedPreferences.Editor editor = settings.edit();
-            editor.putString(PreferenceKeys.RemoteVideoMode, "preference_remote_video_mode_pause");
             editor.putString(PreferenceKeys.VolumeKeysPreferenceKey, "volume_take_photo");
             editor.apply();
             updateForSettings();
@@ -6551,8 +6550,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                     fail();
                 }
 
-                Log.d(TAG, "pause video with camera key");
-                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_CAMERA);
+                Log.d(TAG, "pause video with volume key down");
+                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_DOWN);
                 getInstrumentation().waitForIdleSync();
                 assertTrue( mPreview.isVideoRecording() );
                 assertTrue( mPreview.isVideoRecordingPaused() );
@@ -6566,8 +6565,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                     fail();
                 }
 
-                Log.d(TAG, "resume video with keyboard select key");
-                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_SPACE);
+                Log.d(TAG, "resume video with volume key down");
+                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_DOWN);
                 getInstrumentation().waitForIdleSync();
                 assertTrue( mPreview.isVideoRecording() );
                 assertFalse(mPreview.isVideoRecordingPaused());
@@ -6581,8 +6580,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                     fail();
                 }
 
-                Log.d(TAG, "pause video with volume key remote path");
-                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_UP);
+                Log.d(TAG, "pause video again with volume key down");
+                getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_VOLUME_DOWN);
                 getInstrumentation().waitForIdleSync();
                 assertTrue( mPreview.isVideoRecording() );
                 assertTrue( mPreview.isVideoRecordingPaused() );
