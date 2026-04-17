@@ -790,9 +790,6 @@
     <string name="preference_enable_remote">Enable Bluetooth LE remote control</string>
     <string name="preference_enable_remote_summary">Enable Bluetooth LE (BLE) remote control devices</string>
     <string name="preference_remote_type">Remote device type</string>
-    <string name="preference_remote_video_mode">Remote control action during video recording</string>
-    <string name="preference_remote_video_mode_standard">Standard (start/stop video)</string>
-    <string name="preference_remote_video_mode_pause">Pause/resume video (stop on-screen only)</string>
 
     <string name="ble_not_supported">BLE not supported</string>
     <string name="scan_ble">BLE Device Scan</string>
@@ -1052,6 +1049,10 @@
     <string name="preference_gallery_include_legacy">Default</string>
     <string name="preference_gallery_exclude_legacy">Exclude legacy</string>
     <string name="preference_gallery_all_editors">Include editors</string>
+
+    <string name="preference_remote_video_mode">Remote control action during video recording</string>
+    <string name="preference_remote_video_mode_standard">Standard (start/stop video)</string>
+    <string name="preference_remote_video_mode_pause">Pause/resume video (stop on-screen only)</string>
 
     <!-- The following strings should not be translated (and shouldn't be included in language-specific strings.xml), in case they need updating -->
 
