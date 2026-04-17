@@ -138,8 +138,7 @@ public class BluetoothRemoteControl {
                 // TODO: we could abstract this into a method provided by each remote control model
                 switch( command ) {
                     case BluetoothLeService.COMMAND_SHUTTER:
-                        // Easiest - just take a picture (or start/stop camera)
-                        main_activity.takePicture(false);
+                        main_activity.triggerRemoteControlAction();
                         break;
                     case BluetoothLeService.COMMAND_MODE:
                         // "Mode" key :either toggles photo/video mode, or

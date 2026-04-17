@@ -901,6 +901,14 @@
     <string-array name="preference_remote_type_values">
         <item>preference_remote_type_kraken</item>
     </string-array>
+    <string-array name="preference_remote_video_mode_entries">
+        <item>@string/preference_remote_video_mode_standard</item>
+        <item>@string/preference_remote_video_mode_pause</item>
+    </string-array>
+    <string-array name="preference_remote_video_mode_values">
+        <item>preference_remote_video_mode_standard</item>
+        <item>preference_remote_video_mode_pause</item>
+    </string-array>
     <string-array name="preference_stamp_geo_address_entries">
         <item>@string/preference_stamp_geo_address_both</item>
         <item>@string/preference_stamp_geo_address_prefer</item>
