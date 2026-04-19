@@ -1133,7 +1133,7 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
      */
     void audioTrigger() {
         if( MyDebug.LOG )
-            Log.d(TAG, "ignore audio trigger due to popup open");
+            Log.d(TAG, "audioTrigger");
         if( popupIsOpen() ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "ignore audio trigger due to popup open");
