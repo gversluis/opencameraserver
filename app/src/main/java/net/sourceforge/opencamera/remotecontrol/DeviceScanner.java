@@ -48,8 +48,7 @@ public class DeviceScanner extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
 
     private static final int REQUEST_ENABLE_BT = 1;
-    private static final int REQUEST_LOCATION_PERMISSIONS = 2;
-    private static final int REQUEST_BLUETOOTHSCANCONNECT_PERMISSIONS = 3;
+    private static final int REQUEST_BLUETOOTHSCANCONNECT_PERMISSIONS = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +56,12 @@ public class DeviceScanner extends AppCompatActivity {
         setContentView(R.layout.activity_device_select);
         bluetoothHandler = new Handler();
 
+        if( !useAndroid12BluetoothPermissions() ) {
+            if( MyDebug.LOG )
+                Log.e(TAG, "bluetooth remote control requires Android 12+");
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
+        }
         if( !getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
             finish();
@@ -106,8 +111,10 @@ public class DeviceScanner extends AppCompatActivity {
     /** Returns whether we can use the new Android 12 permissions for bluetooth (BLUETOOTH_SCAN,
      *  BLUETOOTH_CONNECT) - if so, we should use these and NOT location permissions.
      *  See https://developer.android.com/guide/topics/connectivity/bluetooth/permissions .
+     *  Update: we now require Android 12+ for bluetooth remote control, to avoid ever needing
+     *  location permission for this.
      */
-    static boolean useAndroid12BluetoothPermissions() {
+    public static boolean useAndroid12BluetoothPermissions() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
     }
 
@@ -124,6 +131,12 @@ public class DeviceScanner extends AppCompatActivity {
                 Log.e(TAG, "bluetooth connect permission not granted!");
                 return;
             }
+        }
+        else {
+            // shouldn't be here as we check for Android 12+ in onCreate(), but just to be safe
+            if( MyDebug.LOG )
+                Log.e(TAG, "bluetooth remote control requires Android 12+");
+            return;
         }
         if( !bluetoothAdapter.isEnabled() ) {
             // fire an intent to display a dialog asking the user to grant permission to enable Bluetooth
@@ -144,6 +157,7 @@ public class DeviceScanner extends AppCompatActivity {
         // Also see https://stackoverflow.com/questions/33045581/location-needs-to-be-enabled-for-bluetooth-low-energy-scanning-on-android-6-0
         // Update: on Android 10+, ACCESS_FINE_LOCATION is needed: https://developer.android.com/about/versions/10/privacy/changes#location-telephony-bluetooth-wifi
         // Update: on Android 12+, we use the new bluetooth permissions instead of location permissions.
+        // Update: we now require Android 12+ for bluetooth remote control, so we never need location permissions.
         boolean has_permission = false;
         if( useAndroid12BluetoothPermissions() ) {
             if( ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
@@ -154,18 +168,10 @@ public class DeviceScanner extends AppCompatActivity {
             }
         }
         else {
-            String permission_needed = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? Manifest.permission.ACCESS_FINE_LOCATION : Manifest.permission.ACCESS_COARSE_LOCATION;
-
-            /*int permissionCoarse = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
-                    ContextCompat
-                            .checkSelfPermission(this, permission_needed) :
-                    PackageManager.PERMISSION_GRANTED;*/
-            int permissionCoarse = ContextCompat
-                    .checkSelfPermission(this, permission_needed);
-
-            if( permissionCoarse == PackageManager.PERMISSION_GRANTED ) {
-                has_permission = true;
-            }
+            // shouldn't be here as we check for Android 12+ in onCreate(), but just to be safe
+            if( MyDebug.LOG )
+                Log.e(TAG, "bluetooth remote control requires Android 12+");
+            has_permission = false;
         }
 
         if( has_permission ) {
@@ -201,6 +207,7 @@ public class DeviceScanner extends AppCompatActivity {
         // is denied automatically).
         // Update: on Android 10+, ACCESS_FINE_LOCATION is needed anyway: https://developer.android.com/about/versions/10/privacy/changes#location-telephony-bluetooth-wifi
         // Update: on Android 12+, we use the new bluetooth permissions instead of location permissions.
+        // Update: we now require Android 12+ for bluetooth remote control, so we never need location permissions.
         if( useAndroid12BluetoothPermissions() ) {
             if( ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_SCAN) ||
                     ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_CONNECT) ) {
@@ -219,21 +226,9 @@ public class DeviceScanner extends AppCompatActivity {
             }
         }
         else {
-            if( ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION) ) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                showRequestLocationPermissionRationale();
-            }
-            else {
-                // Can go ahead and request the permission
-                if( MyDebug.LOG )
-                    Log.d(TAG, "requesting location permissions...");
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                        REQUEST_LOCATION_PERMISSIONS);
-            }
+            // shouldn't be here as we check for Android 12+ in onCreate(), but just to be safe
+            if( MyDebug.LOG )
+                Log.e(TAG, "bluetooth remote control requires Android 12+");
         }
     }
 
@@ -264,33 +259,6 @@ public class DeviceScanner extends AppCompatActivity {
                 }).show();
     }
 
-    private void showRequestLocationPermissionRationale() {
-        if( MyDebug.LOG )
-            Log.d(TAG, "showRequestLocationPermissionRationale");
-        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
-            if( MyDebug.LOG )
-                Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
-            return;
-        }*/
-
-        String [] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        int message_id = R.string.permission_rationale_location;
-
-        final String [] permissions_f = permissions;
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.permission_rationale_title)
-                .setMessage(message_id)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.ok, null)
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    public void onDismiss(DialogInterface dialog) {
-                        if( MyDebug.LOG )
-                            Log.d(TAG, "requesting permission...");
-                        ActivityCompat.requestPermissions(DeviceScanner.this, permissions_f, REQUEST_LOCATION_PERMISSIONS);
-                    }
-                }).show();
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -300,20 +268,6 @@ public class DeviceScanner extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
-            case REQUEST_LOCATION_PERMISSIONS: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "location permission granted");
-                    checkBluetoothEnabled();
-                    scanLeDevice(true);
-                }
-                else {
-                    if( MyDebug.LOG )
-                        Log.d(TAG, "location permission denied");
-                }
-
-                break;
-            }
             case REQUEST_BLUETOOTHSCANCONNECT_PERMISSIONS: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if( MyDebug.LOG )
@@ -414,6 +368,12 @@ public class DeviceScanner extends AppCompatActivity {
                 return;
             }
         }
+        else {
+            // shouldn't be here as we check for Android 12+ in onCreate(), but just to be safe
+            if( MyDebug.LOG )
+                Log.e(TAG, "bluetooth remote control requires Android 12+");
+            return;
+        }
 
         if( enable ) {
             // stop scanning after certain time
@@ -502,6 +462,12 @@ public class DeviceScanner extends AppCompatActivity {
                 if( ContextCompat.checkSelfPermission(DeviceScanner.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ) {
                     has_bluetooth_scan_permission = false;
                 }
+            }
+            else {
+                // shouldn't be here as we check for Android 12+ in onCreate(), but just to be safe
+                if( MyDebug.LOG )
+                    Log.e(TAG, "bluetooth remote control requires Android 12+");
+                has_bluetooth_scan_permission = false;
             }
 
             BluetoothDevice device = mLeDevices.get(i);

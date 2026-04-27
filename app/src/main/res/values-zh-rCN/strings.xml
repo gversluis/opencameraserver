@@ -940,7 +940,7 @@
     <string name="preference_audio_control_noise">大的声音</string>
     <string name="preference_audio_control_voice">语音命令: \"cheese\"</string> <!-- note that cheese shouldn't be translated, as we listen for this no matter what language is being used -->
     <string name="permission_rationale_storage">需要存储读/写权限才能保存照片或视频文件</string>
-    <string name="permission_rationale_location">地理标记需要位置权限（将位置数据存储在照片和视频，包括水印和）。还需要位置权限（至少对于 Android 11 及更早版本）才能连接到BLE远程控制设备。</string>
+    <string name="permission_rationale_location">地理标记需要位置权限（将位置数据存储在照片和视频，包括水印和）。</string>
 
     <string name="photo_mode_x_night">夜景</string>
     <string name="photo_mode_x_night_full">夜景(Night)</string>

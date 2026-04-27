@@ -302,8 +302,7 @@
     <string name="permission_rationale_camera">Cal el permís de càmera per habilitar-la</string>
     <string name="permission_rationale_storage">Cal el permís de lectura/escriptura de l\'emmagatzematge per poder desar els fitxers de foto i vídeo</string>
     <string name="permission_rationale_record_audio">Cal el permís de micròfon per poder enregistrar vídeo amb àudio i també per usar les opcions de \"Control d\'àudio\"</string>
-    <string name="permission_rationale_location">Cal el permís d\'ubicació per geoetiquetar (emmagatzemar les dades d\'ubicació a
-        fotos i vídeos, com també les opcions d\'annexació d\'informació i subtítols). També cal el permís d\'ubicació, almenys en Android 11 i anteriors, per connectar dispositius de control remot Bluetooth LE.</string>
+    <string name="permission_rationale_location">Cal el permís d\'ubicació per geoetiquetar (emmagatzemar les dades d\'ubicació a fotos i vídeos, com també les opcions d\'annexació d\'informació i subtítols).</string>
         
     <string name="preference_category_debugging">Opcions de depuració</string>
     <string name="preference_camera2_fake_flash">Usa un mètode de flaix alternatiu</string>

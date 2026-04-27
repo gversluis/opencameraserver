@@ -17,8 +17,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import android.util.Log;
@@ -31,6 +34,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+@RequiresApi(api = Build.VERSION_CODES.S)
 public class BluetoothLeService extends Service {
     private final static String TAG = "BluetoothLeService";
 

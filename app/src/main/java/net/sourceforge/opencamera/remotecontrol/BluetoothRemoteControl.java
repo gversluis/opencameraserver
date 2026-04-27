@@ -15,6 +15,8 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
 import net.sourceforge.opencamera.MainActivity;
 import net.sourceforge.opencamera.MyApplicationInterface;
 import net.sourceforge.opencamera.MyDebug;
@@ -55,6 +57,14 @@ public class BluetoothRemoteControl {
                 // a later stage).
                 return;
             }
+            if( !DeviceScanner.useAndroid12BluetoothPermissions() ) {
+                if( MyDebug.LOG )
+                    Log.e(TAG, "bluetooth remote control requires Android 12+");
+                // in theory not needed as mServiceConnection is not used if remoteEnabled() returns
+                // false (which will be the case if not on Android 12+), but just to be safe
+                // also needed to avoid lint warnings for BluetoothLeService requiring Android 12+
+                return;
+            }
             bluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             if( !bluetoothLeService.initialize() ) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
@@ -75,6 +85,13 @@ public class BluetoothRemoteControl {
         public void onServiceDisconnected(ComponentName componentName) {
             if( MyDebug.LOG )
                 Log.d(TAG, "onServiceDisconnected");
+            if( !DeviceScanner.useAndroid12BluetoothPermissions() ) {
+                if( MyDebug.LOG )
+                    Log.e(TAG, "bluetooth remote control requires Android 12+");
+                // in theory not needed as mServiceConnection is not used if remoteEnabled() returns
+                // false (which will be the case if not on Android 12+), but just to be safe
+                return;
+            }
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
@@ -93,6 +110,12 @@ public class BluetoothRemoteControl {
     private final BroadcastReceiver remoteControlCommandReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if( !DeviceScanner.useAndroid12BluetoothPermissions() ) {
+                // shouldn't be here if not on Android 12+, but to fix Android lint warning
+                if( MyDebug.LOG )
+                    Log.e(TAG, "bluetooth remote control requires Android 12+");
+                return;
+            }
             final String action = intent.getAction();
             MyApplicationInterface applicationInterface = main_activity.getApplicationInterface();
             MainUI mainUI = main_activity.getMainUI();
@@ -220,6 +243,7 @@ public class BluetoothRemoteControl {
     }
 
     // TODO: refactor for a filter than receives generic remote control intents
+    @RequiresApi(api = Build.VERSION_CODES.S)
     private static IntentFilter makeRemoteCommandIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
@@ -237,13 +261,16 @@ public class BluetoothRemoteControl {
     public void startRemoteControl() {
         if( MyDebug.LOG )
             Log.d(TAG, "BLE Remote control service start check...");
-        Intent gattServiceIntent = new Intent(main_activity, BluetoothLeService.class);
         // Check isAppPaused() just to be safe - in theory shouldn't be needed, but don't want to
         // start up the service if we're in background! (And we might as well then try to stop the
         // service instead.)
-        if( !main_activity.isAppPaused() && remoteEnabled() ) {
+        if( !DeviceScanner.useAndroid12BluetoothPermissions() ) {
+            // bluetooth remote control requires Android 12+
+        }
+        else if( !main_activity.isAppPaused() && remoteEnabled() ) {
             if( MyDebug.LOG )
                 Log.d(TAG, "Remote enabled, starting service");
+            Intent gattServiceIntent = new Intent(main_activity, BluetoothLeService.class);
             main_activity.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
             // For Android 14 (UPSIDE_DOWN_CAKE) onwards, a flag of RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED must be specified when using
             // registerReceiver with non-system intents, otherwise a SecurityException will be thrown.
@@ -298,6 +325,10 @@ public class BluetoothRemoteControl {
      * @return true if this is the case
      */
     public boolean remoteEnabled() {
+        if( !DeviceScanner.useAndroid12BluetoothPermissions() ) {
+            // bluetooth remote control requires Android 12+
+            return false;
+        }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
         boolean remote_enabled = sharedPreferences.getBoolean(PreferenceKeys.EnableRemote, false);
         remoteDeviceType = sharedPreferences.getString(PreferenceKeys.RemoteType, "undefined");

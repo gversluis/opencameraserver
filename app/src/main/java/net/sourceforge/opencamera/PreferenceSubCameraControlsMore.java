@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import net.sourceforge.opencamera.remotecontrol.DeviceScanner;
 import net.sourceforge.opencamera.ui.FolderChooserDialog;
 
 import java.io.File;
@@ -41,6 +42,14 @@ public class PreferenceSubCameraControlsMore extends PreferenceSubScreen {
         if( !can_disable_shutter_sound ) {
             // Camera.enableShutterSound requires JELLY_BEAN_MR1 or greater
             Preference pref = findPreference("preference_shutter_sound");
+            //PreferenceGroup pg = (PreferenceGroup)this.findPreference("preference_screen_camera_controls_more");
+            PreferenceGroup pg = (PreferenceGroup)this.findPreference("preferences_root");
+            pg.removePreference(pref);
+        }
+
+        if( !DeviceScanner.useAndroid12BluetoothPermissions() ) {
+            // we require Android 12+ for bluetooth remove control
+            Preference pref = findPreference("preference_screen_remote_control");
             //PreferenceGroup pg = (PreferenceGroup)this.findPreference("preference_screen_camera_controls_more");
             PreferenceGroup pg = (PreferenceGroup)this.findPreference("preferences_root");
             pg.removePreference(pref);
