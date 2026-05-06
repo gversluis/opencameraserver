@@ -3217,7 +3217,6 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                 if( MyDebug.LOG )
                     Log.e(TAG, "PopupOnBackPressedCallback was enabled but popup menu not open?!");
                 this.setEnabled(false);
-                MainActivity.this.onBackPressed();
             }
         }
     }
@@ -3253,7 +3252,6 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                 if( MyDebug.LOG )
                     Log.e(TAG, "PausePreviewOnBackPressedCallback was enabled but preview not paused?!");
                 this.setEnabled(false);
-                MainActivity.this.onBackPressed();
             }
         }
     }
@@ -3286,7 +3284,6 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
                 if( MyDebug.LOG )
                     Log.e(TAG, "ScreenLockOnBackPressedCallback was enabled but screen isn't locked?!");
                 this.setEnabled(false);
-                MainActivity.this.onBackPressed();
             }
         }
     }
