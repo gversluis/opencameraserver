@@ -1459,6 +1459,16 @@ public class MyApplicationInterface extends BasicApplicationInterface {
                 return false;
             }
         }
+        if( getPausePreviewPref() && n_images_to_save > 0 ) {
+            // With pause preview mode, allowing multiple to save at once is not worthwhile since the whole point is to
+            // pause the preview after every shot; also we want to avoid the problem where the user unpauses when a photo
+            // is still being saved in background: if we allow another photo to be taken, we then have trouble not knowing
+            // which of the photos being saved are the ones that should be shared/trashed (we can't just say it's the last
+            // image, as some modes e.g. RAW or expo will have a set of photo).
+            if( MyDebug.LOG )
+                Log.d(TAG, "canTakeNewPhoto: no, as too many for pause preview");
+            return false;
+        }
         // otherwise, still have a max limit of 5 photos
         if( n_images_to_save >= 5*photo_cost ) {
             if( main_activity.supportsNoiseReduction() && n_images_to_save <= 8 ) {
@@ -2809,8 +2819,10 @@ public class MyApplicationInterface extends BasicApplicationInterface {
         View shareButton = main_activity.findViewById(R.id.share);
         View trashButton = main_activity.findViewById(R.id.trash);
         if( paused ) {
-            shareButton.setVisibility(View.VISIBLE);
-            trashButton.setVisibility(View.VISIBLE);
+            // we don't show the share/trash buttons here, as image is saved on background thread, and need to wait until it's saved -
+            // so instead we show them from MainActivity.imageQueueChanged() once saved
+            //shareButton.setVisibility(View.VISIBLE);
+            //trashButton.setVisibility(View.VISIBLE);
             main_activity.enablePausePreviewOnBackPressedCallback(true); // so that pressing back button instead unpauses the preview
         }
         else {
@@ -2931,7 +2943,7 @@ public class MyApplicationInterface extends BasicApplicationInterface {
             Log.d(TAG, "updateThumbnail");
         main_activity.updateGalleryIcon(thumbnail);
         drawPreview.updateThumbnail(thumbnail, is_video, true);
-        if( !is_video && this.getPausePreviewPref() ) {
+        if( !is_video && this.getPausePreviewPref() && main_activity.getPreview().isPreviewPaused() ) {
             drawPreview.showLastImage();
         }
     }
@@ -3319,8 +3331,6 @@ public class MyApplicationInterface extends BasicApplicationInterface {
 		/*if( !sharedPreferences.getBoolean(PreferenceKeys.BackgroundPhotoSavingPreferenceKey, true) )
 			do_in_background = false;
 		else*/ if( image_capture_intent )
-            do_in_background = false;
-        else if( getPausePreviewPref() )
             do_in_background = false;
         return do_in_background;
     }

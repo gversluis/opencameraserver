@@ -1857,7 +1857,7 @@ public class DrawPreview {
         canvas.save();
         canvas.rotate(ui_rotation, canvas.getWidth()/2.0f, canvas.getHeight()/2.0f);
 
-        if( camera_controller != null && !preview.isPreviewPaused() ) {
+        if( camera_controller != null  ) {
 			/*canvas.drawText("PREVIEW", canvas.getWidth() / 2,
 					canvas.getHeight() / 2, p);*/
 
@@ -1962,9 +1962,11 @@ public class DrawPreview {
                 }*/
             }
 
+            boolean is_preview_paused = preview.isPreviewPaused();
             boolean draw_angle = has_level_angle && show_angle_pref;
             boolean draw_geo_direction = has_geo_direction && show_geo_direction_pref;
-            if( draw_angle ) {
+
+            if( draw_angle && !is_preview_paused ) {
                 int color = Color.WHITE;
                 p.setTextSize(14 * scale_font + 0.5f); // convert dps to pixels
                 int pixels_offset_x;
@@ -2011,7 +2013,8 @@ public class DrawPreview {
                 applicationInterface.drawTextWithBackground(canvas, p, angle_string, color, Color.BLACK, canvas.getWidth() / 2 + pixels_offset_x, text_base_y, MyApplicationInterface.Alignment.ALIGNMENT_BOTTOM, null, MyApplicationInterface.Shadow.SHADOW_OUTLINE, Math.abs(cached_angle) < 10.0 ? text_bounds_angle_single : text_bounds_angle_double);
                 p.setUnderlineText(false);
             }
-            if( draw_geo_direction ) {
+
+            if( draw_geo_direction && !is_preview_paused ) {
                 int color = Color.WHITE;
                 p.setTextSize(14 * scale_font + 0.5f); // convert dps to pixels
                 int pixels_offset_x;
@@ -2032,7 +2035,8 @@ public class DrawPreview {
                 String string = String.valueOf(Math.round(geo_angle)) + (char)0x00B0;
                 applicationInterface.drawTextWithBackground(canvas, p, string, color, Color.BLACK, canvas.getWidth() / 2 + pixels_offset_x, text_base_y, MyApplicationInterface.Alignment.ALIGNMENT_BOTTOM, ybounds_text, MyApplicationInterface.Shadow.SHADOW_OUTLINE);
             }
-            if( preview.isOnTimer() ) {
+
+            if( preview.isOnTimer() && !is_preview_paused ) {
                 long remaining_time = (preview.getTimerEndTime() - time_ms + 999)/1000;
                 if( MyDebug.LOG )
                     Log.d(TAG, "remaining_time: " + remaining_time);
@@ -2050,7 +2054,7 @@ public class DrawPreview {
                     applicationInterface.drawTextWithBackground(canvas, p, time_s, Color.rgb(244, 67, 54), Color.BLACK, canvas.getWidth() / 2, canvas.getHeight() / 2); // Red 500
                 }
             }
-            else if( preview.isVideoRecording() ) {
+            else if( preview.isVideoRecording() && !is_preview_paused ) {
                 long video_time = preview.getVideoTime(false);
                 String time_s = getTimeStringFromSeconds(video_time/1000);
             	/*if( MyDebug.LOG )
@@ -2125,7 +2129,7 @@ public class DrawPreview {
                     }
                 }
             }
-            else if( taking_picture && capture_started ) {
+            else if( taking_picture && capture_started && !is_preview_paused ) {
                 if( camera_controller.isCapturingBurst() ) {
                     int n_burst_taken = camera_controller.getNBurstTaken() + 1;
                     int n_burst_total = camera_controller.getBurstTotal();
@@ -2157,6 +2161,8 @@ public class DrawPreview {
                 }
             }
             else if( image_queue_full ) {
+                // still display this message even when preview is paused, to make it clear why user can't take more photos
+                // yet
                 if( ((int)(time_ms / 500)) % 2 == 0 ) {
                     p.setTextSize(14 * scale_font + 0.5f); // convert dps to pixels
                     p.setTextAlign(Paint.Align.CENTER);
@@ -2167,7 +2173,7 @@ public class DrawPreview {
                 }
             }
 
-            if( preview.supportsZoom() && show_zoom_pref && preview.isPreviewStarted() ) {
+            if( preview.supportsZoom() && show_zoom_pref && preview.isPreviewStarted() && !is_preview_paused ) {
                 // don't show if preview not started - otherwise if we're not waiting on UI thread for preview to start (see wait_until_started in
                 // Preview and CameraController), we may see incorrect zoom being shown until preview has started, as in Preview.setupCamera() we only
                 // set the default zoom for CameraController once preview has started
@@ -2184,7 +2190,6 @@ public class DrawPreview {
                     applicationInterface.drawTextWithBackground(canvas, p, getContext().getResources().getString(R.string.zoom) + ": " + zoom_ratio +"x", Color.WHITE, Color.BLACK, canvas.getWidth() / 2, text_base_y - text_y, MyApplicationInterface.Alignment.ALIGNMENT_BOTTOM, ybounds_text, MyApplicationInterface.Shadow.SHADOW_OUTLINE);
                 }
             }
-
         }
         else if( camera_controller == null ) {
 			/*if( MyDebug.LOG ) {

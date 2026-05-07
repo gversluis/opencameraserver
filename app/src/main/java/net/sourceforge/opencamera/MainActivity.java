@@ -4333,6 +4333,16 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             Log.d(TAG, "imageQueueChanged");
         applicationInterface.getDrawPreview().setImageQueueFull( !applicationInterface.canTakeNewPhoto() );
 
+        if( preview.isPreviewPaused() && applicationInterface.getImageSaver().getNRealImagesToSave() == 0 ) {
+            // if the preview is paused, then once images are saved we can show the share/trash buttons
+            if( MyDebug.LOG )
+                Log.d(TAG, "show share/trash buttons");
+            View shareButton = this.findViewById(R.id.share);
+            View trashButton = this.findViewById(R.id.trash);
+            shareButton.setVisibility(View.VISIBLE);
+            trashButton.setVisibility(View.VISIBLE);
+        }
+
         /*if( applicationInterface.getImageSaver().getNImagesToSave() == 0) {
             cancelImageSavingNotification();
         }
@@ -4878,6 +4888,12 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
             Log.d(TAG, "takePicturePressed");
 
         closePopup();
+
+        // With pause-preview, we only allow taking one photo at a time (see MyApplicationInterface.canTakeNewPhoto()).
+        // But if the user unpauses whilst photo is still being saved, but then takes a new photo, we want to make sure
+        // that the next pause preview only covers the new photo (for share/trash options), so we need to clear the previous
+        // photo.
+        applicationInterface.clearLastImages();
 
         this.last_continuous_fast_burst = continuous_fast_burst;
         this.preview.takePicturePressed(photo_snapshot, continuous_fast_burst);
