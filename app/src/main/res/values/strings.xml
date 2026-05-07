@@ -1103,13 +1103,14 @@
     <string name="whats_new_text" translatable="false">
         <small>[This dialog is shown when Open Camera is updated. You can disable it under
             Settings/On screen GUI/Show What\'s New dialog.]</small>
-        \n\n<b>v1.55:</b>\n
+        \n\n<b>v1.56:</b>\n
         <ul>
-            <li>More crop guides: 65:24 and 3:1.\n</li>
-            <li>Shutter button now changes to a red square when recording video.\n</li>
-            <li>Removed -/+ controls for zoom and exposure compensation.\n</li>
-            <li>Show current save location in settings.\n</li>
-            <li>Don\'t block UI thread when first starting camera preview (for Camera2 API with Android 14+).\n</li>
+            <li>Optional on-screen icon for locking orientation to portrait/landscape.\n</li>
+            <li>Optional on-screen icon for preview shots.\n</li>
+            <li>Grids now rotate when auto-level is enabled.\n</li>
+            <li>Exif tags now supported for WebP and PNG image formats.\n</li>
+            <li>Panorama photos now store XMP metadata to mark these as panorama images (JPEG formats only).\n</li>
+            <li>Photos no longer save on UI thread when using \"Pause after taking photo\" option.\n</li>
             <li>Various other improvements and bug fixes.\n</li>
         </ul>
     </string>
