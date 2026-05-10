@@ -5153,6 +5153,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         }
         assertEquals(initial_navigation_gap_landscape, mActivity.getMainUI().test_navigation_gap_landscape);
         assertEquals(initial_navigation_gap_reversed_landscape, mActivity.getMainUI().test_navigation_gap_reversed_landscape);
+
+        // need to reset as statics retain their value between tests!
+        MainActivity.test_preview_want_no_limits = false;
     }
 
     /** Tests the use of the FLAG_LAYOUT_NO_LIMITS flag introduced in 1.48, with the mode set from startup.
@@ -5196,6 +5199,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         }
         assertEquals(supports_hide_navigation ? View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION : 0, mActivity.getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         assertEquals(mActivity.getNavigationGap(), mActivity.getMainUI().test_navigation_gap);
+
+        // need to reset as statics retain their value between tests!
+        MainActivity.test_preview_want_no_limits = false;
     }
 
     private void subTestTakePhotoPreviewPaused(boolean immersive_mode, boolean is_raw) throws InterruptedException {

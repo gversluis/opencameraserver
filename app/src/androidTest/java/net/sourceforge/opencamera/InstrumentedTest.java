@@ -6388,6 +6388,10 @@ public class InstrumentedTest {
                 assertEquals(0, layoutParams.bottomMargin);
             });
         }
+
+        // need to reset as statics retain their value between tests!
+        MainActivity.test_force_system_orientation = false;
+        MainActivity.test_force_window_insets = false;
     }
 
     private void subTestTouchToFocus(final boolean wait_after_focus, final boolean single_tap_photo, final boolean double_tap_photo, final boolean manual_can_auto_focus, final boolean can_focus_area, final String focus_value, final String focus_value_ui) throws InterruptedException {
@@ -9001,6 +9005,8 @@ public class InstrumentedTest {
         waitUntilPreviewStarted();
 
         subTestTakePhoto(false, false, true, true, false, false, false, false);
+
+        CameraController.test_force_slow_preview_start = false; // need to reset as statics retain their value between tests!
     }
 
     /** Tests with flag set to force preview to take 6s to start (tests Camera2 behaviour for this happening on background thread, and
@@ -9050,6 +9056,8 @@ public class InstrumentedTest {
 
         // make sure preview starts up
         waitUntilPreviewStarted();
+
+        CameraController.test_force_slow_preview_start = false; // need to reset as statics retain their value between tests!
     }
 
     private int getNFiles() {
