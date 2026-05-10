@@ -64,6 +64,9 @@ interface VideoTests {}
 interface PhotoCamera2Tests {}
 
 interface OldDeviceTests {}
+
+interface Nexus7Tests {}
+
 interface HDRTests {}
 
 interface HDRNTests {}
@@ -6511,7 +6514,7 @@ public class InstrumentedTest {
 
     }
 
-    @Category({PhotoTests.class, OldDeviceTests.class})
+    @Category({PhotoTests.class, OldDeviceTests.class, Nexus7Tests.class})
     @Test
     public void testTakePhoto() throws InterruptedException {
         Log.d(TAG, "testTakePhoto");
@@ -7551,7 +7554,7 @@ public class InstrumentedTest {
 
     // If this test fails, make sure we've manually selected that folder (as permission can't be given through the test framework).
     // named "aaa_" to run test earlier as it requires various permissions be allowed, that can only be set by user action
-    @Category(PhotoTests.class)
+    @Category({PhotoTests.class, Nexus7Tests.class})
     @Test
     public void aaa_testTakePhotoSAF() throws InterruptedException {
         Log.d(TAG, "testTakePhotoSAF");
