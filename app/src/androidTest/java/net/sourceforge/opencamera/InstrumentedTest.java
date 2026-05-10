@@ -8533,7 +8533,9 @@ public class InstrumentedTest {
         });
 
         final int n_back_photos = 3;
+        Log.d(TAG, "call subTestTakePhoto");
         subTestTakePhoto(false, false, true, true, false, false, false, false);
+        Log.d(TAG, "done subTestTakePhoto");
         mActivityRule.getScenario().onActivity(activity -> {
             Log.d(TAG, "test_capture_results: " + activity.getPreview().getCameraController().test_capture_results);
             assertEquals(1, activity.getPreview().getCameraController().test_capture_results);
