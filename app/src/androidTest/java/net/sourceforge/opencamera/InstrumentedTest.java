@@ -6945,7 +6945,8 @@ public class InstrumentedTest {
         subTestTakePhoto(false, false, false, false, false, false, false, false);
         mActivityRule.getScenario().onActivity(activity -> {
             assertTrue( activity.getPreview().getCameraController() == null || activity.getPreview().getCameraController().count_precapture_timeout == 0 );
-            assertEquals(4, activity.getPreview().getCameraController().test_fake_flash_focus);
+            //assertEquals(4, activity.getPreview().getCameraController().test_fake_flash_focus);
+            assertEquals((do_af_for_continuous ? 4 : 3), activity.getPreview().getCameraController().test_fake_flash_focus);
             assertEquals(4, activity.getPreview().getCameraController().test_fake_flash_precapture);
             assertEquals(4, activity.getPreview().getCameraController().test_fake_flash_photo);
         });
