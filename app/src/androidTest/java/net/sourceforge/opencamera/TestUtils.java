@@ -1139,7 +1139,7 @@ public class TestUtils {
         }
     }
 
-    public static void checkFilesAfterTakePhoto(MainActivity activity, final boolean is_raw, final boolean test_wait_capture_result, final String [] files) throws InterruptedException {
+    public static void checkFilesAfterTakePhoto(MainActivity activity, final boolean is_raw, final boolean test_wait_capture_result, final String [] files, boolean is_instrumented_test) throws InterruptedException {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         boolean is_dro = activity.supportsDRO() && sharedPreferences.getString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_std").equals("preference_photo_mode_dro");
         boolean is_hdr = activity.supportsHDR() && sharedPreferences.getString(PreferenceKeys.PhotoModePreferenceKey, "preference_photo_mode_std").equals("preference_photo_mode_hdr");
@@ -1204,7 +1204,9 @@ public class TestUtils {
         int exp_n_new_files = getExpNNewFiles(activity, is_raw);
         assertEquals(n_new_files, exp_n_new_files);
         checkFilenames(activity, is_raw, files, files2);
-        Thread.sleep(1500); // wait until we've scanned
+        if( !is_instrumented_test ) {
+            Thread.sleep(1500); // wait until we've scanned (n.b., for InstrumentedTests this won't help as this will be on the UI thread - instead the caller does the Thread.sleep before onActivity())
+        }
         if( test_wait_capture_result ) {
             // if test_wait_capture_result, then it may take longer before we've scanned
         }

@@ -6496,13 +6496,17 @@ public class InstrumentedTest {
             assertEquals(saved_thumbnail_count, new_thumbnail_count);
         }
 
+        // allow time to scan the file, for the failed_to_scan check in TestUtils.checkFilesAfterTakePhoto;
+        // needs to be before onActivity
+        Thread.sleep(1500);
+
         mActivityRule.getScenario().onActivity(activity -> {
             activity.waitUntilImageQueueEmpty();
 
             TestUtils.checkFocusAfterTakePhoto(activity, info.focus_value, info.focus_value_ui);
 
             try {
-                TestUtils.checkFilesAfterTakePhoto(activity, is_raw, test_wait_capture_result, files);
+                TestUtils.checkFilesAfterTakePhoto(activity, is_raw, test_wait_capture_result, files, true);
             }
             catch(InterruptedException e) {
                 Log.e(TAG, "InterruptedException from checkFilesAfterTakePhoto", e);

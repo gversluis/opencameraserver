@@ -3492,7 +3492,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         TestUtils.checkFocusAfterTakePhoto(mActivity, focus_value, focus_value_ui);
 
-        TestUtils.checkFilesAfterTakePhoto(mActivity, is_raw, test_wait_capture_result, files);
+        TestUtils.checkFilesAfterTakePhoto(mActivity, is_raw, test_wait_capture_result, files, false);
 
         TestUtils.checkFocusAfterTakePhoto2(mActivity, touch_to_focus, single_tap_photo, double_tap_photo, test_wait_capture_result, locked_focus, can_auto_focus, can_focus_area, saved_count);
 
