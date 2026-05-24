@@ -2453,6 +2453,10 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             // making zoom sticking or not only supported for Camera2 API
             return;
         }
+        if( camera_controller == null ) {
+            // just in case - have seen rare NullPointerException crashes from Google Play
+            return;
+        }
         this.camera_controller_zoom_ratios = this.camera_controller.setZoomSticky(sticky);
         this.camera_controller_max_zoom_factor = camera_controller_zoom_ratios != null ? camera_controller_zoom_ratios.size()-1 : 0;
         if( this.has_zoom ) {
