@@ -7617,8 +7617,10 @@ public class CameraController2 extends CameraController {
             Log.d(TAG, "reconnect");
         // if we change where we play the STOP_VIDEO_RECORDING sound, make sure it can't be heard in resultant video
         playSound(MediaActionSound.STOP_VIDEO_RECORDING);
-        createPreviewRequest();
         if( restart_preview ) {
+            // important to only call createPreviewRequest() it we're also going to close and reopen the capture session -
+            // otherwise we end up in a state where the capture session is still running, but previewBuilder has no target surfaces
+            createPreviewRequest();
             createCaptureSession(true, null, null, null, false);
             /*if( MyDebug.LOG )
                 Log.d(TAG, "add preview surface to previewBuilder");
