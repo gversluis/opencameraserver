@@ -5357,6 +5357,10 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
     /** Sets up the zoom seekbar based on available zoom values.
      */
     public void setZoomSeekbar() {
+        if( preview.getCameraController() == null ) {
+            // just in case - have seen rare NullPointerException crashes from Google Play
+            return;
+        }
         SeekBar zoomSeekBar = findViewById(R.id.zoom_seekbar);
         zoomSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
         zoomSeekBar.setMax(preview.getMaxZoom());
