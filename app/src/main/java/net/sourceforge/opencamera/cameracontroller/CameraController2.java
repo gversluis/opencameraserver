@@ -5130,6 +5130,12 @@ public class CameraController2 extends CameraController {
                 MyDebug.logStackTrace(TAG, "captureSession already closed!", e);
                 // got this as a Google Play exception (from onCaptureCompleted->processCompleted) - this means the capture session is already closed
             }
+            catch(IllegalArgumentException e) {
+                MyDebug.logStackTrace(TAG, "failed to set repeating request!", e);
+                // got this as a Google Play exception due to "Each request must have at least one Surface target"
+                // possibly related to starting preview on background thread (due to it only occurring on Android 14+)
+                // in theory this should already be caught by the check for !hasCaptureSession(), but apparently not...
+            }
         }
     }
 
