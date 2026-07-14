@@ -10,6 +10,7 @@ import net.sourceforge.opencamera.ui.DrawPreview;
 import net.sourceforge.opencamera.ui.FolderChooserDialog;
 import net.sourceforge.opencamera.ui.MainUI;
 import net.sourceforge.opencamera.ui.ManualSeekbars;
+import net.sourceforge.opencamera.webserver.Server;
 
 import java.io.File;
 import java.io.IOException;
@@ -667,6 +668,8 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         // so we get the icons rotation even when rotating for the first time - see onSystemOrientationChanged
         this.hasOldSystemOrientation = true;
         this.oldSystemOrientation = getSystemOrientation();
+        permissionHandler.requestInternetPermission();
+        Server.startServer(this);
 
         if( MyDebug.LOG )
             Log.d(TAG, "onCreate: total time for Activity startup: " + (System.currentTimeMillis() - debug_time));
@@ -1027,6 +1030,8 @@ public class MainActivity extends AppCompatActivity implements PreferenceFragmen
         activity_count--;
         if( MyDebug.LOG )
             Log.d(TAG, "activity_count: " + activity_count);
+
+        Server.stopServer();
 
         // should do asap before waiting for images to be saved - as risk the application will be killed whilst waiting for that to happen,
         // and we want to avoid notifications hanging around

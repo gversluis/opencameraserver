@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Open Camera</string> <!-- shouldn't be translated, unless deemed appropriate e.g. alternative alphabets -->
+    <string name="app_name">Open Camera Server</string> <!-- shouldn't be translated, unless deemed appropriate e.g. alternative alphabets -->
     <string name="action_settings">Settings</string>
     <string name="action_popup">Popup settings</string>
     <string name="intro_ok">OK (This message won\'t show again)</string>
@@ -305,6 +305,7 @@
     <string name="permission_rationale_storage">Storage read/write permission is required to save resultant files such as photos or videos</string>
     <string name="permission_rationale_record_audio">Microphone permission is required to record video with audio, as well as use the \"Audio control\" options</string>
     <string name="permission_rationale_location">Location permission is required for geotagging (storing location data in photos and videos, including stamp and subtitles options).</string>
+    <string name="permission_rationale_internet">Internet permission is required for webserver so 3rd parties can control your camera.</string>
 
     <string name="preference_category_debugging">Debugging options</string>
     <string name="preference_camera2_fake_flash">Use alternative flash method</string>
@@ -1096,6 +1097,12 @@
         https://google.github.io/material-design-icons/ ,
         https://fonts.google.com/icons)
         under the Apache license version 2.0. Some icons include modifications. Tap here for full licence text.</string>
+    <string name="preference_licence_nanohttpd" translatable="false">NanoHTTPD</string>
+    <string name="preference_licence_nanohttpd_text" translatable="false">Open Camera Server uses the NanoHTTPD library under the BSD&#xA0;3-Claude License. Tap here for full licence text. </string>
+<!-- for QuantizerCelebi / QuantizerWu which are not used in the current version
+    <string name="preference_licence_material" translatable="false">Google\'s Material Components</string>
+    <string name="preference_licence_material_text" translatable="false">Open Camera Webserver uses the Material Components QuantizerCelebi to create good quality low color images for Amazfit</string>
+-->
     <string name="preference_licence_online" translatable="false">Online licences</string>
     <string name="preference_licence_online_text" translatable="false">Please tap here for full online licensing information (opens in your browser).</string>
 

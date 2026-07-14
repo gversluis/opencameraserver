@@ -57,7 +57,7 @@ public class Server extends NanoHTTPD {
     }
 
     public Server(String host, int port, MainActivity mainActivity) {
-        super(port);
+        super(host, port);
         this.mainActivity = mainActivity;
     }
 

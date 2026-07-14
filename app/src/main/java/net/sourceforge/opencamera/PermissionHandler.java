@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import android.util.Log;
 
+import net.sourceforge.opencamera.webserver.Server;
+
 /** Android 6+ permission handling:
  */
 public class PermissionHandler {
@@ -21,6 +23,7 @@ public class PermissionHandler {
     final private static int MY_PERMISSIONS_REQUEST_STORAGE = 1;
     final private static int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 2;
     final private static int MY_PERMISSIONS_REQUEST_LOCATION = 3;
+    final private static int MY_PERMISSIONS_REQUEST_INTERNET = 4;
 
     private boolean camera_denied; // whether the user requested to deny a camera permission
     private long camera_denied_time_ms; // if denied, the time when this occurred
@@ -30,6 +33,8 @@ public class PermissionHandler {
     private long audio_denied_time_ms; // if denied, the time when this occurred
     private boolean location_denied; // whether the user requested to deny a camera permission
     private long location_denied_time_ms; // if denied, the time when this occurred
+    private boolean internet_denied; // whether the user requested to deny a camera permission
+    private long internet_denied_time_ms; // if denied, the time when this occurred
     // In some cases there can be a problem if the user denies a permission, we then get an onResume()
     // (since application goes into background when showing system UI to request permission) at which
     // point we try to request permission again! This would happen for camera and storage permissions.
@@ -85,6 +90,12 @@ public class PermissionHandler {
                     Log.d(TAG, "display rationale for location permission");
                 permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
                 message_id = R.string.permission_rationale_location;
+                break;
+            case MY_PERMISSIONS_REQUEST_INTERNET:
+                if (MyDebug.LOG)
+                    Log.d(TAG, "display rationale for internet permission");
+                permissions = new String[]{Manifest.permission.INTERNET};
+                message_id = R.string.permission_rationale_internet;
                 break;
             default:
                 if (MyDebug.LOG)
@@ -228,6 +239,34 @@ public class PermissionHandler {
         }
     }
 
+    public void requestInternetPermission() {
+        if( MyDebug.LOG )
+            Log.d(TAG, "requestLocationPermission");
+        /*if( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+            if( MyDebug.LOG )
+                Log.e(TAG, "shouldn't be requesting permissions for pre-Android M!");
+            return;
+        }
+        else*/ if( internet_denied && System.currentTimeMillis() < internet_denied_time_ms + deny_delay_ms ) {
+            if( MyDebug.LOG )
+                Log.d(TAG, "too soon since user last denied permission");
+            return;
+        }
+
+        if( ActivityCompat.shouldShowRequestPermissionRationale(main_activity, Manifest.permission.INTERNET) ) {
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
+            showRequestPermissionRationale(MY_PERMISSIONS_REQUEST_INTERNET);
+        }
+        else {
+            // Can go ahead and request the permission
+            if( MyDebug.LOG )
+                Log.d(TAG, "requesting internet permissions...");
+            ActivityCompat.requestPermissions(main_activity, new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
+        }
+    }
+
     public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
         if( MyDebug.LOG )
             Log.d(TAG, "onRequestPermissionsResult: requestCode " + requestCode);
@@ -340,6 +379,30 @@ public class PermissionHandler {
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putBoolean(PreferenceKeys.LocationPreferenceKey, false);
                     editor.apply();
+                }
+                return;
+            }
+            case MY_PERMISSIONS_REQUEST_INTERNET:
+            {
+                // If request is cancelled, the result arrays are empty.
+                if( grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "internet permission granted");
+                    // no need to do anything
+                    Server.startServer(main_activity);
+                }
+                else {
+                    if( MyDebug.LOG )
+                        Log.d(TAG, "internet permission denied");
+                    internet_denied = true;
+                    internet_denied_time_ms = System.currentTimeMillis();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    // no need to do anything
+                    // note that we don't turn off record audio option, as user may then record video not realising audio won't be recorded - best to be explicit each time
                 }
                 return;
             }

@@ -10,6 +10,7 @@
     <supports-screens android:xlargeScreens="true" android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true"/>
 
     <!-- if adding permissions, remember to review privacy policy; also features accessing sensitive information must be listed in Google Play listing -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
         android:usesPermissionFlags="neverForLocation"
         tools:targetApi="s" />
@@ -146,6 +147,7 @@
             android:exported="false"
             tools:targetApi="31"
             />
+        <service android:name="net.sourceforge.opencamera.webserver.WebService" />
     </application>
     <!-- needed for targetting Android 11 - see https://developer.android.com/about/versions/11/behavior-changes-11 -->
     <queries>

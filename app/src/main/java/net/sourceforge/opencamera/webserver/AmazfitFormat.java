@@ -5,9 +5,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.material.color.utilities.QuantizerCelebi;
-import com.google.android.material.color.utilities.QuantizerResult;
-import com.google.android.material.color.utilities.QuantizerWu;
+//import com.google.android.material.color.utilities.QuantizerCelebi;
+//import com.google.android.material.color.utilities.QuantizerResult;
+//import com.google.android.material.color.utilities.QuantizerWu;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,7 +50,6 @@ public class AmazfitFormat {
     }
 
     private static final String TAG = "AmazfitFormat";
-    private static QuantizerWu quantizer = null;
     private int width;
     private int fakeWidth;
     private int height;
@@ -129,7 +128,7 @@ public class AmazfitFormat {
         // QuantizerWu is faster than QuantizerCelebi, QuantizerCelebi uses QuantizerWu but gives better quality than QuantizerWu
         //Map<Integer, Integer> colorHistogram = QuantizerCelebi.quantize(pixels, maxColors); // slightly improvement upon Wu but slower
 /*
-        if (quantizer==null) quantizer = new QuantizerWu();
+        QuantizerWu quantizer = new QuantizerWu();
         QuantizerResult wuResult = quantizer.quantize(pixels, maxColors);
         Map<Integer, Integer> colorHistogram = wuResult.colorToCount;
         int[] palette = new int[colorHistogram.size()];

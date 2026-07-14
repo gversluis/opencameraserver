@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Open Camera</string>
+    <string name="app_name">Open Camera Server</string>
     <string name="action_settings">Paràmetres</string>
     <string name="action_popup">Paràmetres de finestra emergent</string>
     <string name="intro_ok">D\'acord (Aquest missatge no es tornarà a mostrar)</string>

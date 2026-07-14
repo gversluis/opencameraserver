@@ -55,6 +55,23 @@ public class PreferenceSubLicences extends PreferenceSubScreen {
         }
 
         {
+            final Preference pref = findPreference("preference_licence_nanohttpd");
+            pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference arg0) {
+                    if( pref.getKey().equals("preference_licence_nanohttpd") ) {
+                        if( MyDebug.LOG )
+                            Log.d(TAG, "user clicked nanohttpd licence");
+                        // display the Apache licence 2.0 text
+                        displayTextDialog(R.string.preference_licence_nanohttpd, "nanohttpd_LICENSE.txt");
+                        return false;
+                    }
+                    return false;
+                }
+            });
+        }
+
+        {
             final Preference pref = findPreference("preference_licence_google_icons");
             pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
